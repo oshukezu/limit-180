@@ -552,7 +552,7 @@
       this.gameState.initLimitTime = initLimit;
       this.gameState.limitTime = initLimit;
       this.gameState.targetSpeed = targetLimit;
-      this.gameState.correctRateTarget = config.passRate;
+      this.gameState.correctRateTarget = 0.60;
       
       this.gameState.questionTimes = [];
       this.gameState.recentQueue = [];
@@ -639,6 +639,9 @@
       }
 
       this.gameState.questionIndex++;
+      
+      // 動態梯度計時：根據目前題號更新本題限時
+      this.gameState.limitTime = this.getRoundTimeLimit(this.gameState.currentMission, this.gameState.questionIndex);
       
       document.getElementById('game-progress').textContent = `${this.gameState.questionIndex}/${this.gameState.totalQuestions}`;
       document.getElementById('game-combo').textContent = this.gameState.combo;
@@ -741,6 +744,25 @@
         }, 1200);
       } else {
         this.handleFailure("超時！算力加載失敗。");
+      }
+    },
+
+    getRoundTimeLimit(level, round) {
+      const LEVEL_LIMITS = {
+        1: 7.5, 2: 7.0, 3: 6.5, 4: 6.0, 5: 5.5,
+        6: 5.0, 7: 4.5, 8: 4.0, 9: 3.5, 10: 3.0
+      };
+      const base = LEVEL_LIMITS[level] || 3.0;
+      
+      if (round >= 1 && round <= 5) {
+        if (level === 1) {
+          return base + 2.0; // LV1 新手防禦：第 1-5 題加給 2.0 秒 (即 9.5 秒)
+        }
+        return base + 1.0; // 起跑熱身：第 1-5 題加給 1.0 秒
+      } else if (round >= 6 && round <= 15) {
+        return base + 0.5; // 中段加速：第 6-15 題加給 0.5 秒
+      } else {
+        return base; // 壓榨極限：第 16 題以後回歸基準秒數
       }
     },
 
@@ -861,19 +883,21 @@
       this.gameState.isGameOver = true;
 
       const accuracy = this.gameState.correctCount / this.gameState.totalQuestions;
-      const isPass = isCompleted && accuracy >= this.gameState.correctRateTarget;
+      const isPass = isCompleted && accuracy >= 0.60;
       
       const validTimes = this.gameState.questionTimes;
       const avgTime = validTimes.length > 0 ? (validTimes.reduce((s, x) => s + x, 0) / validTimes.length) : 99.9;
 
       let starsEarned = 0;
       if (isPass) {
-        starsEarned = 1;
-        const halfSpeedThreshold = (this.gameState.initLimitTime + this.gameState.targetSpeed) / 2;
-        if (avgTime <= this.gameState.targetSpeed) {
+        if (accuracy >= 0.90) {
           starsEarned = 3;
-        } else if (avgTime <= halfSpeedThreshold) {
+        } else if (accuracy >= 0.80) {
           starsEarned = 2;
+        } else if (accuracy >= 0.70) {
+          starsEarned = 1;
+        } else {
+          starsEarned = 0;
         }
       }
 
@@ -957,18 +981,21 @@
         }
         starsEl.textContent = starsStr.trim();
         starsEl.className = `flex justify-center gap-4 text-4xl my-2 ${
-          starsEarned === 3 ? 'text-green-400' : starsEarned === 2 ? 'text-cyan-400' : 'text-slate-300'
+          starsEarned === 3 ? 'text-green-400' : starsEarned === 2 ? 'text-cyan-400' : starsEarned === 1 ? 'text-yellow-400' : 'text-slate-600'
         }`;
 
         if (starsEarned === 3) {
-          motivationBox.textContent = "傳奇速度！您已獲得該關卡最大榮譽 3 顆星！";
+          motivationBox.textContent = "表現絕佳！您已獲得最大榮譽 3 顆星！";
           motivationBox.className = "p-3 bg-slate-900/60 border border-green-800 text-xs font-tech rounded text-green-300 text-center";
         } else if (starsEarned === 2) {
-          motivationBox.textContent = "表現極佳！繼續加油，將平均思考時間縮小到目標速度以下就能取得 3 星！";
+          motivationBox.textContent = "表現極佳！繼續加油，將正確率提升到 90% 以上就能取得 3 星！";
           motivationBox.className = "p-3 bg-slate-900/60 border border-yellow-800 text-xs font-tech rounded text-yellow-300 text-center";
-        } else {
-          motivationBox.textContent = "成功通過！挑戰更快的心算反應，衝刺 2 星與 3 星徽章吧！";
+        } else if (starsEarned === 1) {
+          motivationBox.textContent = "成功通過！再接再厲，將正確率提升到 80% 以上就能獲得 2 顆星！";
           motivationBox.className = "p-3 bg-slate-900/60 border border-cyan-800 text-xs font-tech rounded text-cyan-300 text-center";
+        } else {
+          motivationBox.textContent = "安全過關！挑戰更精準的心算反應，將正確率提升到 70% 以上來獲取星星吧！";
+          motivationBox.className = "p-3 bg-slate-900/60 border border-slate-700 text-xs font-tech rounded text-slate-400 text-center";
         }
       } else {
         // 隱藏往下一關按鈕

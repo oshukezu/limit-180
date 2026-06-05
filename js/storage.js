@@ -94,7 +94,7 @@
       const prevKey = `mission-${missionNum}-level-${levelNum - 1}`;
       const prevRecord = profile.level_records[prevKey];
       
-      return prevRecord && (prevRecord.stars || 0) > 0;
+      return prevRecord && (prevRecord.is_passed === true || (prevRecord.stars || 0) > 0);
     },
 
     // Save or update level score record
@@ -110,6 +110,7 @@
         record.best_avg_time = Math.min(record.best_avg_time, avgTime);
       }
       record.max_combo = Math.max(record.max_combo, maxCombo);
+      record.is_passed = true;
       profile.level_records[levelKey] = record;
 
       // Re-calculate total stars across all missions and sub-levels
