@@ -1,19 +1,21 @@
 // Limit 180 Supabase 連線服務封裝
 (function() {
-  let supabase = null;
+  let supabaseClient = null;
 
-  // 1. 初始化 Supabase Client
-  function initSupabase() {
-    if (window.supabase) {
-      if (!window.CFG || !window.CFG.SUPABASE_URL || !window.CFG.SUPABASE_ANON_KEY) {
-        console.error("[SupabaseService] 環境變數未設定，無法初始化！");
-        return;
+  // 1. 取得或初始化 Supabase Client (防呆機制)
+  function getSupabaseClient() {
+    if (!supabaseClient) {
+      const url = 'https://kzlvuyxsijsffigmcnti.supabase.co';
+      const key = 'sb_publishable_U1YrJqNz18LedymnrjcoTg_2SxZQhd_';
+      
+      if (!url || !key || key.includes('YOUR_') || !window.supabase) {
+        console.error("[SupabaseService] Supabase credentials or SDK missing!");
+        return null;
       }
-      supabase = window.supabase.createClient(window.CFG.SUPABASE_URL, window.CFG.SUPABASE_ANON_KEY);
-      console.log("[SupabaseService] 成功初始化 Supabase。");
-    } else {
-      console.error("[SupabaseService] 未檢測到 Supabase SDK，請確保 index.html 已載入 UMD CDN！");
+      supabaseClient = window.supabase.createClient(url, key);
+      console.log("[SupabaseService] Supabase client successfully initialized.");
     }
+    return supabaseClient;
   }
 
   // 2. 內部 SHA-256 雜湊產生器 (防改雜湊，由前端邏輯防護)
@@ -35,14 +37,16 @@
 
   // 3. 儲存或更新用戶紀錄 (UPSERT)
   async function saveRecord(gradeClass, seatNumber, nickname, stars, avgTime) {
-    if (!supabase) initSupabase();
-    if (!supabase) throw new Error("Supabase 未初始化");
+    const db = getSupabaseClient();
+    if (!db) {
+      throw new Error("Supabase 未初始化");
+    }
 
     // 計算前端防改雜湊
     const integrityHash = await generateHash(gradeClass, seatNumber, nickname, stars, avgTime);
 
     // 呼叫 upsert 語法，依據唯一約束的衝突鍵 grade_class 與 seat_number 覆蓋更新
-    const { data, error } = await supabase
+    const { data, error } = await db
       .from('users_profile')
       .upsert({
         grade_class: gradeClass,
@@ -68,10 +72,12 @@
 
   // 4. 取得排行榜前 50 名資料 (總星數降序，平均答題時間升序)
   async function getLeaderboard() {
-    if (!supabase) initSupabase();
-    if (!supabase) throw new Error("Supabase 未初始化");
+    const db = getSupabaseClient();
+    if (!db) {
+      throw new Error("Supabase 未初始化");
+    }
 
-    const { data, error } = await supabase
+    const { data, error } = await db
       .from('users_profile')
       .select('*')
       .order('total_stars', { ascending: false })
@@ -108,7 +114,7 @@
 
   // 掛載到 window 全域命名空間中
   window.MathSprintSupabaseService = {
-    initSupabase,
+    initSupabase: getSupabaseClient, // 保持相容性命名
     saveRecord,
     getLeaderboard
   };

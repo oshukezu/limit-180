@@ -8,6 +8,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Supabase JS CDN (2.0 雲端功能) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <!-- Supabase 服務封裝 (確保先於其它核心邏輯加載) -->
+  <script src="js/supabase-service.js"></script>
   <!-- Custom Cyberpunk Styles -->
   <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -55,7 +57,6 @@
 
   <!-- Core Javascript Modules (Global namespace object model) -->
   <script src="js/config.js"></script>
-  <script src="js/supabase-service.js"></script>
   <script src="js/onboarding.js"></script>
   <script src="js/storage.js"></script>
   <script src="js/generator.js"></script>
