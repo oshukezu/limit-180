@@ -120,6 +120,12 @@
       profile.total_stars = totalStars;
 
       this.saveProfile(profile);
+
+      // 同步新進度到 Supabase 雲端
+      if (window.MathSprintOnboarding && window.MathSprintOnboarding.syncCurrentStatsToCloud) {
+        window.MathSprintOnboarding.syncCurrentStatsToCloud().catch(() => {});
+      }
+
       return profile;
     },
 

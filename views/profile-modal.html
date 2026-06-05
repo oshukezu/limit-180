@@ -1,0 +1,44 @@
+<div id="profile-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-50 p-4">
+  <div class="hud-panel p-6 bg-slate-950 border-2 border-cyan-500 max-w-md w-full relative glow-blue text-shadow">
+    <div class="text-center mb-6">
+      <span class="text-xs font-pixel text-pink-500 glow-pink block mb-1">// IDENTITY INITIALIZATION //</span>
+      <h3 class="text-base font-pixel text-white">建立特工身份</h3>
+    </div>
+    
+    <form id="profile-form" class="space-y-4" onsubmit="return false;">
+      <!-- 班級 -->
+      <div>
+        <label for="profile-class" class="block text-[10px] font-pixel text-slate-400 mb-1.5">年級班別 (3位數字，如 501):</label>
+        <input type="text" id="profile-class" name="grade_class" required pattern="^[0-9]{3}$" 
+               class="w-full bg-slate-900 border-2 border-slate-800 p-2.5 font-pixel text-[11px] text-cyan-400 focus:outline-none focus:border-cyan-500 rounded"
+               placeholder="例如: 501">
+      </div>
+      
+      <!-- 座號 -->
+      <div>
+        <label for="profile-seat" class="block text-[10px] font-pixel text-slate-400 mb-1.5">座號 (1-50 號):</label>
+        <input type="number" id="profile-seat" name="seat_number" required min="1" max="50"
+               class="w-full bg-slate-900 border-2 border-slate-800 p-2.5 font-pixel text-[11px] text-cyan-400 focus:outline-none focus:border-cyan-500 rounded"
+               placeholder="例如: 12">
+      </div>
+      
+      <!-- 暱稱 -->
+      <div>
+        <label for="profile-nickname" class="block text-[10px] font-pixel text-slate-400 mb-1.5">遊戲暱稱 (2-8 字元):</label>
+        <input type="text" id="profile-nickname" name="nickname" required minlength="2" maxlength="8"
+               class="w-full bg-slate-900 border-2 border-slate-800 p-2.5 font-pixel text-[11px] text-cyan-400 focus:outline-none focus:border-cyan-500 rounded"
+               placeholder="例如: 西屯路李相赫">
+      </div>
+
+      <!-- 錯誤/提示訊息區 -->
+      <div id="profile-error-msg" class="hidden text-[10px] font-pixel text-red-500 glow-pink text-center animate-pulse py-1">
+        暱稱不合法，請重新輸入！
+      </div>
+
+      <!-- 提交按鈕 -->
+      <button type="submit" id="profile-submit-btn" class="w-full cyber-btn cyber-btn-green py-3.5 font-pixel text-xs text-green-400 mt-2">
+        進入 180 禁區
+      </button>
+    </form>
+  </div>
+</div>
