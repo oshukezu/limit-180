@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MATH SPRINT // 像素電競心算大賽</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Supabase JS CDN (2.0 雲端功能) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <!-- Custom Cyberpunk Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="crt min-h-screen flex flex-col justify-between select-none">
+  <!-- Scanner Line effect -->
+  <div class="scanner-line"></div>
+
+  <!-- Main HUD Header -->
+  <header class="border-b-2 border-slate-800 bg-slate-950 px-4 py-3 sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-pixel px-2 py-1 bg-red-600 text-white animate-pulse border-glow-pink">LIVE</span>
+        <h1 class="text-xl font-pixel glow-blue text-cyan-400 tracking-wider">MATH SPRINT</h1>
+      </div>
+      <nav id="main-nav" class="flex items-center gap-2 text-sm">
+        <button id="nav-home-btn" class="cyber-btn px-3 py-1.5 text-xs text-cyan-400 font-pixel">首頁選單</button>
+        <button id="nav-dashboard-btn" class="cyber-btn px-3 py-1.5 text-xs text-yellow-400 border-yellow-500 font-pixel">家長戰報</button>
+        <button id="nav-achievements-btn" class="cyber-btn px-3 py-1.5 text-xs text-pink-400 border-pink-500 font-pixel">成就牆</button>
+        <!-- 2.0：帳號按鈕 -->
+        <button id="auth-account-btn" class="cyber-btn px-3 py-1.5 text-xs text-purple-400 border-purple-500 font-pixel hidden" onclick="document.getElementById('auth-modal').classList.remove('hidden')">
+          👤 <span id="auth-nickname-display">---</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main SPA Content Wrapper -->
+  <main class="flex-grow max-w-6xl w-full mx-auto p-4 flex flex-col justify-center">
+    
+    <!-- 1. Home Menu / Level Selection -->
+    <section id="view-home" class="view-section py-8 flex flex-col items-center">
+      <div class="text-center mb-8">
+        <p class="text-xs font-pixel text-pink-500 mb-2 glow-pink">// NEON ARCADIA SPORTS //</p>
+        <h2 class="text-4xl md:text-5xl font-pixel text-yellow-400 glow-yellow tracking-widest uppercase">心算反應大賽</h2>
+        <p class="text-slate-400 text-sm mt-3 font-tech max-w-lg mx-auto">
+          逆向速度回推！高頻心算刻意練習，衝刺傳奇 1.8 秒極限領域。
+        </p>
+      </div>
+
+      <!-- Quick Action Panels -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl mb-8">
+        <!-- Play Panel -->
+        <div class="hud-panel p-6 bg-slate-900/80 flex flex-col justify-between">
+          <div>
+            <h3 class="text-lg font-pixel text-cyan-400 glow-blue mb-4">電競挑戰模式</h3>
+            <p class="text-sm text-slate-300 leading-relaxed mb-4">
+              挑戰 10 個由淺入深的關卡。累積星星以解鎖更高等級，解鎖終極的「Level 10 傳奇殿堂」！
+            </p>
+          </div>
+          <div class="flex items-center justify-between mt-4">
+            <span class="text-xs font-pixel text-slate-400">當前星數: <span id="profile-total-stars" class="text-yellow-400">0</span> ★</span>
+            <button id="start-levels-btn" class="cyber-btn px-6 py-2.5 font-pixel text-xs text-cyan-400">
+              進入大廳
+            </button>
+          </div>
+        </div>
+
+        <!-- Wrong Questions Panel -->
+        <div class="hud-panel p-6 bg-slate-900/80 border-glow-pink flex flex-col justify-between">
+          <div>
+            <h3 class="text-lg font-pixel text-pink-500 glow-pink mb-4">錯題消除訓練</h3>
+            <p class="text-sm text-slate-300 leading-relaxed mb-4">
+              凡是在遊戲中做錯或超時的題目，都會自動載入此防錯系統。無時間限制，將每道錯題「重新答對 3 次」即可消除它，紮實奠定數學基礎！
+            </p>
+          </div>
+          <div class="flex items-center justify-between mt-4">
+            <span class="text-xs font-pixel text-slate-400">待消除錯題: <span id="profile-wrong-count" class="text-pink-500">0</span> 題</span>
+            <button id="start-review-btn" class="cyber-btn cyber-btn-pink px-6 py-2.5 font-pixel text-xs text-pink-400">
+              錯題消除
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2.0：全台速算秒殺榜 -->
+      <div class="w-full max-w-4xl">
+        <div class="hud-panel p-5 bg-slate-900/80">
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+            <div class="flex items-center gap-2">
+              <span class="text-base font-pixel text-yellow-400 glow-yellow">⚡ 全台速算秒殺榜</span>
+              <span id="leaderboard-live-dot" class="inline-block w-2 h-2 rounded-full bg-neon-green transition-all duration-300" style="background: #39ff14; box-shadow: 0 0 6px #39ff14;"></span>
+              <span class="text-[9px] font-pixel text-slate-500">即時</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-pixel text-slate-400">Mission</span>
+              <select id="leaderboard-mission-select" class="bg-slate-950 border border-cyan-800 text-cyan-400 font-pixel text-[10px] px-2 py-1 rounded focus:outline-none focus:border-cyan-400">
+                <!-- 由 JS 動態生成 -->
+              </select>
+            </div>
+          </div>
+
+          <!-- 排行榜列表 -->
+          <div id="leaderboard-list" class="space-y-1 max-h-64 overflow-y-auto pr-1">
+            <div class="text-center text-slate-600 font-pixel text-xs py-6 animate-pulse">連線中...</div>
+          </div>
+          <div id="leaderboard-empty" class="hidden text-center text-slate-600 font-pixel text-xs py-6">
+            尚無排行資料，成為第一名吧！
+          </div>
+
+          <!-- 雲端未啟用提示 -->
+          <div id="leaderboard-offline-notice" class="text-center text-slate-700 font-pixel text-[9px] mt-3">
+            // 排行榜需設定 Supabase 後啟用
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- 2. Level Selection Lobby -->
+    <section id="view-lobby" class="view-section hidden py-6">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-pixel text-cyan-400 glow-blue">關卡大廳</h2>
+        <button id="lobby-back-btn" class="cyber-btn px-4 py-1.5 font-pixel text-xs text-slate-400 border-slate-600">返回首頁</button>
+      </div>
+
+      <!-- Level Progression Stats HUD -->
+      <div class="bg-slate-950 border border-slate-800 p-4 mb-6 flex flex-wrap justify-between items-center gap-4 text-xs font-pixel text-slate-400">
+        <div>總星星：<span id="lobby-stars" class="text-yellow-400">0</span> ★</div>
+        <div>已解鎖最高關卡：<span id="lobby-max-level" class="text-cyan-400">Level 1</span></div>
+        <div>免死金牌 (盾)：<span id="lobby-shields" class="text-yellow-400">0</span> 🛡️</div>
+      </div>
+
+      <!-- Grid of Levels -->
+      <div id="levels-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Level cards will be generated by JavaScript -->
+      </div>
+    </section>
+
+
+    <!-- 3. Game Arena -->
+    <section id="view-game" class="view-section hidden py-4 max-w-2xl mx-auto w-full flex flex-col gap-4">
+      
+      <!-- Keyboards Reminder for caps lock / Input method -->
+      <div id="input-warning" class="bg-red-950/80 border border-red-500/50 p-2 text-center rounded text-xs text-red-300 font-pixel animate-pulse">
+        ⚠️ 請將輸入法切換為 [ 英文 ] (Caps Lock) 確保鍵盤能正常輸入！
+      </div>
+
+      <!-- Main Game HUD Panel -->
+      <div class="hud-panel p-4 bg-slate-950 flex flex-col gap-4">
+        <!-- Status Bar -->
+        <div class="flex justify-between items-center text-xs font-pixel text-slate-400">
+          <div><span id="game-level-title" class="text-cyan-400">LEVEL 1</span></div>
+          <div>題數：<span id="game-progress" class="text-white">0/20</span></div>
+          <div>COMBO: <span id="game-combo" class="text-yellow-400">0</span></div>
+          <div class="flex items-center gap-1">🛡️: <span id="game-shields" class="text-yellow-400">0</span></div>
+        </div>
+
+        <!-- Timer / Energy Bar -->
+        <div class="time-bar-container">
+          <div id="game-time-bar" class="time-bar" style="width: 100%;"></div>
+        </div>
+
+        <!-- Scaffold Container (Visual Help) -->
+        <div id="scaffold-box" class="scaffold-container h-32 w-full bg-slate-900 border border-slate-800 flex items-center justify-center relative overflow-hidden rounded">
+          <span class="absolute top-2 left-2 text-[9px] font-pixel text-slate-600 tracking-wider">// 視覺輔助鷹架</span>
+          <div id="scaffold-canvas-container" class="w-full h-full flex items-center justify-center p-2">
+            <!-- Canvas or SVG helper elements will draw here -->
+          </div>
+        </div>
+
+        <!-- Math Question Screen -->
+        <div class="bg-slate-900 border-2 border-slate-800 p-8 flex flex-col items-center justify-center relative min-h-[160px]">
+          <span class="absolute top-2 right-3 text-[9px] font-pixel text-slate-500" id="game-mode-tag">// SPEED MATH CORE</span>
+          <div id="question-text" class="text-4xl font-pixel text-white text-center tracking-wide leading-relaxed">
+            --
+          </div>
+        </div>
+
+        <!-- Scaffold Explanatory Text or Shield Alert when active -->
+        <div id="shield-alert" class="hidden text-center text-xs font-pixel text-yellow-400 glow-yellow animate-pulse">
+          🛡️ 已啟動時間凍結盾！免除超時扣分！
+        </div>
+
+        <!-- Correct/Incorrect Overlay Info Block (shows during error pause) -->
+        <div id="error-feedback" class="hidden bg-red-950/90 border border-red-500 p-4 rounded text-center">
+          <div class="font-pixel text-sm text-red-500 glow-pink mb-2">錯誤 / 超時！</div>
+          <div class="text-xs text-slate-300 font-tech">
+            正確答案：<span id="error-correct-answer" class="text-green-400 font-bold"></span>
+          </div>
+          <div class="text-xs text-slate-400 font-tech mt-1" id="error-explanation">
+            解析：--
+          </div>
+        </div>
+
+        <!-- Answer Controls Area -->
+        <div id="answer-controls-container" class="mt-2">
+          <!-- Area A: Keyboard Input Box + Virtual Numpad (L1-L4, L8, Wrong Review) -->
+          <div id="control-input-mode" class="flex flex-col gap-4">
+            <!-- Numeric Input Field -->
+            <div class="flex items-center gap-2">
+              <input type="text" id="calc-input" 
+                     class="flex-grow bg-slate-900 border-2 border-cyan-500 p-3 text-2xl font-pixel text-cyan-400 text-center rounded focus:outline-none focus:border-cyan-400 glow-blue text-shadow"
+                     placeholder="輸入答案..." autocomplete="off">
+              <button id="calc-submit-btn" class="cyber-btn cyber-btn-green px-6 py-4 font-pixel text-xs text-green-400 rounded">
+                確認
+              </button>
+            </div>
+            
+            <!-- Virtual Keypad (0-9, Backspace, Dash for negative values) -->
+            <div class="keypad-grid grid grid-cols-4 gap-2">
+              <button data-key="1" class="cyber-btn font-pixel text-slate-300">1</button>
+              <button data-key="2" class="cyber-btn font-pixel text-slate-300">2</button>
+              <button data-key="3" class="cyber-btn font-pixel text-slate-300">3</button>
+              <button data-key="back" class="cyber-btn cyber-btn-pink font-pixel text-pink-400">退格</button>
+
+              <button data-key="4" class="cyber-btn font-pixel text-slate-300">4</button>
+              <button data-key="5" class="cyber-btn font-pixel text-slate-300">5</button>
+              <button data-key="6" class="cyber-btn font-pixel text-slate-300">6</button>
+              <button data-key="-" class="cyber-btn font-pixel text-slate-400">-</button>
+
+              <button data-key="7" class="cyber-btn font-pixel text-slate-300">7</button>
+              <button data-key="8" class="cyber-btn font-pixel text-slate-300">8</button>
+              <button data-key="9" class="cyber-btn font-pixel text-slate-300">9</button>
+              <button data-key="." class="cyber-btn font-pixel text-slate-400">.</button>
+
+              <button data-key="0" class="col-span-3 cyber-btn font-pixel text-slate-300">0</button>
+              <button data-key="clear" class="cyber-btn cyber-btn-pink font-pixel text-pink-400">清除</button>
+            </div>
+          </div>
+
+          <!-- Area B: Click二選一 Mode (L5-L7, L9-L10 Comparison type) -->
+          <div id="control-binary-mode" class="hidden grid grid-cols-2 gap-4">
+            <button id="binary-left-btn" class="cyber-btn py-6 px-4 font-pixel text-sm text-cyan-400 flex flex-col justify-center items-center gap-1 min-h-[96px]">
+              <span id="binary-left-text" class="text-xl font-bold">A</span>
+              <span class="text-[9px] text-slate-500 font-tech">[ 實體鍵盤 ← ]</span>
+            </button>
+            <button id="binary-right-btn" class="cyber-btn py-6 px-4 font-pixel text-sm text-pink-400 border-pink-500 flex flex-col justify-center items-center gap-1 min-h-[96px]">
+              <span id="binary-right-text" class="text-xl font-bold">B</span>
+              <span class="text-[9px] text-slate-500 font-tech">[ 實體鍵盤 → ]</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Exit Button -->
+      <div class="flex justify-center mt-2">
+        <button id="game-exit-btn" class="text-xs font-pixel text-red-500 hover:text-red-400 px-4 py-2 hover:underline">
+          退出挑戰
+        </button>
+      </div>
+    </section>
+
+
+    <!-- 4. Game Result Overlay / Modal -->
+    <section id="view-result" class="view-section hidden py-6 max-w-xl mx-auto w-full">
+      <div class="hud-panel p-6 bg-slate-950 text-center flex flex-col gap-6">
+        <div>
+          <h2 id="result-status-title" class="text-2xl font-pixel text-yellow-400 glow-yellow mb-2">挑戰成功！</h2>
+          <p class="text-xs font-pixel text-slate-400" id="result-subtitle">// 戰績結算面板</p>
+        </div>
+
+        <!-- Stars display -->
+        <div id="result-stars" class="flex justify-center gap-4 text-4xl text-yellow-500 my-2">
+          ★ ★ ★
+        </div>
+
+        <!-- Stats List -->
+        <div class="bg-slate-900 border border-slate-800 p-4 text-left rounded text-sm font-tech space-y-2">
+          <div class="flex justify-between">
+            <span class="text-slate-400">關卡：</span>
+            <span id="result-level" class="text-white font-bold">Level 1</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">答對題數：</span>
+            <span id="result-score" class="text-white font-bold">18/20</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">平均答題速度：</span>
+            <span id="result-avg-time" class="text-cyan-400 font-bold">3.2 秒 / 題</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">最高連擊 (Combo)：</span>
+            <span id="result-max-combo" class="text-yellow-400 font-bold">12</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">關卡目標速度：</span>
+            <span id="result-target-speed" class="text-purple-400">2.5 秒</span>
+          </div>
+        </div>
+
+        <!-- Shield warning / feedback message -->
+        <div id="result-motivation-box" class="p-3 bg-slate-900/60 border border-cyan-800 text-xs font-tech rounded text-cyan-300 text-center">
+          差一點點！你的速度已達標 95%！再接再厲！
+        </div>
+
+        <div class="flex gap-4 justify-center mt-2">
+          <button id="result-lobby-btn" class="cyber-btn px-6 py-2.5 font-pixel text-xs text-cyan-400">
+            返回大廳
+          </button>
+          <button id="result-retry-btn" class="cyber-btn cyber-btn-yellow px-6 py-2.5 font-pixel text-xs text-yellow-400">
+            再試一次
+          </button>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- 5. Parental Dashboard -->
+    <section id="view-dashboard" class="view-section hidden py-6">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-pixel text-yellow-400 glow-yellow">家長戰報 (Parental Dashboard)</h2>
+        <button id="dashboard-back-btn" class="cyber-btn px-4 py-1.5 font-pixel text-xs text-slate-400 border-slate-600">返回首頁</button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <!-- Radar Chart -->
+        <div class="hud-panel p-6 bg-slate-900/80">
+          <h3 class="text-sm font-pixel text-cyan-400 glow-blue mb-4">// 算力核心弱點雷達</h3>
+          <div class="relative min-h-[300px] flex items-center justify-center">
+            <canvas id="radar-chart"></canvas>
+            <div id="radar-no-data" class="absolute text-slate-500 font-pixel text-xs hidden">尚無作答數據，請先開始遊戲挑戰！</div>
+          </div>
+          <p class="text-xs text-slate-400 mt-4 leading-relaxed font-tech">
+            雷達圖顯示在各運算範疇的平均單題反應時間（越往外圈表示思考時間越長、為您的弱點）。可針對特定範疇在錯題本或對應關卡進行加強。
+          </p>
+        </div>
+
+        <!-- Line Chart -->
+        <div class="hud-panel p-6 bg-slate-900/80">
+          <h3 class="text-sm font-pixel text-pink-500 glow-pink mb-4">// 近 7 日心算反應速度趨勢</h3>
+          <div class="relative min-h-[300px] flex items-center justify-center">
+            <canvas id="line-chart"></canvas>
+            <div id="line-no-data" class="absolute text-slate-500 font-pixel text-xs hidden">尚無近七日歷史數據！</div>
+          </div>
+          <p class="text-xs text-slate-400 mt-4 leading-relaxed font-tech">
+            折線圖記錄玩家過去 7 天的每日單題平均思考時間變化，持續下降代表反應力越趨敏捷！
+          </p>
+        </div>
+      </div>
+
+      <!-- Profile clear statistics -->
+      <div class="flex justify-end gap-4">
+        <button id="dashboard-reset-btn" class="cyber-btn cyber-btn-pink px-4 py-2 font-pixel text-xs text-pink-500 border-pink-700">
+          清除所有資料 (重設存檔)
+        </button>
+      </div>
+    </section>
+
+
+    <!-- 6. Achievements Wall -->
+    <section id="view-achievements" class="view-section hidden py-6">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-pixel text-pink-400 glow-pink">成就徽章牆</h2>
+        <button id="achievements-back-btn" class="cyber-btn px-4 py-1.5 font-pixel text-xs text-slate-400 border-slate-600">返回首頁</button>
+      </div>
+
+      <div id="achievements-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Achievements badges will be generated by JS -->
+      </div>
+    </section>
+
+
+    <!-- 7. Wrong Answers Review Room -->
+    <section id="view-review" class="view-section hidden py-6">
+      <div class="flex justify-between items-center mb-6">
+        <div>
+          <h2 class="text-2xl font-pixel text-pink-400 glow-pink">錯題消除訓練</h2>
+          <p class="text-xs text-slate-400 font-tech mt-1">孩子必須將錯題本中的題目「重新答對 3 次」才能移出資料庫。此模式沒有時間限制與懲罰。</p>
+        </div>
+        <button id="review-back-btn" class="cyber-btn px-4 py-1.5 font-pixel text-xs text-slate-400 border-slate-600">返回首頁</button>
+      </div>
+
+      <div id="review-empty-state" class="hud-panel p-8 bg-slate-900/60 text-center flex flex-col items-center gap-4">
+        <span class="text-4xl">🎉</span>
+        <h3 class="text-lg font-pixel text-cyan-400 glow-blue">錯題本空空如也！</h3>
+        <p class="text-xs text-slate-400 font-tech">太厲害了！你目前沒有任何做錯的題目。請繼續保持！</p>
+      </div>
+
+      <div id="review-workspace" class="hidden flex flex-col md:flex-row gap-6">
+        <!-- Left Side: Wrong list -->
+        <div class="hud-panel p-4 bg-slate-900/80 md:w-1/3 flex flex-col max-h-[450px]">
+          <h3 class="text-xs font-pixel text-pink-500 glow-pink mb-3">// 待消除清單 (<span id="review-total-count">0</span>)</h3>
+          <div id="review-list-items" class="flex-grow overflow-y-auto space-y-2 pr-2">
+            <!-- Wrong questions rows will be inserted here -->
+          </div>
+        </div>
+
+        <!-- Right Side: Interaction Area -->
+        <div class="hud-panel p-6 bg-slate-950 md:w-2/3 flex flex-col justify-between min-h-[350px]">
+          <div>
+            <div class="flex justify-between items-center text-xs font-pixel text-slate-400 mb-4">
+              <div>錯題消除模式</div>
+              <div>進度：當前題需答對 <span id="review-item-correct-count" class="text-green-400">0</span> / 3 次</div>
+            </div>
+            
+            <div class="bg-slate-900 border border-slate-800 p-8 flex justify-center items-center rounded mb-6 min-h-[120px]">
+              <div id="review-question-text" class="text-3xl font-pixel text-white text-center">
+                --
+              </div>
+            </div>
+
+            <!-- Feedback area for review -->
+            <div id="review-feedback" class="hidden p-3 mb-4 rounded text-center text-xs font-pixel"></div>
+          </div>
+
+          <div id="review-controls-container">
+            <!-- Only Input Mode is used for review currently as we make kids calculate the real answers -->
+            <div class="flex flex-col gap-4">
+              <div class="flex items-center gap-2">
+                <input type="text" id="review-input" 
+                       class="flex-grow bg-slate-900 border-2 border-pink-500 p-3 text-2xl font-pixel text-pink-400 text-center rounded focus:outline-none focus:border-pink-400 glow-pink"
+                       placeholder="解答..." autocomplete="off">
+                <button id="review-submit-btn" class="cyber-btn cyber-btn-pink px-6 py-4 font-pixel text-xs text-pink-400 rounded">
+                  確認
+                </button>
+              </div>
+              <div class="keypad-grid grid grid-cols-4 gap-2">
+                <button data-review-key="1" class="cyber-btn font-pixel text-slate-300">1</button>
+                <button data-review-key="2" class="cyber-btn font-pixel text-slate-300">2</button>
+                <button data-review-key="3" class="cyber-btn font-pixel text-slate-300">3</button>
+                <button data-review-key="back" class="cyber-btn cyber-btn-pink font-pixel text-pink-400">退格</button>
+
+                <button data-review-key="4" class="cyber-btn font-pixel text-slate-300">4</button>
+                <button data-review-key="5" class="cyber-btn font-pixel text-slate-300">5</button>
+                <button data-review-key="6" class="cyber-btn font-pixel text-slate-300">6</button>
+                <button data-review-key="-" class="cyber-btn font-pixel text-slate-400">-</button>
+
+                <button data-review-key="7" class="cyber-btn font-pixel text-slate-300">7</button>
+                <button data-review-key="8" class="cyber-btn font-pixel text-slate-300">8</button>
+                <button data-review-key="9" class="cyber-btn font-pixel text-slate-300">9</button>
+                <button data-review-key="." class="cyber-btn font-pixel text-slate-400">.</button>
+
+                <button data-review-key="0" class="col-span-3 cyber-btn font-pixel text-slate-300">0</button>
+                <button data-review-key="clear" class="cyber-btn cyber-btn-pink font-pixel text-pink-400">清除</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Demote Warning & Level Suggestion Modal -->
+  <div id="demote-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center hidden z-50 p-4">
+    <div class="hud-panel p-6 bg-slate-950 max-w-sm w-full text-center border-glow-pink">
+      <h3 class="text-lg font-pixel text-pink-500 glow-pink mb-3">挑戰連敗提示</h3>
+      <p class="text-xs font-tech text-slate-300 mb-6 leading-relaxed">
+        檢測到您在目前關卡已連續失敗 3 次。要不要先去前一個關卡練習，讓大腦熱身一下再回來挑戰？
+      </p>
+      <div class="flex gap-4 justify-center">
+        <button id="demote-modal-prev-btn" class="cyber-btn cyber-btn-green px-4 py-2 font-pixel text-xs text-green-400">
+          練練前一關
+        </button>
+        <button id="demote-modal-stay-btn" class="cyber-btn px-4 py-2 font-pixel text-xs text-slate-400 border-slate-700">
+          繼續嘗試
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Stats -->
+  <footer class="border-t-2 border-slate-800 bg-slate-950 px-4 py-3 text-center text-slate-600 text-[10px] font-pixel">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-2">
+      <div>MATH SPRINT ELECTRONS // v1.0.0-CYBERPUNK</div>
+      <div>NO BACKEND // SECURE OFFLINE PLAYER RECORD SYSTEM</div>
+    </div>
+  </footer>
+
+  <!-- Confetti script -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- ChartJS script -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Core Javascript Modules (Global namespace object model) -->
+  <script src="js/config.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/generator.js"></script>
+  <script src="js/achievements.js"></script>
+  <script src="js/dashboard.js"></script>
+  <!-- 2.0 Cloud Modules（依賴 storage.js，需在 game.js 之前載入）-->
+  <script src="js/auth.js"></script>
+  <script src="js/cloud-sync.js"></script>
+  <script src="js/leaderboard.js"></script>
+  <script src="js/game.js"></script>
+</body>
+
+<!-- 2.0：帳號管理 Modal -->
+<div id="auth-modal" class="fixed inset-0 bg-black/85 flex items-center justify-center hidden z-50 p-4" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div class="hud-panel p-6 bg-slate-950 max-w-sm w-full text-center" style="border-color: #bf00ff; box-shadow: 0 0 20px #bf00ff40;">
+    <div class="text-xs font-pixel text-purple-400 mb-1">// PLAYER IDENTITY</div>
+    <h3 class="text-lg font-pixel text-white mb-5">帳號管理</h3>
+
+    <!-- 當前身份顯示 -->
+    <div class="bg-slate-900 border border-slate-700 p-3 rounded mb-4 text-left">
+      <div class="text-[10px] font-pixel text-slate-500 mb-1">當前玩家代號</div>
+      <div id="auth-modal-nickname" class="text-sm font-pixel text-cyan-400">---</div>
+      <div id="auth-modal-status" class="text-[9px] font-tech text-slate-500 mt-1">狀態：檢查中...</div>
+    </div>
+
+    <!-- 錯誤訊息 -->
+    <div id="auth-error-msg" class="hidden text-xs font-tech text-red-400 bg-red-950/60 border border-red-700 p-2 rounded mb-3"></div>
+
+    <!-- 動作按鈕 -->
+    <div class="flex flex-col gap-3">
+      <button id="auth-google-btn" class="cyber-btn py-3 font-pixel text-xs" style="border-color: #bf00ff; color: #bf00ff;"
+        onclick="window.MathSprintAuth?.signInWithGoogle() || window.MathSprintAuth?.linkGoogleAccount()">
+        🔗 使用 Google 帳號（跨裝置同步）
+      </button>
+      <button class="text-xs font-pixel text-slate-500 hover:text-slate-300 py-2"
+        onclick="document.getElementById('auth-modal').classList.add('hidden')">
+        繼續匿名遊玩
+      </button>
+    </div>
+
+    <p class="text-[9px] font-tech text-slate-600 mt-4 leading-relaxed">
+      連結 Google 帳號後，您的遊戲進度將安全保存於雲端，支援多裝置登入。<br>
+      匿名模式的進度只儲存在本裝置的瀏覽器中。
+    </p>
+  </div>
+</div>
+
+</html>
