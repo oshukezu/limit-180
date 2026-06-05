@@ -4,3 +4,27 @@ agents.md
 agent.md
 js/config.js
 /agents
+
+# 本地環境變數與金鑰
+.env
+.env.local
+.env.*.local
+*.pem
+
+# Supabase CLI 暫存
+.supabase/
+supabase/.temp/
+
+# 虛擬環境與 Python 快取 (防護環境)
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# 系統與編輯器暫存
+.vscode/
+.idea/
+*.suo
+*.sln
+*.swp
+*.log
