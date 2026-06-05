@@ -252,6 +252,24 @@
         }
       });
 
+      // 往下一關按鈕事件
+      document.getElementById('result-next-btn').addEventListener('click', () => {
+        let nextMission = this.gameState.currentMission;
+        let nextLevel = this.gameState.currentLevel + 1;
+        if (nextLevel > 20) {
+          nextLevel = 1;
+          nextMission = this.gameState.currentMission + 1;
+        }
+
+        if (nextMission > 10) {
+          alert("🎉 恭喜您通關了所有的 Limit 180 關卡！");
+          this.renderLobby();
+          showView('view-lobby');
+        } else {
+          this.startGame(nextMission, nextLevel);
+        }
+      });
+
       // Exit
       document.getElementById('game-exit-btn').addEventListener('click', () => {
         if (confirm('確定要放棄本次挑戰，返回大廳嗎？')) {
@@ -518,6 +536,7 @@
 
       this.gameState.currentMission = missionNum;
       this.gameState.currentLevel = levelNum;
+      this.gameState.questionIndex = 0; // 修正：重設題目索引以避免一進關卡即判定結束/失敗的 Bug
       this.gameState.totalQuestions = config.totalQuestions;
       this.gameState.correctCount = 0;
       this.gameState.combo = 0;
@@ -907,6 +926,10 @@
         statusTitle.textContent = "挑戰成功！";
         statusTitle.className = "text-2xl font-pixel text-green-400 glow-green mb-2";
         
+        // 顯示往下一關按鈕
+        const nextBtn = document.getElementById('result-next-btn');
+        if (nextBtn) nextBtn.classList.remove('hidden');
+
         const starsEl = document.getElementById('result-stars');
         let starsStr = '';
         for (let s = 1; s <= 3; s++) {
@@ -928,6 +951,9 @@
           motivationBox.className = "p-3 bg-slate-900/60 border border-cyan-800 text-xs font-tech rounded text-cyan-300 text-center";
         }
       } else {
+        // 隱藏往下一關按鈕
+        const nextBtn = document.getElementById('result-next-btn');
+        if (nextBtn) nextBtn.classList.add('hidden');
         statusTitle.textContent = "挑戰失敗！";
         statusTitle.className = "text-2xl font-pixel text-red-500 glow-pink mb-2";
         document.getElementById('result-stars').textContent = '☆ ☆ ☆';
