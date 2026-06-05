@@ -969,13 +969,11 @@
       // 3. Question is not comparison type
       const isBoss = [5, 7, 10].includes(this.gameState.currentMission);
       if (isBoss || this.gameState.combo >= 5 || question.type !== 'compare' || !question.scaffoldData) {
-        box.style.opacity = '0';
-        box.style.pointerEvents = 'none';
+        box.style.display = 'none';
         return;
       }
 
-      box.style.opacity = '1';
-      box.style.pointerEvents = 'auto';
+      box.style.display = 'block';
 
       const data = question.scaffoldData;
       const wrapper = document.createElement('div');

@@ -391,31 +391,57 @@ body.body-in-game main {
   justify-content: center;
 }
 
-/* 小螢幕高度 (高度小於 720px) 的自適應縮放 */
-@media (max-height: 720px) {
-  #view-game .min-h-\[160px\] {
-    min-height: 100px !important;
-    padding-top: 1rem !important;
-    padding-bottom: 1rem !important;
+/* 小螢幕高度 (高度小於 720px) 或是手機尺寸時的自適應縮放 */
+@media (max-height: 720px), (max-width: 600px) {
+  /* 隱藏行動端無用的輸入法提示框，釋放高度 */
+  #input-warning {
+    display: none !important;
   }
+
+  /* 縮小題目框的 Padding 與高度，去除多餘留白 */
+  #question-container {
+    min-height: 80px !important;
+    padding: 12px 16px !important;
+  }
+  
   #question-text {
-    font-size: 2rem !important;
-    line-height: 1.3 !important;
+    font-size: 1.8rem !important;
+    line-height: 1.2 !important;
   }
+
+  /* 縮小輔助鷹架的高度 */
   #scaffold-box {
-    height: 80px !important;
+    height: 70px !important;
   }
   #scaffold-canvas-container svg {
-    width: 50px !important;
-    height: 50px !important;
+    width: 45px !important;
+    height: 45px !important;
   }
+
   #error-feedback {
     padding: 0.5rem !important;
   }
+
+  /* 縮小挑戰畫面的元件間距 */
   #view-game {
     padding-top: 2px !important;
     padding-bottom: 2px !important;
-    gap: 4px !important;
+    gap: 6px !important;
+  }
+
+  #view-game .hud-panel {
+    padding: 10px !important;
+    gap: 8px !important;
+  }
+
+  /* 微調行動端確認按鈕與退出按鈕間距 */
+  #calc-submit-btn {
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+  }
+
+  #view-game .mt-2 {
+    margin-top: 4px !important;
   }
 }
 
@@ -424,12 +450,12 @@ body.body-in-game main {
   #scaffold-box {
     display: none !important;
   }
-  #view-game .min-h-\[160px\] {
-    min-height: 60px !important;
-    padding: 0.25rem !important;
+  #question-container {
+    min-height: 55px !important;
+    padding: 6px 12px !important;
   }
   #question-text {
-    font-size: 1.5rem !important;
+    font-size: 1.4rem !important;
   }
 }
 
