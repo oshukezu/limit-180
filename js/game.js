@@ -13,7 +13,7 @@
     7: { name: "Mission 7 [魔王]", totalQuestions: 40, passRate: 0.95, desc: "兩步驟四則混合運算", initStart: 3.0, initEnd: 1.8, targetStart: 1.8, targetEnd: 1.2 },
     8: { name: "Mission 8", totalQuestions: 50, passRate: 0.95, desc: "分數/小數/百分比混搭二選一", initStart: 2.5, initEnd: 1.5, targetStart: 1.8, targetEnd: 0.9 }, // 14yo limits for binary
     9: { name: "Mission 9", totalQuestions: 60, passRate: 0.98, desc: "國中正負數代數與高難度比大小", initStart: 2.0, initEnd: 1.5, targetStart: 1.8, targetEnd: 1.0 },
-    10: { name: "Mission 10 [傳奇]", totalQuestions: 100, passRate: 1.00, desc: "高中傳奇殿堂：極速全範疇", initStart: 1.5, initEnd: 1.2, targetStart: 1.2, targetEnd: 1.0 }
+    10: { name: "Limit 180 終極挑戰", totalQuestions: 100, passRate: 1.00, desc: "在 3 分鐘 (180秒) 內挑戰做完 100 題！", initStart: 1.8, initEnd: 1.8, targetStart: 1.8, targetEnd: 1.8 }
   };
 
   // Sound generator using Web Audio API
@@ -279,8 +279,9 @@
       calcInput.addEventListener('keydown', blockKeys);
 
       // Focus pull
+      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
       document.addEventListener('click', (e) => {
-        if (currentView === 'view-game' && !this.gameState.isPaused && !this.gameState.isGameOver) {
+        if (!isTouchDevice && currentView === 'view-game' && !this.gameState.isPaused && !this.gameState.isGameOver) {
           const isCompare = this.gameState.currentQuestion?.type === 'compare';
           if ((!isCompare || this.gameState.isReviewMode) && e.target !== calcInput && e.target.tagName !== 'BUTTON') {
             calcInput.focus();
@@ -861,11 +862,15 @@
         statusTitle.textContent = "挑戰成功！";
         statusTitle.className = "text-2xl font-pixel text-green-400 glow-green mb-2";
         
+        const starsEl = document.getElementById('result-stars');
         let starsStr = '';
         for (let s = 1; s <= 3; s++) {
           starsStr += s <= starsEarned ? '★ ' : '☆ ';
         }
-        document.getElementById('result-stars').textContent = starsStr.trim();
+        starsEl.textContent = starsStr.trim();
+        starsEl.className = `flex justify-center gap-4 text-4xl my-2 ${
+          starsEarned === 3 ? 'text-green-400' : starsEarned === 2 ? 'text-cyan-400' : 'text-slate-300'
+        }`;
 
         if (starsEarned === 3) {
           motivationBox.textContent = "傳奇速度！您已獲得該關卡最大榮譽 3 顆星！";

@@ -5,7 +5,10 @@
   --neon-pink: #ff007f;
   --neon-green: #39ff14;
   --neon-blue: #00f0ff;
-  --neon-yellow: #fffb00;
+  --neon-yellow: #39ff14; /* 根據需求，將黃色霓虹替換為綠色霓虹 */
+  --neon-pink: #ff007f;
+  --neon-green: #39ff14;
+  --neon-blue: #00f0ff;
   --dark-bg: #0a0a12;
   --panel-bg: #121224;
   --pixel-font: 'Press Start 2P', monospace;
@@ -51,7 +54,7 @@ body {
   text-shadow: 0 0 5px var(--neon-blue), 0 0 10px var(--neon-blue);
 }
 .glow-yellow {
-  text-shadow: 0 0 5px var(--neon-yellow), 0 0 10px var(--neon-yellow);
+  text-shadow: 0 0 5px var(--neon-green), 0 0 10px var(--neon-green);
 }
 
 /* Neon Border Glow */
@@ -68,8 +71,8 @@ body {
   border: 2px solid var(--neon-blue);
 }
 .border-glow-yellow {
-  box-shadow: 0 0 8px var(--neon-yellow), inset 0 0 4px var(--neon-yellow);
-  border: 2px solid var(--neon-yellow);
+  box-shadow: 0 0 8px var(--neon-green), inset 0 0 4px var(--neon-green);
+  border: 2px solid var(--neon-green);
 }
 
 /* Font Classes */
@@ -164,13 +167,13 @@ body {
   box-shadow: 0 0 15px var(--neon-green);
 }
 .cyber-btn-yellow {
-  border: 2px solid var(--neon-yellow);
-  background: rgba(255, 251, 0, 0.1);
+  border: 2px solid var(--neon-green);
+  background: rgba(57, 255, 20, 0.1);
 }
 .cyber-btn-yellow:hover {
-  background: var(--neon-yellow);
+  background: var(--neon-green);
   color: #000;
-  box-shadow: 0 0 15px var(--neon-yellow);
+  box-shadow: 0 0 15px var(--neon-green);
 }
 
 /* Dynamic Time Bar style */
@@ -337,3 +340,28 @@ body {
   box-shadow: 0 0 15px #bf00ff;
 }
 
+/* ============================================================ */
+/* 手機 / 平板：隱藏螢幕虛擬鍵盤，改用系統數字鍵盤作答           */
+/* ============================================================ */
+
+/* 預設全部顯示（桌機保留虛擬鍵盤） */
+.keypad-grid {
+  display: grid;
+}
+
+/* 觸控裝置（手機 / 平板）：隱藏虛擬鍵盤面板 */
+@media (hover: none) and (pointer: coarse) {
+  /* 隱藏遊戲區域的虛擬鍵盤 */
+  #control-input-mode .keypad-grid {
+    display: none;
+  }
+  /* 隱藏錯題複習區域的虛擬鍵盤 */
+  #review-controls-container .keypad-grid {
+    display: none;
+  }
+  /* 輸入框讓手機原生數字鍵盤彈出 */
+  #calc-input,
+  #review-input {
+    font-size: 1.5rem; /* 防止 iOS 自動縮放 */
+  }
+}
