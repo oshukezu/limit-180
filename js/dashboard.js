@@ -226,7 +226,7 @@
   // Export
   window.MathSprintDashboard = Dashboard;
 
-  window.addEventListener('DOMContentLoaded', () => {
+  window.addEventListener('limit180ComponentsLoaded', () => {
     Dashboard.init();
   });
 })();

@@ -1,0 +1,76 @@
+<section id="view-home" class="view-section py-8 flex flex-col items-center">
+  <div class="text-center mb-8">
+    <p class="text-xs font-pixel text-pink-500 mb-2 glow-pink">// NEON ARCADIA SPORTS //</p>
+    <h2 class="text-4xl md:text-5xl font-pixel text-green-400 glow-green tracking-widest uppercase">Limit 180</h2>
+    <p class="text-slate-400 text-sm mt-3 font-tech max-w-lg mx-auto">
+      正式代號「Limit 180」！你的目標是挑戰 100 題在 3 分鐘 (180 秒) 內做完的極速心算極限。
+    </p>
+  </div>
+
+  <!-- Quick Action Panels -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl mb-8">
+    <!-- Play Panel -->
+    <div class="hud-panel p-6 bg-slate-900/80 flex flex-col justify-between">
+      <div>
+        <h3 class="text-lg font-pixel text-cyan-400 glow-blue mb-4">電競挑戰模式</h3>
+        <p class="text-sm text-slate-300 leading-relaxed mb-4">
+          挑戰 10 個由淺入深的關卡。累積星星以解鎖更高等級，解鎖終極的「Limit 180 終極挑戰」！
+        </p>
+      </div>
+      <div class="flex items-center justify-between mt-4">
+        <span class="text-xs font-pixel text-slate-400">當前星數: <span id="profile-total-stars" class="text-green-400">0</span> ★</span>
+        <button id="start-levels-btn" class="cyber-btn px-6 py-2.5 font-pixel text-xs text-cyan-400">
+          進入大廳
+        </button>
+      </div>
+    </div>
+
+    <!-- Wrong Questions Panel -->
+    <div class="hud-panel p-6 bg-slate-900/80 border-glow-pink flex flex-col justify-between">
+      <div>
+        <h3 class="text-lg font-pixel text-pink-500 glow-pink mb-4">錯題消除訓練</h3>
+        <p class="text-sm text-slate-300 leading-relaxed mb-4">
+          凡是在遊戲中做錯或超時的題目，都會自動載入此防錯系統。無時間限制，將每道錯題「重新答對 3 次」即可消除它，紮實奠定數學基礎！
+        </p>
+      </div>
+      <div class="flex items-center justify-between mt-4">
+        <span class="text-xs font-pixel text-slate-400">待消除錯題: <span id="profile-wrong-count" class="text-pink-500">0</span> 題</span>
+        <button id="start-review-btn" class="cyber-btn cyber-btn-pink px-6 py-2.5 font-pixel text-xs text-pink-400">
+          錯題消除
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2.0：全台速算秒殺榜 -->
+  <div class="w-full max-w-4xl">
+    <div class="hud-panel p-5 bg-slate-900/80">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+        <div class="flex items-center gap-2">
+          <span class="text-base font-pixel text-green-400 glow-green">⚡ 全台速算秒殺榜</span>
+          <span id="leaderboard-live-dot" class="inline-block w-2 h-2 rounded-full bg-neon-green transition-all duration-300" style="background: #39ff14; box-shadow: 0 0 6px #39ff14;"></span>
+          <span class="text-[9px] font-pixel text-slate-500">即時</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-[10px] font-pixel text-slate-400">Mission</span>
+          <select id="leaderboard-mission-select" class="bg-slate-950 border border-cyan-800 text-cyan-400 font-pixel text-[10px] px-2 py-1 rounded focus:outline-none focus:border-cyan-400">
+            <!-- 由 JS 動態生成 -->
+          </select>
+        </div>
+      </div>
+
+      <!-- 排行榜列表 -->
+      <div id="leaderboard-list" class="space-y-1 max-h-64 overflow-y-auto pr-1">
+        <div class="text-center text-slate-600 font-pixel text-xs py-6 animate-pulse">連線中...</div>
+      </div>
+      <div id="leaderboard-empty" class="hidden text-center text-slate-600 font-pixel text-xs py-6">
+        尚無排行資料，成為第一名吧！
+      </div>
+
+      <!-- 雲端未啟用提示 -->
+      <div id="leaderboard-offline-notice" class="text-center text-slate-700 font-pixel text-[9px] mt-3">
+        // 排行榜需設定 Supabase 後啟用
+      </div>
+    </div>
+  </div>
+</section>

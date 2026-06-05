@@ -1,0 +1,51 @@
+<section id="view-result" class="view-section hidden py-6 max-w-xl mx-auto w-full">
+  <div class="hud-panel p-6 bg-slate-950 text-center flex flex-col gap-6">
+    <div>
+      <h2 id="result-status-title" class="text-2xl font-pixel text-green-400 glow-green mb-2">挑戰成功！</h2>
+      <p class="text-xs font-pixel text-slate-400" id="result-subtitle">// 戰績結算面板</p>
+    </div>
+
+    <!-- Stars display -->
+    <div id="result-stars" class="flex justify-center gap-4 text-4xl text-green-400 my-2">
+      ★ ★ ★
+    </div>
+
+    <!-- Stats List -->
+    <div class="bg-slate-900 border border-slate-800 p-4 text-left rounded text-sm font-tech space-y-2">
+      <div class="flex justify-between">
+        <span class="text-slate-400">關卡：</span>
+        <span id="result-level" class="text-white font-bold">Level 1</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-slate-400">答對題數：</span>
+        <span id="result-score" class="text-white font-bold">18/20</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-slate-400">平均答題速度：</span>
+        <span id="result-avg-time" class="text-cyan-400 font-bold">3.2 秒 / 題</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-slate-400">最高連擊 (Combo)：</span>
+        <span id="result-max-combo" class="text-green-400 font-bold">12</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-slate-400">關卡目標速度：</span>
+        <span id="result-target-speed" class="text-purple-400">2.5 秒</span>
+      </div>
+    </div>
+
+    <!-- Shield warning / feedback message -->
+    <div id="result-motivation-box" class="p-3 bg-slate-900/60 border border-cyan-800 text-xs font-tech rounded text-cyan-300 text-center">
+      差一點點！你的速度已達標 95%！再接再厲！
+    </div>
+
+    <div class="flex gap-4 justify-center mt-2">
+      <button id="result-lobby-btn" class="cyber-btn px-6 py-2.5 font-pixel text-xs text-cyan-400">
+        返回大廳
+      </button>
+      <button id="result-retry-btn" class="cyber-btn cyber-btn-green px-6 py-2.5 font-pixel text-xs text-green-400">
+        再試一次
+      </button>
+    </div>
+  </div>
+</section>

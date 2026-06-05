@@ -75,6 +75,13 @@
       currentView = viewId;
     }
     
+    // 如果進入遊戲或複習，隱藏 header 與 footer
+    if (viewId === 'view-game' || viewId === 'view-review') {
+      document.body.classList.add('body-in-game');
+    } else {
+      document.body.classList.remove('body-in-game');
+    }
+    
     const warning = document.getElementById('input-warning');
     const scannerLine = document.querySelector('.scanner-line');
     if (viewId === 'view-game') {
@@ -109,6 +116,7 @@
       isGameOver: false,
       isPaused: false,
       consecutiveFailures: 0,
+      pauseCount: 0, // 新增：單關已暫停次數
       
       // Review Mode variables
       isReviewMode: false,
@@ -358,6 +366,16 @@
           input.focus();
         });
       });
+
+      // --- Pause/Resume Events ---
+      const pauseBtn = document.getElementById('game-pause-btn');
+      if (pauseBtn) {
+        pauseBtn.addEventListener('click', () => this.pauseGame());
+      }
+      const resumeBtn = document.getElementById('game-resume-btn');
+      if (resumeBtn) {
+        resumeBtn.addEventListener('click', () => this.resumeGame());
+      }
     },
 
     renderHome() {
@@ -507,6 +525,7 @@
       this.gameState.isGameOver = false;
       this.gameState.isPaused = false;
       this.gameState.isReviewMode = false;
+      this.gameState.pauseCount = 0;
 
       // Sync HUD
       document.getElementById('game-shields').textContent = profile.shields_count;
@@ -514,6 +533,10 @@
 
       document.getElementById('error-feedback').classList.add('hidden');
       document.getElementById('shield-alert').classList.add('hidden');
+
+      const overlay = document.getElementById('pause-overlay');
+      if (overlay) overlay.classList.add('hidden');
+      this.updatePauseBtnUI();
 
       showView('view-game');
       this.nextQuestion();
@@ -657,6 +680,16 @@
     },
 
     handleTimeout() {
+      // 1. 如果是輸入模式，且輸入框有值，時間到時自動送出
+      const isCompare = this.gameState.currentQuestion?.type === 'compare' && !this.gameState.isReviewMode;
+      if (!isCompare) {
+        const inputVal = document.getElementById('calc-input').value.trim();
+        if (inputVal !== '') {
+          this.submitCalcAnswer();
+          return;
+        }
+      }
+
       const profile = window.MathSprintStorage.getProfile();
       if (profile.shields_count > 0) {
         window.MathSprintStorage.useShield();
@@ -1200,13 +1233,65 @@
           this.loadReviewQuestion();
         }, 2200);
       }
+    },
+
+    pauseGame() {
+      if (this.gameState.isPaused || this.gameState.isGameOver || !this.gameState.currentQuestion) return;
+
+      this.gameState.pauseCount++;
+      this.updatePauseBtnUI();
+
+      if (this.gameState.pauseCount <= 3) {
+        this.gameState.isPaused = true;
+      } else {
+        const warningText = document.getElementById('pause-warning-text');
+        if (warningText) {
+          warningText.innerHTML = `<span class="text-red-500 font-pixel">⚠️ 暫停次數已用盡！時間照常扣減中！</span>`;
+        }
+      }
+
+      const overlay = document.getElementById('pause-overlay');
+      if (overlay) overlay.classList.remove('hidden');
+    },
+
+    resumeGame() {
+      const overlay = document.getElementById('pause-overlay');
+      if (overlay) overlay.classList.add('hidden');
+
+      this.gameState.isPaused = false;
+      
+      const isCompare = this.gameState.currentQuestion?.type === 'compare' && !this.gameState.isReviewMode;
+      if (!isCompare) {
+        const input = document.getElementById('calc-input');
+        if (input) input.focus();
+      }
+    },
+
+    updatePauseBtnUI() {
+      const btn = document.getElementById('game-pause-btn');
+      if (btn) {
+        const remaining = Math.max(0, 3 - this.gameState.pauseCount);
+        btn.textContent = `暫停 (${remaining}/3)`;
+        if (remaining === 0) {
+          btn.classList.remove('text-pink-400', 'border-pink-500');
+          btn.classList.add('text-red-500', 'border-red-600', 'animate-pulse');
+        } else {
+          btn.classList.remove('text-red-500', 'border-red-600', 'animate-pulse');
+          btn.classList.add('text-pink-400', 'border-pink-500');
+        }
+      }
+      
+      const warningText = document.getElementById('pause-warning-text');
+      if (warningText) {
+        warningText.innerHTML = `前 3 次暫停時間會停止倒數。<br>第 4 次暫停起，時間將照常扣減！`;
+      }
     }
   };
 
   // Export to window
   window.MathSprintGame = Game;
 
-  window.addEventListener('DOMContentLoaded', () => {
+  window.addEventListener('limit180ComponentsLoaded', () => {
     Game.init();
   });
 })();

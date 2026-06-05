@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Limit 180 // 遊戲規則與挑戰指引</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Custom Cyberpunk Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* 調整規則頁面專屬的滾動條 */
+    body {
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body class="crt min-h-screen flex flex-col justify-between">
+  <!-- Scanner Line effect -->
+  <div class="scanner-line"></div>
+
+  <!-- Header -->
+  <header class="border-b-2 border-slate-800 bg-slate-950 px-4 py-3 sticky top-0 z-40">
+    <div class="max-w-4xl mx-auto flex items-center justify-between">
+      <h1 class="text-xl font-pixel glow-green text-green-400 tracking-wider">LIMIT 180</h1>
+      <span class="text-xs font-pixel text-slate-500">// 系統核心規則說明</span>
+    </div>
+  </header>
+
+  <!-- Content -->
+  <main class="flex-grow max-w-4xl w-full mx-auto p-6 flex flex-col gap-8">
+    <section class="hud-panel p-6 bg-slate-900/90 flex flex-col gap-4">
+      <h2 class="text-2xl font-pixel text-green-400 glow-green">// 什麼是 Limit 180？</h2>
+      <p class="text-sm text-slate-300 leading-relaxed font-tech">
+        「Limit 180」是一個高頻心算反應電競平台。
+        核心目標是挑戰在 <strong class="text-green-400">180 秒（3 分鐘）內</strong>，連續答對並做完 <strong class="text-green-400">100 題心算題目</strong>。
+        這相當於平均每題的思考反應時間必須控制在 <strong class="text-green-400">1.8 秒</strong> 以內！這將激發大腦的極速運算潛能。
+      </p>
+    </section>
+
+    <!-- Missions Guide -->
+    <section class="hud-panel p-6 bg-slate-900/90 flex flex-col gap-4">
+      <h2 class="text-xl font-pixel text-cyan-400 glow-blue">// 關卡難度劃分</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs font-tech border-collapse">
+          <thead>
+            <tr class="border-b border-slate-800 text-cyan-400 font-pixel">
+              <th class="py-2 pr-4">關卡 (Mission)</th>
+              <th class="py-2 pr-4">總題數</th>
+              <th class="py-2 pr-4">通關門檻 (正確率)</th>
+              <th class="py-2">題型與範疇描述</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800 text-slate-300">
+            <tr>
+              <td class="py-3 pr-4 font-bold">Mission 1</td>
+              <td class="py-3 pr-4">20 題</td>
+              <td class="py-3 pr-4">90%</td>
+              <td class="py-3">20以內加減法（含進/借位）</td>
+            </tr>
+            <tr>
+              <td class="py-3 pr-4 font-bold">Mission 2</td>
+              <td class="py-3 pr-4">20 題</td>
+              <td class="py-3 pr-4">90%</td>
+              <td class="py-3">10以內乘法（乘積10以內）</td>
+            </tr>
+            <tr>
+              <td class="py-3 pr-4 font-bold">Mission 3</td>
+              <td class="py-3 pr-4">20 題</td>
+              <td class="py-3 pr-4">90%</td>
+              <td class="py-3">81以內除法（被除數81以內）</td>
+            </tr>
+            <tr>
+              <td class="py-3 pr-4 font-bold">Mission 4</td>
+              <td class="py-3 pr-4">25 題</td>
+              <td class="py-3 pr-4">90%</td>
+              <td class="py-3">50以內加減法（無進/借位）</td>
+            </tr>
+            <tr>
+              <td class="py-3 pr-4 font-bold text-pink-500">Mission 5 [魔王]</td>
+              <td class="py-3 pr-4">30 題</td>
+              <td class="py-3 pr-4">95%</td>
+              <td class="py-3">100以內加減法（有進/借位）</td>
+            </tr>
+            <tr>
+              <td class="py-3 pr-4 font-bold">Mission 6</td>
+              <td class="py-3 pr-4">35 題</td>
+              <td class="py-3 pr-4">95%</td>
+              <td class="py-3">九九乘法與基本除法</td>
+            </tr>
+            <tr>
+              <td class="py-3 pr-4 font-bold text-pink-500">Mission 7 [魔王]</td>
+              <td class="py-3 pr-4">40 題</td>
+              <td class="py-3 pr-4">95%</td>
+              <td class="py-3">兩步驟四則混合運算</td>
+            </tr>
+            <tr>
+              <td class="py-3 pr-4 font-bold">Mission 8</td>
+              <td class="py-3 pr-4">50 題</td>
+              <td class="py-3 pr-4">95%</td>
+              <td class="py-3">分數/小數/百分比混搭二選一 (實體鍵盤左右鍵作答)</td>
+            </tr>
+            <tr>
+              <td class="py-3 pr-4 font-bold">Mission 9</td>
+              <td class="py-3 pr-4">60 題</td>
+              <td class="py-3 pr-4">98%</td>
+              <td class="py-3">國中正負數代數與高難度比大小</td>
+            </tr>
+            <tr class="text-green-400">
+              <td class="py-3 pr-4 font-bold font-pixel">Limit 180 終極挑戰</td>
+              <td class="py-3 pr-4">100 題</td>
+              <td class="py-3 pr-4">100%</td>
+              <td class="py-3"><b>極速全範疇心算挑戰！每題限時 1.8 秒，容錯率為 0！</b></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Key Rules -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      
+      <!-- Shield Rule -->
+      <div class="hud-panel p-6 bg-slate-900/90 flex flex-col gap-3">
+        <h3 class="text-lg font-pixel text-pink-500 glow-pink">🛡️ 免死金牌 (時間凍結盾牌)</h3>
+        <p class="text-xs text-slate-300 leading-relaxed font-tech">
+          當你在任何關卡中累計答對 <strong class="text-pink-400">50 題</strong> 時，系統會自動贈送你 1 個時間盾牌。
+          當時間條扣完（超時）但你手頭上有盾牌時，系統會自動消耗一個盾牌並凍結該題時間，讓你有額外機會繼續作答而不算失敗。
+        </p>
+      </div>
+
+      <!-- Review Rule -->
+      <div class="hud-panel p-6 bg-slate-900/90 flex flex-col gap-3">
+        <h3 class="text-lg font-pixel text-pink-500 glow-pink">✏️ 錯題消除訓練系統</h3>
+        <p class="text-xs text-slate-300 leading-relaxed font-tech">
+          凡是在遊戲中做錯或超時的題目，都會自動被載入防錯系統中。
+          錯題複習模式下沒有時間限制，但是你必須對每一道錯題「連續答對 3 次」才能成功將它從錯題本中消除。這能幫你徹底紮實基礎，不怕重蹈覆轍！
+        </p>
+      </div>
+
+      <!-- Timeout Auto Submit -->
+      <div class="hud-panel p-6 bg-slate-900/90 flex flex-col gap-3">
+        <h3 class="text-lg font-pixel text-green-400 glow-green">⚡ 超時自動送出機制</h3>
+        <p class="text-xs text-slate-300 leading-relaxed font-tech">
+          為了防止打字來不及，當單題時間到期時，如果你的答案輸入框中<strong>已經有填寫答案</strong>，系統將會<strong>自動幫你提交</strong>該答案進行評判，而不是直接判定超時錯誤。
+        </p>
+      </div>
+
+      <!-- Pause Rule -->
+      <div class="hud-panel p-6 bg-slate-900/90 flex flex-col gap-3">
+        <h3 class="text-lg font-pixel text-green-400 glow-green">⏱️ 關卡暫停與作弊防護</h3>
+        <p class="text-xs text-slate-300 leading-relaxed font-tech">
+          遊戲中提供暫停挑戰的功能。在同一個關卡中：
+          <br>• <strong>第 1 至 3 次暫停</strong>：時間會完全停止（凍結）。
+          <br>• <strong>第 4 次暫停起</strong>：雖然可以點選暫停，但<strong>時間條仍會繼續扣減</strong>！請把握有限的暫停次數。
+        </p>
+      </div>
+
+    </section>
+
+    <!-- Close button -->
+    <div class="flex justify-center my-4">
+      <button onclick="window.close()" class="cyber-btn px-6 py-2.5 font-pixel text-xs text-cyan-400">
+        關閉規則說明
+      </button>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t-2 border-slate-800 bg-slate-950 px-4 py-3 text-center text-slate-600 text-[10px] font-pixel">
+    <div class="max-w-4xl mx-auto">
+      LIMIT 180 SYSTEM CORE MANUAL // v1.0.0
+    </div>
+  </footer>
+</body>
+</html>
