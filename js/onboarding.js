@@ -172,6 +172,10 @@
           totalStars,
           bestAvgTime
         );
+        // 實時重新整理首頁排行榜
+        if (window.MathSprintLeaderboard && window.MathSprintLeaderboard.renderLeaderboard) {
+          window.MathSprintLeaderboard.renderLeaderboard().catch(() => {});
+        }
       }
 
       localStorage.setItem('limit180_user_profile', JSON.stringify(userProfile));
@@ -250,6 +254,10 @@
           bestAvgTime
         );
         console.log("[Onboarding] 雲端遊戲進度同步成功。");
+        // 實時重新整理首頁排行榜
+        if (window.MathSprintLeaderboard && window.MathSprintLeaderboard.renderLeaderboard) {
+          window.MathSprintLeaderboard.renderLeaderboard().catch(() => {});
+        }
       }
     } catch (e) {
       console.warn("[Onboarding] 雲端遊戲進度自動同步失敗：", e.message);
