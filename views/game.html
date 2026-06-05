@@ -72,12 +72,12 @@
       <!-- Area A: Keyboard Input Box + Virtual Numpad (L1-L4, L8, Wrong Review) -->
       <div id="control-input-mode" class="flex flex-col gap-4">
         <!-- Numeric Input Field -->
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 w-full">
           <input type="text" id="calc-input" 
                  inputmode="numeric"
-                 class="flex-grow bg-slate-900 border-2 border-cyan-500 p-3 text-2xl font-pixel text-cyan-400 text-center rounded focus:outline-none focus:border-cyan-400 glow-blue text-shadow"
+                 class="w-full min-w-0 bg-slate-900 border-2 border-cyan-500 p-3 text-2xl font-pixel text-cyan-400 text-center rounded focus:outline-none focus:border-cyan-400 glow-blue text-shadow"
                  placeholder="輸入答案..." autocomplete="off">
-          <button id="calc-submit-btn" class="cyber-btn cyber-btn-green px-6 py-4 font-pixel text-xs text-green-400 rounded">
+          <button id="calc-submit-btn" class="cyber-btn cyber-btn-green px-4 py-3.5 font-pixel text-xs text-green-400 rounded flex-shrink-0">
             確認
           </button>
         </div>

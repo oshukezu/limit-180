@@ -43,12 +43,12 @@
       <div id="review-controls-container">
         <!-- Only Input Mode is used for review currently as we make kids calculate the real answers -->
         <div class="flex flex-col gap-4">
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2 w-full">
             <input type="text" id="review-input" 
                    inputmode="numeric"
-                   class="flex-grow bg-slate-900 border-2 border-pink-500 p-3 text-2xl font-pixel text-pink-400 text-center rounded focus:outline-none focus:border-pink-400 glow-pink"
+                   class="w-full min-w-0 bg-slate-900 border-2 border-pink-500 p-3 text-2xl font-pixel text-pink-400 text-center rounded focus:outline-none focus:border-pink-400 glow-pink"
                    placeholder="解答..." autocomplete="off">
-            <button id="review-submit-btn" class="cyber-btn cyber-btn-pink px-6 py-4 font-pixel text-xs text-pink-400 rounded">
+            <button id="review-submit-btn" class="cyber-btn cyber-btn-pink px-4 py-3.5 font-pixel text-xs text-pink-400 rounded flex-shrink-0">
               確認
             </button>
           </div>
