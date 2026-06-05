@@ -376,6 +376,14 @@
       if (resumeBtn) {
         resumeBtn.addEventListener('click', () => this.resumeGame());
       }
+
+      // --- Demote Modal Events ---
+      const demoteStayBtn = document.getElementById('demote-modal-stay-btn');
+      if (demoteStayBtn) {
+        demoteStayBtn.addEventListener('click', () => {
+          document.getElementById('demote-modal').classList.add('hidden');
+        });
+      }
     },
 
     renderHome() {
@@ -499,6 +507,11 @@
     // --- GAME STAGE INITIATION ---
     startGame(missionNum, levelNum) {
       this.stopGame();
+
+      // 只有當切換到與上一次不同的關卡時，才重置連續失敗次數
+      if (this.gameState.currentMission !== missionNum || this.gameState.currentLevel !== levelNum) {
+        this.gameState.consecutiveFailures = 0;
+      }
 
       const config = MISSION_CONFIGS[missionNum];
       const profile = window.MathSprintStorage.getProfile();
@@ -783,7 +796,6 @@
       );
 
       if (this.gameState.currentMission === 10) {
-        this.gameState.consecutiveFailures++;
         this.endGame(false);
         return;
       }
