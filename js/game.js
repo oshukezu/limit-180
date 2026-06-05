@@ -5,7 +5,7 @@
   // Mission Configurations (10 Missions difficulty metadata & speed ranges)
   const MISSION_CONFIGS = {
     1: { name: "Mission 1", totalQuestions: 20, passRate: 0.90, desc: "20以內加減法（含進/借位）", initStart: 6.0, initEnd: 3.0, targetStart: 4.0, targetEnd: 1.5 },
-    2: { name: "Mission 2", totalQuestions: 20, passRate: 0.90, desc: "10以內乘法（乘積10以內）", initStart: 5.5, initEnd: 2.5, targetStart: 3.5, targetEnd: 1.5 },
+    2: { name: "Mission 2", totalQuestions: 20, passRate: 0.90, desc: "九九乘法表", initStart: 5.5, initEnd: 2.5, targetStart: 3.5, targetEnd: 1.5 },
     3: { name: "Mission 3", totalQuestions: 20, passRate: 0.90, desc: "81以內除法（被除數81以內）", initStart: 5.0, initEnd: 2.5, targetStart: 3.0, targetEnd: 1.5 },
     4: { name: "Mission 4", totalQuestions: 25, passRate: 0.90, desc: "50以內加減法（無進/借位）", initStart: 4.5, initEnd: 2.0, targetStart: 2.5, targetEnd: 1.3 },
     5: { name: "Mission 5 [魔王]", totalQuestions: 30, passRate: 0.95, desc: "100以內加減法（有進/借位）", initStart: 4.0, initEnd: 2.0, targetStart: 2.2, targetEnd: 1.3 },
@@ -286,6 +286,7 @@
           this.submitCalcAnswer();
         }
       });
+      document.getElementById('calc-input').addEventListener('input', () => this.checkAutoSubmit());
 
       // Input keys filter
       const calcInput = document.getElementById('calc-input');
@@ -329,6 +330,7 @@
             input.value += key;
           }
           input.focus();
+          this.checkAutoSubmit();
         });
       });
 
@@ -450,7 +452,7 @@
               <span class="text-xs font-pixel ${i === 5 || i === 7 ? 'text-pink-500 glow-pink' : i === 10 ? 'text-yellow-400 glow-yellow' : 'text-cyan-400'}">
                 ${config.name.toUpperCase()}
               </span>
-              <div class="text-xs font-pixel text-yellow-400">${isMUnlocked ? `★ ${starsInM} / 60` : '🔒 鎖定'}</div>
+              <div class="text-xs font-pixel text-yellow-400">${isMUnlocked ? `★ ${starsInM} / 60` : '🔒 需前一關滿 ★3'}</div>
             </div>
             <h4 class="text-base font-bold text-white mb-1">${config.desc}</h4>
             <p class="text-[11px] text-slate-400 font-tech mb-2">
@@ -739,6 +741,24 @@
         }, 1200);
       } else {
         this.handleFailure("超時！算力加載失敗。");
+      }
+    },
+
+    checkAutoSubmit() {
+      if (this.gameState.isPaused || this.gameState.isGameOver) return;
+      const isCompare = this.gameState.currentQuestion?.type === 'compare' && !this.gameState.isReviewMode;
+      if (isCompare) return;
+
+      const input = document.getElementById('calc-input');
+      if (!input) return;
+
+      const inputVal = input.value.trim();
+      const correctAnswer = this.gameState.currentQuestion?.correctAnswer;
+      if (!correctAnswer) return;
+
+      const correctLen = correctAnswer.length;
+      if (inputVal.length === correctLen && correctLen > 0) {
+        this.submitCalcAnswer();
       }
     },
 

@@ -68,39 +68,17 @@
 
     // Check if a Mission is unlocked (M1-M10)
     isMissionUnlocked(missionNum) {
+      if (missionNum === 1) return true;
       const profile = this.getProfile();
-      const totalStars = profile.total_stars || 0;
 
-      // Mission 10 (Legend) requirement: Mission 1-9 must ALL be fully 3-starred
-      if (missionNum === 10) {
-        let allPassedThree = true;
-        for (let m = 1; m <= 9; m++) {
-          for (let l = 1; l <= 20; l++) {
-            const rec = profile.level_records[`mission-${m}-level-${l}`];
-            if (!rec || rec.stars < 3) {
-              allPassedThree = false;
-              break;
-            }
-          }
-          if (!allPassedThree) break;
-        }
-        return allPassedThree;
+      const prevMission = missionNum - 1;
+      let starsInPrevMission = 0;
+      for (let l = 1; l <= 20; l++) {
+        const record = profile.level_records[`mission-${prevMission}-level-${l}`];
+        starsInPrevMission += record ? record.stars : 0;
       }
 
-      // Mission 1-9 Star Threshold requirements
-      const thresholds = {
-        1: 0,
-        2: 10,
-        3: 30,
-        4: 60,
-        5: 100,
-        6: 150,
-        7: 210,
-        8: 280,
-        9: 360
-      };
-
-      return totalStars >= (thresholds[missionNum] || 0);
+      return starsInPrevMission >= 3 && this.isMissionUnlocked(prevMission);
     },
 
     // Check if a Sub-level within a Mission is unlocked (L1-L20)

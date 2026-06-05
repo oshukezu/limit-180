@@ -133,13 +133,10 @@
       };
     },
 
-    // Level 2: 10以內乘法 (乘積 <= 10)
+    // Level 2: 九九乘法表 (1..9 乘法)
     genLevel2() {
-      // Pick multipliers that keep product <= 10
-      // e.g. A from 1..10, B from 1..floor(10/A)
-      const a = randInt(1, 10);
-      const maxB = Math.floor(10 / a);
-      const b = randInt(1, maxB);
+      const a = randInt(1, 9);
+      const b = randInt(1, 9);
       
       const qText = `${a} &times; ${b} = ?`;
       const ans = (a * b).toString();
