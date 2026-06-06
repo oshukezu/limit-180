@@ -570,9 +570,9 @@
           console.log('[Game] Mission 10 ✅ 防作弊通過，已記錄傳奇殿堂成績');
 
         } else if (missionNum < 10) {
-          // Mission 1-9：直接提交排行榜（沒有傳奇光環，風險較低）
-          if (window.MathSprintLeaderboard) {
-            await window.MathSprintLeaderboard.submitScore(missionNum, avgTime);
+          // Mission 1-9：直接同步排行榜
+          if (window.MathSprintOnboarding && window.MathSprintOnboarding.syncCurrentStatsToCloud) {
+            await window.MathSprintOnboarding.syncCurrentStatsToCloud(missionNum);
           }
         }
       } catch (e) {
@@ -849,6 +849,18 @@
         }
       }
 
+      // 實作「星數差額補給制」防刷機制
+      const localProfileForAntiExploit = window.MathSprintStorage.getProfile();
+      const levelKeyForAntiExploit = `mission-${this.gameState.currentMission}-level-${this.gameState.currentLevel}`;
+      const prevRecordForAntiExploit = localProfileForAntiExploit.level_records[levelKeyForAntiExploit];
+      const history_best_stars = prevRecordForAntiExploit ? (prevRecordForAntiExploit.stars || 0) : 0;
+      
+      let starsAdded = 0;
+      if (isPass && starsEarned > history_best_stars) {
+        starsAdded = starsEarned - history_best_stars;
+      }
+      console.log(`[防刷差額補給] 本次通關星數: ${starsEarned}★, 歷史最高星數: ${history_best_stars}★, 本次實際補給星星: ${starsAdded}★`);
+
       if (isPass) {
         const minTime = validTimes.length > 0 ? Math.min(...validTimes) : 99.9;
         window.MathSprintStorage.saveLevelRecord(
@@ -1022,7 +1034,7 @@
       leftDiv.appendChild(this.createScaffoldGraphic(data.leftType, data.leftVal, data.fracDetails));
 
       const vsSpan = document.createElement('span');
-      vsSpan.className = "text-xs font-pixel text-pink-500 glow-pink animate-pulse";
+      vsSpan.className = "text-xs font-pixel text-pink-500 animate-pulse";
       vsSpan.textContent = "VS";
 
       const rightDiv = document.createElement('div');
@@ -1189,7 +1201,7 @@
       this.gameState.reviewList.forEach((item, index) => {
         const row = document.createElement('div');
         row.className = `p-3 bg-slate-950 border text-xs font-tech flex justify-between items-center rounded ${
-          index === this.gameState.reviewIndex ? 'border-pink-500 glow-pink' : 'border-slate-800'
+          index === this.gameState.reviewIndex ? 'border-pink-500' : 'border-slate-800'
         }`;
         
         row.innerHTML = `

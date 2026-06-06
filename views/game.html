@@ -10,7 +10,7 @@
     
     <!-- Pause Overlay (暫停覆蓋層) -->
     <div id="pause-overlay" class="hidden absolute inset-0 bg-black/95 flex flex-col items-center justify-center z-30 p-4 rounded text-center">
-      <h3 class="text-2xl font-pixel text-green-400 glow-green mb-4">挑戰暫停中</h3>
+      <h3 class="text-2xl font-pixel text-green-400 mb-4">挑戰暫停中</h3>
       <p id="pause-warning-text" class="text-xs font-tech text-slate-300 mb-6 max-w-xs leading-relaxed">
         前 3 次暫停時間會停止倒數。<br>第 4 次暫停起，時間將照常扣減！
       </p>
@@ -52,13 +52,13 @@
     </div>
 
     <!-- Scaffold Explanatory Text or Shield Alert when active -->
-    <div id="shield-alert" class="hidden text-center text-xs font-pixel text-green-400 glow-green animate-pulse">
+    <div id="shield-alert" class="hidden text-center text-xs font-pixel text-green-400 animate-pulse">
       🛡️ 已啟動時間凍結盾！免除超時扣分！
     </div>
 
     <!-- Correct/Incorrect Overlay Info Block (shows during error pause) -->
     <div id="error-feedback" class="hidden bg-red-950/90 border border-red-500 p-4 rounded text-center">
-      <div class="font-pixel text-sm text-red-500 glow-pink mb-2">錯誤 / 超時！</div>
+      <div class="font-pixel text-sm text-red-500 mb-2">錯誤 / 超時！</div>
       <div class="text-xs text-slate-300 font-tech">
         正確答案：<span id="error-correct-answer" class="text-green-400 font-bold"></span>
       </div>
@@ -75,7 +75,7 @@
         <div class="flex items-center gap-2 w-full">
           <input type="text" id="calc-input" 
                  inputmode="numeric"
-                 class="w-full bg-slate-900 border-2 border-cyan-500 p-3 text-2xl font-pixel text-cyan-400 text-center rounded focus:outline-none focus:border-cyan-400 glow-blue text-shadow"
+                 class="w-full bg-slate-900 border-2 border-cyan-500 p-3 text-2xl font-pixel text-cyan-400 text-center rounded focus:outline-none focus:border-cyan-400"
                  placeholder="輸入答案..." autocomplete="off">
           <button id="calc-submit-btn" class="cyber-btn cyber-btn-green px-4 py-3.5 font-pixel text-xs text-green-400 rounded flex-shrink-0 hidden">
             確認

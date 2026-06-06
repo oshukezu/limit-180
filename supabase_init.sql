@@ -1,3 +1,6 @@
+-- 0. 重置舊有的資料表 (為防欄位衝突，重建資料表)
+DROP TABLE IF EXISTS users_profile;
+
 -- 1. 建立 users_profile 資料表 (用於聯賽排行榜之單一資料表)
 CREATE TABLE IF NOT EXISTS users_profile (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

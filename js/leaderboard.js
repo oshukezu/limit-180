@@ -253,7 +253,7 @@
         }
 
       } else if (this.currentTab === 'mission') {
-        // --- 關卡分類榜 ---
+        // --- 答題速度榜 (原關卡分類榜) ---
 
         // 做好防空與防崩潰篩選 (Null-Defense)
         let missionData = [];
@@ -264,46 +264,40 @@
           missionData = [];
         }
 
-        // 排序：獲得星數降序，平均答題時間升序
+        // 排序演算法：完全不看星星，嚴格以「平均答題秒數 (best_avg_time)」進行升序 (Ascending) 排列
         missionData.sort((a, b) => {
-          const starsA = a.stars || 0;
-          const starsB = b.stars || 0;
-          if (starsB !== starsA) {
-            return starsB - starsA;
-          }
           const timeA = a.best_avg_time || 999;
           const timeB = b.best_avg_time || 999;
           return timeA - timeB;
         });
 
-        // (A) 獨立渲染分類榜 Block (Error Isolation)
+        // (A) 獨立渲染答題速度榜 Block (Error Isolation)
         try {
           if (rankBlock) {
             rankBlock.classList.remove('hidden');
             if (!currentUser) {
-              rankBlock.innerHTML = `<div>🎯 尚未建立特工身分，無法查看您的關卡排行</div>`;
+              rankBlock.innerHTML = `<div>🎯 尚未建立特工身分，無法查看您的速度排行</div>`;
             } else {
               const myMissionRank = missionData.findIndex(r => r.grade_class === currentUser.grade_class && r.seat_number === currentUser.seat_number);
               if (myMissionRank === -1) {
-                rankBlock.innerHTML = `<div>🎯 特工 ${this._escapeHtml(currentUser.nickname)} | 本關卡（Mission ${this.currentMission}）尚未入榜</div>`;
+                rankBlock.innerHTML = `<div>🎯 特工 ${this._escapeHtml(currentUser.nickname)} | 本關卡（Mission ${this.currentMission}）尚未進入答題速度榜</div>`;
               } else {
                 const myRec = missionData[myMissionRank];
-                const myStars = myRec.stars || 0;
                 const myAvg = typeof myRec.best_avg_time === 'number' ? myRec.best_avg_time.toFixed(2) : '99.90';
                 const myMin = typeof myRec.min_time === 'number' ? myRec.min_time.toFixed(2) : '99.90';
                 rankBlock.innerHTML = `
-                  <div>🎯 我的本關排名：第 <span class="text-green-400 font-bold">${myMissionRank + 1}</span> 名</div>
-                  <div>成績：<span class="text-green-400 font-bold">${myStars} ⭐</span> | 均速：${myAvg}s | 最快：${myMin}s</div>
+                  <div>🎯 我的速度排名：第 <span class="text-green-400 font-bold">${myMissionRank + 1}</span> 名</div>
+                  <div>成績：均速 <span class="text-green-400 font-bold">${myAvg}s</span> | 最快：${myMin}s</div>
                 `;
               }
             }
           }
         } catch (rankErr) {
-          console.error("[Leaderboard] 關卡榜 Block 渲染崩潰：", rankErr);
-          if (rankBlock) rankBlock.innerHTML = `<div>⚠️ 載入關卡排名卡片失敗</div>`;
+          console.error("[Leaderboard] 答題速度榜 Block 渲染崩潰：", rankErr);
+          if (rankBlock) rankBlock.innerHTML = `<div>⚠️ 載入速度排名卡片失敗</div>`;
         }
 
-        // (B) 獨立渲染關卡分類榜 Top 50 列表 (Error Isolation)
+        // (B) 獨立渲染答題速度榜 Top 50 列表 (Error Isolation)
         try {
           if (missionData.length === 0) {
             // 消除錯誤警語，改為優雅的空資料提示
@@ -320,11 +314,10 @@
             const rankClass = rank === 1 ? 'text-yellow-400 font-bold' : rank === 2 ? 'text-slate-300 font-bold' : rank === 3 ? 'text-orange-400 font-bold' : 'text-slate-500';
             const meBorderClass = isMe ? 'border-2 border-cyan-500 bg-cyan-950/20 shadow-[0_0_8px_rgba(0,240,255,0.2)]' : 'border-b border-slate-900/50 hover:bg-slate-800/10';
 
-            const stars = row.stars || 0;
             const avgTime = typeof row.best_avg_time === 'number' ? row.best_avg_time.toFixed(2) : '99.90';
             const minTime = typeof row.min_time === 'number' ? row.min_time.toFixed(2) : '99.90';
 
-            // 絕對禁止顯示任何「最慢秒數」或「失敗次數」等負面指標。只顯示「名次、暱稱、班級座號、獲得星星數、平均秒數、單題最快秒數」
+            // 欄位精簡鎖定為：「名次、暱稱、班級座號、平均答題秒數、單題最快秒數」，移除星星數與所有負面指標
             return `
               <div class="leaderboard-row ${isTop3 ? 'leaderboard-row-top' : ''} ${meBorderClass} flex justify-between items-center py-2 px-3 text-xs font-pixel">
                 <div class="flex items-center gap-2">
@@ -333,17 +326,16 @@
                   <span class="text-white text-[11px] font-bold">${this._escapeHtml(row.nickname)}</span>
                   ${isMe ? '<span class="text-[8px] bg-cyan-500 text-black px-1 font-bold rounded">我</span>' : ''}
                 </div>
-                <div class="text-right flex items-center gap-2">
-                  <span class="text-green-400 font-bold">${stars}⭐</span>
-                  <span class="text-slate-500 text-[9px] font-tech">均速: ${avgTime}s</span>
+                <div class="text-right flex items-center gap-3">
+                  <span class="text-green-400 font-bold">均速: ${avgTime}s</span>
                   <span class="text-cyan-400 text-[9px] font-tech">最快: ${minTime}s</span>
                 </div>
               </div>
             `;
           }).join('');
         } catch (listErr) {
-          console.error("[Leaderboard] 關卡榜列表渲染崩潰：", listErr);
-          container.innerHTML = `<div class="text-center text-slate-500 font-pixel text-[10px] py-8">⚠️ 載入關卡排行榜失敗</div>`;
+          console.error("[Leaderboard] 答題速度榜列表渲染崩潰：", listErr);
+          container.innerHTML = `<div class="text-center text-slate-500 font-pixel text-[10px] py-8">⚠️ 載入答題速度排行榜失敗</div>`;
         }
       }
     },
@@ -392,7 +384,7 @@
           }
         });
 
-        // 關卡分類榜時顯示 Mission 下拉選單，其餘隱藏
+        // 答題速度榜時顯示 Mission 下拉選單，其餘隱藏
         if (tabName === 'mission') {
           if (selectContainer) selectContainer.classList.remove('hidden');
         } else {

@@ -1,7 +1,7 @@
 <section id="view-home" class="view-section py-8 flex flex-col items-center">
   <!-- 用戶身份綁定右上角顯示區 -->
   <div id="user-profile-bar" class="w-full max-w-4xl flex justify-end items-center mb-6 px-4 hidden">
-    <div class="flex items-center gap-3 bg-slate-950/80 border border-cyan-800/50 p-2.5 rounded shadow-[0_0_10px_rgba(0,240,255,0.1)] text-[10px] font-pixel text-slate-300 glow-blue">
+    <div class="flex items-center gap-3 bg-slate-950/80 border border-cyan-800/50 p-2.5 rounded shadow-[0_0_10px_rgba(0,240,255,0.1)] text-[10px] font-pixel text-slate-300">
       👤 <span id="user-profile-info" class="text-cyan-400"></span>
       <button id="edit-profile-btn" class="cyber-btn px-2 py-1 text-[8px] text-pink-400 border-pink-500 font-pixel">修改暱稱</button>
     </div>
@@ -20,7 +20,7 @@
     <!-- Play Panel -->
     <div class="hud-panel p-6 bg-slate-900/80 flex flex-col justify-between">
       <div>
-        <h3 class="text-lg font-pixel text-cyan-400 glow-blue mb-4">電競挑戰模式</h3>
+        <h3 class="text-lg font-pixel text-cyan-400 mb-4">電競挑戰模式</h3>
         <p class="text-sm text-slate-300 leading-relaxed mb-4">
           挑戰 10 個由淺入深的關卡。累積星星以解鎖更高等級，解鎖終極的「Limit 180 終極挑戰」！
         </p>
@@ -36,7 +36,7 @@
     <!-- Wrong Questions Panel -->
     <div class="hud-panel p-6 bg-slate-900/80 border-glow-pink flex flex-col justify-between">
       <div>
-        <h3 class="text-lg font-pixel text-pink-500 glow-pink mb-4">錯題消除訓練</h3>
+        <h3 class="text-lg font-pixel text-pink-500 mb-4">錯題消除訓練</h3>
         <p class="text-sm text-slate-300 leading-relaxed mb-4">
           凡是在遊戲中做錯或超時的題目，都會自動載入此防錯系統。無時間限制，將每道錯題「重新答對 3 次」即可消除它，紮實奠定數學基礎！
         </p>
@@ -71,11 +71,11 @@
       <div class="flex border-b border-slate-800 mb-4 font-pixel text-[10px]">
         <button id="tab-leaderboard-personal" class="flex-1 text-center py-2.5 text-cyan-400 border-b-2 border-cyan-500 font-bold focus:outline-none cursor-pointer">個人總榜</button>
         <button id="tab-leaderboard-team" class="flex-1 text-center py-2.5 text-slate-400 hover:text-cyan-400 focus:outline-none cursor-pointer">團隊對抗榜</button>
-        <button id="tab-leaderboard-mission" class="flex-1 text-center py-2.5 text-slate-400 hover:text-cyan-400 focus:outline-none cursor-pointer">關卡分類榜</button>
+        <button id="tab-leaderboard-mission" class="flex-1 text-center py-2.5 text-slate-400 hover:text-cyan-400 focus:outline-none cursor-pointer">答題速度榜</button>
       </div>
 
       <!-- 我的排名固定 Block -->
-      <div id="leaderboard-my-rank-block" class="mb-3 p-3 bg-cyan-950/30 border border-cyan-800/80 rounded flex justify-between items-center text-[10px] font-pixel text-slate-300 glow-blue">
+      <div id="leaderboard-my-rank-block" class="mb-3 p-3 bg-cyan-950/30 border border-cyan-800/80 rounded flex justify-between items-center text-[10px] font-pixel text-slate-300">
         <!-- 由 JS 動態渲染當前登入玩家排名 -->
       </div>
 
