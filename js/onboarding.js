@@ -24,6 +24,14 @@
       form.addEventListener('submit', handleFormSubmit);
     }
 
+    const inputClass = document.getElementById('profile-class');
+    if (inputClass) {
+      inputClass.addEventListener('input', (e) => {
+        // 自動將英文轉大寫，並剔除空格、特殊符號與中文
+        e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+      });
+    }
+
     const editBtn = document.getElementById('edit-profile-btn');
     if (editBtn) {
       editBtn.addEventListener('click', () => showProfileModal(true));
@@ -98,9 +106,9 @@
     const inputSeat = document.getElementById('profile-seat').value.trim();
     const inputNickname = document.getElementById('profile-nickname').value.trim();
 
-    // 驗證班級 (需為 3 位數字)
-    if (!/^[0-9]{3}$/.test(inputClass)) {
-      showError("班級格式錯誤，須為 3 位數字（如 501）");
+    // 驗證班級 (需為 3 至 8 位英數字組合)
+    if (!/^[A-Z0-9]{3,8}$/.test(inputClass)) {
+      showError("班級格式錯誤，須為 3 至 8 位英數字組合（如 501 或 ST501）");
       return;
     }
 
@@ -264,9 +272,61 @@
     }
   }
 
+  // 6.5. 同步特定 Mission 成績至雲端 (分關排行榜)
+  async function syncMissionStatsToCloud(missionNum) {
+    const profileStr = localStorage.getItem('limit180_user_profile');
+    if (!profileStr) return;
+    const u = JSON.parse(profileStr);
+
+    if (window.MathSprintStorage) {
+      const localProfile = window.MathSprintStorage.getProfile();
+      let missionStars = 0;
+      let totalTime = 0;
+      let count = 0;
+      let minTime = 999;
+
+      for (let l = 1; l <= 20; l++) {
+        const rec = localProfile.level_records[`mission-${missionNum}-level-${l}`];
+        if (rec) {
+          missionStars += rec.stars || 0;
+          if (rec.stars > 0 && rec.best_avg_time && rec.best_avg_time < 999) {
+            totalTime += rec.best_avg_time;
+            count++;
+          }
+          if (rec.min_time && rec.min_time < minTime) {
+            minTime = rec.min_time;
+          }
+        }
+      }
+
+      const avgTime = count > 0 ? parseFloat((totalTime / count).toFixed(3)) : 999;
+      
+      // 只有在真的有星數或通關紀錄時才上傳
+      if (missionStars > 0 && avgTime < 999) {
+        if (window.MathSprintSupabaseService && window.MathSprintSupabaseService.saveMissionRecord) {
+          try {
+            await window.MathSprintSupabaseService.saveMissionRecord(
+              u.grade_class,
+              u.seat_number,
+              u.nickname,
+              missionNum,
+              missionStars,
+              avgTime,
+              minTime === 999 ? 99.9 : parseFloat(minTime.toFixed(3))
+            );
+            console.log(`[Onboarding] 雲端 Mission ${missionNum} 進度同步成功。`);
+          } catch (e) {
+            console.warn(`[Onboarding] 雲端 Mission ${missionNum} 同步失敗：`, e.message);
+          }
+        }
+      }
+    }
+  }
+
   // 掛載到全域
   window.MathSprintOnboarding = {
     showProfileModal,
-    syncCurrentStatsToCloud
+    syncCurrentStatsToCloud,
+    syncMissionStatsToCloud
   };
 })();

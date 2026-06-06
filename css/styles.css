@@ -85,17 +85,45 @@ body {
 }
 
 /* Cyberpunk Scanner Line Effect */
-.scanner-line {
+.scanner-line.scanner-container {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  height: 2px;
-  background: rgba(0, 240, 255, 0.25);
-  box-shadow: 0 0 8px var(--neon-blue);
+  height: 100%;
   pointer-events: none;
   z-index: -1;
-  /* 動畫由 JS 的 initScanner() 控制 */
+}
+
+.scanner-line-1,
+.scanner-line-2 {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  opacity: 0.25;
+}
+
+.scanner-line-1 {
+  background: var(--neon-blue);
+  box-shadow: 0 0 8px var(--neon-blue), 0 0 15px var(--neon-blue);
+  animation: scan-double 6s linear infinite;
+}
+
+.scanner-line-2 {
+  background: var(--neon-pink);
+  box-shadow: 0 0 8px var(--neon-pink), 0 0 15px var(--neon-pink);
+  animation: scan-double 6s linear infinite;
+  animation-delay: 0.12s; /* 些微延遲，形成緊鄰平行的雙軌流光效果 */
+}
+
+@keyframes scan-double {
+  0% {
+    top: -5%;
+  }
+  100% {
+    top: 105%;
+  }
 }
 
 

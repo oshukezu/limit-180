@@ -53,18 +53,30 @@
   <!-- 2.0：全台速算秒殺榜 -->
   <div class="w-full max-w-4xl">
     <div class="hud-panel p-5 bg-slate-900/80">
-      <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
         <div class="flex items-center gap-2">
           <span class="text-base font-pixel text-green-400 glow-green">⚡ 全台速算秒殺榜</span>
           <span id="leaderboard-live-dot" class="inline-block w-2 h-2 rounded-full bg-neon-green transition-all duration-300" style="background: #39ff14; box-shadow: 0 0 6px #39ff14;"></span>
           <span class="text-[9px] font-pixel text-slate-500">即時</span>
         </div>
-        <div class="flex items-center gap-2">
+        <div id="leaderboard-select-container" class="flex items-center gap-2 hidden">
           <span class="text-[10px] font-pixel text-slate-400">Mission</span>
           <select id="leaderboard-mission-select" class="bg-slate-950 border border-cyan-800 text-cyan-400 font-pixel text-[10px] px-2 py-1 rounded focus:outline-none focus:border-cyan-400">
             <!-- 由 JS 動態生成 -->
           </select>
         </div>
+      </div>
+
+      <!-- 排行榜 Tab 分頁切換 -->
+      <div class="flex border-b border-slate-800 mb-4 font-pixel text-[10px]">
+        <button id="tab-leaderboard-personal" class="flex-1 text-center py-2.5 text-cyan-400 border-b-2 border-cyan-500 font-bold focus:outline-none cursor-pointer">個人總榜</button>
+        <button id="tab-leaderboard-team" class="flex-1 text-center py-2.5 text-slate-400 hover:text-cyan-400 focus:outline-none cursor-pointer">團隊對抗榜</button>
+        <button id="tab-leaderboard-mission" class="flex-1 text-center py-2.5 text-slate-400 hover:text-cyan-400 focus:outline-none cursor-pointer">關卡分類榜</button>
+      </div>
+
+      <!-- 我的排名固定 Block -->
+      <div id="leaderboard-my-rank-block" class="mb-3 p-3 bg-cyan-950/30 border border-cyan-800/80 rounded flex justify-between items-center text-[10px] font-pixel text-slate-300 glow-blue">
+        <!-- 由 JS 動態渲染當前登入玩家排名 -->
       </div>
 
       <!-- 排行榜列表 -->

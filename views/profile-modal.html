@@ -8,10 +8,13 @@
     <form id="profile-form" class="space-y-4" onsubmit="return false;">
       <!-- 班級 -->
       <div>
-        <label for="profile-class" class="block text-[10px] font-pixel text-slate-400 mb-1.5">年級班別 (3位數字，如 501):</label>
-        <input type="text" id="profile-class" name="grade_class" required pattern="^[0-9]{3}$" 
+        <label for="profile-class" class="block text-[10px] font-pixel text-slate-400 mb-1">年級班別:</label>
+        <div class="text-[8px] font-pixel text-slate-500 mb-1.5 leading-normal">
+          本校請輸入 3 位數字（如 501）。外校聯賽請於班級前加上學校英文縮寫或區域代碼（如：西屯國小 501 班請填 ST501、大墩國小 602 班請填 DD602）。
+        </div>
+        <input type="text" id="profile-class" name="grade_class" required pattern="^[a-zA-Z0-9]{3,8}$" 
                class="w-full bg-slate-900 border-2 border-slate-800 p-2.5 font-pixel text-[11px] text-cyan-400 focus:outline-none focus:border-cyan-500 rounded"
-               placeholder="例如: 501">
+               placeholder="501 或 ST501">
       </div>
       
       <!-- 座號 -->

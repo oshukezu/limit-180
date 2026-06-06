@@ -98,16 +98,19 @@
     },
 
     // Save or update level score record
-    saveLevelRecord(missionNum, levelNum, stars, avgTime, maxCombo) {
+    saveLevelRecord(missionNum, levelNum, stars, avgTime, maxCombo, minTime) {
       const profile = this.getProfile();
       const levelKey = `mission-${missionNum}-level-${levelNum}`;
       
-      const record = profile.level_records[levelKey] || { stars: 0, best_avg_time: 999, max_combo: 0 };
+      const record = profile.level_records[levelKey] || { stars: 0, best_avg_time: 999, max_combo: 0, min_time: 999 };
       
       // Update record values
       record.stars = Math.max(record.stars, stars);
       if (avgTime) {
         record.best_avg_time = Math.min(record.best_avg_time, avgTime);
+      }
+      if (minTime) {
+        record.min_time = Math.min(record.min_time || 999, minTime);
       }
       record.max_combo = Math.max(record.max_combo, maxCombo);
       record.is_passed = true;
@@ -123,8 +126,13 @@
       this.saveProfile(profile);
 
       // 同步新進度到 Supabase 雲端
-      if (window.MathSprintOnboarding && window.MathSprintOnboarding.syncCurrentStatsToCloud) {
-        window.MathSprintOnboarding.syncCurrentStatsToCloud().catch(() => {});
+      if (window.MathSprintOnboarding) {
+        if (window.MathSprintOnboarding.syncCurrentStatsToCloud) {
+          window.MathSprintOnboarding.syncCurrentStatsToCloud().catch(() => {});
+        }
+        if (window.MathSprintOnboarding.syncMissionStatsToCloud) {
+          window.MathSprintOnboarding.syncMissionStatsToCloud(missionNum).catch(() => {});
+        }
       }
 
       return profile;

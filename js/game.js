@@ -130,59 +130,7 @@
 
     // 控制背景掃描光標：5 色 × 4 方向 隨機片段
     initScanner() {
-      const scanner = document.querySelector('.scanner-line');
-      if (!scanner) return;
-
-      const COLORS = [
-        '#00f0ff', // 鼓光藍
-        '#ff007f', // 鼓光粉
-        '#39ff14', // 鼓光綠
-        '#fffb00', // 鼓光黃
-        '#bf00ff'  // 鼓光紫
-      ];
-
-      const DIRS = ['down', 'up', 'right', 'left'];
-      const SPEED = 0.25; // % per frame (速度）
-
-      let dir = 'down';
-      let progress = 0;  // 0..100
-      let color = COLORS[0];
-
-      const pickNew = () => {
-        dir = DIRS[Math.floor(Math.random() * DIRS.length)];
-        color = COLORS[Math.floor(Math.random() * COLORS.length)];
-        // 透明度稍微隨機變化，增加視覺層次
-        const alpha = (0.15 + Math.random() * 0.2).toFixed(2);
-        scanner.style.background = color;
-        scanner.style.boxShadow = `0 0 10px ${color}, 0 0 20px ${color}50`;
-        scanner.style.opacity = alpha;
-        progress = (dir === 'up' || dir === 'left') ? 100 : 0;
-      };
-
-      const tick = () => {
-        this.scannerAnimFrame = requestAnimationFrame(tick);
-
-        if (dir === 'down' || dir === 'up') {
-          // 水平指鉱線上下移動
-          scanner.style.width  = '100%';
-          scanner.style.height = '2px';
-          scanner.style.top    = progress + '%';
-          scanner.style.left   = '0';
-          progress += (dir === 'down') ? SPEED : -SPEED;
-          if (progress >= 100 || progress <= 0) pickNew();
-        } else {
-          // 垂直指鉱線左右移動
-          scanner.style.height = '100%';
-          scanner.style.width  = '2px';
-          scanner.style.left   = progress + '%';
-          scanner.style.top    = '0';
-          progress += (dir === 'right') ? SPEED : -SPEED;
-          if (progress >= 100 || progress <= 0) pickNew();
-        }
-      };
-
-      pickNew();
-      tick();
+      // 雙軌平行流光效果已改用 CSS (@keyframes scan-double) 渲染，此處保持空實作以維持相容性。
     },
 
 
@@ -563,7 +511,7 @@
 
       // Sync HUD
       document.getElementById('game-shields').textContent = profile.shields_count;
-      document.getElementById('game-level-title').textContent = `MISSION ${missionNum} - LVL ${levelNum}`;
+      document.getElementById('game-level-title').textContent = `Mission ${missionNum} - Stage ${String(levelNum).padStart(2, '0')} / 20`;
 
       document.getElementById('error-feedback').classList.add('hidden');
       document.getElementById('shield-alert').classList.add('hidden');
@@ -902,12 +850,14 @@
       }
 
       if (isPass) {
+        const minTime = validTimes.length > 0 ? Math.min(...validTimes) : 99.9;
         window.MathSprintStorage.saveLevelRecord(
           this.gameState.currentMission,
           this.gameState.currentLevel,
           starsEarned,
           avgTime,
-          this.gameState.maxCombo
+          this.gameState.maxCombo,
+          minTime
         );
         this.gameState.consecutiveFailures = 0;
       } else {
@@ -946,7 +896,7 @@
       }
 
       // Render score screen
-      document.getElementById('result-level').textContent = `Mission ${this.gameState.currentMission} Level ${this.gameState.currentLevel} - ${MISSION_CONFIGS[this.gameState.currentMission].desc}`;
+      document.getElementById('result-level').textContent = `Mission ${this.gameState.currentMission} Stage ${String(this.gameState.currentLevel).padStart(2, '0')} / 20 - ${MISSION_CONFIGS[this.gameState.currentMission].desc}`;
       document.getElementById('result-score').textContent = `${this.gameState.correctCount} / ${this.gameState.totalQuestions} (正確率：${Math.round(accuracy * 100)}%)`;
       document.getElementById('result-avg-time').textContent = `${avgTime.toFixed(2)} 秒 / 題`;
       document.getElementById('result-max-combo').textContent = this.gameState.maxCombo;
@@ -962,7 +912,9 @@
           this.gameState.currentLevel,
           avgTime,
           this.gameState.maxCombo,
-          isPass
+          isPass,
+          this.gameState.correctCount,
+          this.gameState.totalQuestions
         );
       }
 
