@@ -141,7 +141,54 @@
     },
 
 
-    init() {
+    async verifySession(profile) {
+      if (!window.MathSprintSupabaseService) return;
+      try {
+        const db = window.MathSprintSupabaseService.initSupabase();
+        if (!db) return;
+
+        // 輕量化查詢：只撈取單一欄位 id，以 grade_class 與 seat_number 作為 match 條件
+        const { data, error } = await db
+          .from('users_profile')
+          .select('id')
+          .eq('grade_class', profile.grade_class)
+          .eq('seat_number', profile.seat_number)
+          .limit(1);
+
+        if (error) {
+          throw error; // 拋出異常，交由 catch 統一處理 (視為網路/服務波動)
+        }
+
+        // 狀況 B（查無此人 / Null）：若 Supabase 回傳陣列長度為 0 或是 data === null
+        if (!data || data.length === 0) {
+          console.warn('[Session Verification] 偵測到雲端帳號不存在（可能已被資料庫重置），啟動自動淨化機制...');
+          localStorage.clear();
+          window.location.reload();
+          // 阻斷後續非同步鏈執行
+          await new Promise(() => {});
+        } else {
+          console.log('[Session Verification] 雲端身份驗證通過。');
+        }
+      } catch (err) {
+        // 非同步異常防禦：若網路斷線或 Supabase 服務波動，絕對禁止 clear()，優雅放行
+        console.warn('[Session Verification] 雲端身份校驗跳過（網路或服務波動）：', err.message || err);
+      }
+    },
+
+    async init() {
+      // 雲端身份校驗
+      const profileStr = localStorage.getItem('limit180_user_profile');
+      if (profileStr) {
+        try {
+          const profile = JSON.parse(profileStr);
+          if (profile && profile.grade_class && profile.seat_number) {
+            await this.verifySession(profile);
+          }
+        } catch (e) {
+          console.error('[Session Verification] 解析本地 profile 錯誤:', e);
+        }
+      }
+
       this.bindEvents();
       this.renderHome();
       this.renderLobby();
