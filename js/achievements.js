@@ -13,7 +13,7 @@
     { id: 'stars_collector_100', name: '繁星點點', desc: '累計獲得 100 顆星星', icon: '✨', color: 'yellow' },
     { id: 'speed_god', name: '閃電速算', desc: '在 1.0 秒內答對任意題目', icon: '⚡', color: 'pink' },
     { id: 'no_error_run', name: '完美無瑕', desc: '以 100% 正確率通關任意關卡', icon: '💎', color: 'green' },
-    { id: 'shield_hoarder', name: '鋼鐵防線', desc: '累計擁有 5 個免死金牌（盾）', icon: '🛡️', color: 'cyan' }
+    { id: 'shield_hoarder', name: '鋼鐵防線', desc: '累計擁有 5 個超時防禦盾', icon: '🛡️', color: 'cyan' }
   ];
 
   const Achievements = {

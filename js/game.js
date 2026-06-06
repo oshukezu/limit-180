@@ -146,7 +146,7 @@
       });
 
       window.addEventListener('mathSprintShieldAwarded', (e) => {
-        alert(`🏆 恭喜！您累計答對 50 題，獲得了 1 個「時間凍結盾牌」🛡️！當前盾牌數：${e.detail.count}`);
+        alert(`🏆 恭喜！您累計答對 50 題，獲得了 1 個「超時防禦盾」🛡️！當前盾牌數：${e.detail.count}`);
       });
 
       // 2.0：初始化雲端認證與排行榜（非阻塞）
