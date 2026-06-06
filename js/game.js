@@ -198,13 +198,15 @@
     },
 
     async init() {
-      // 雲端身份校驗
+      // 雲端身份校驗（改為非阻塞非同步，避免網路延遲卡死主執行緒）
       const profileStr = localStorage.getItem('limit180_user_profile');
       if (profileStr) {
         try {
           const profile = JSON.parse(profileStr);
           if (profile && profile.grade_class && profile.seat_number) {
-            await this.verifySession(profile);
+            this.verifySession(profile).catch(e => {
+              console.error('[Session Verification] 驗證過程出錯:', e);
+            });
           }
         } catch (e) {
           console.error('[Session Verification] 解析本地 profile 錯誤:', e);
