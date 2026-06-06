@@ -70,9 +70,31 @@
     }
   }
 
-  // SPA views switcher
+  //SPA views switcher
   let currentView = 'view-home';
+  
+  // 動態切換雙軌流光相同霓虹顏色
+  function changeScannerColor() {
+    const scanner1 = document.querySelector('.scanner-line-1');
+    const scanner2 = document.querySelector('.scanner-line-2');
+    if (scanner1 && scanner2) {
+      const neonColors = ['#ff007f', '#39ff14', '#00f0ff'];
+      const color = neonColors[Math.floor(Math.random() * neonColors.length)];
+      scanner1.style.background = color;
+      scanner1.style.boxShadow = `0 0 8px ${color}, 0 0 15px ${color}`;
+      scanner2.style.background = color;
+      scanner2.style.boxShadow = `0 0 8px ${color}, 0 0 15px ${color}`;
+    }
+  }
+  window.changeScannerColor = changeScannerColor;
+  
+  // 首次載入時初始化雙軌流光為同色
+  changeScannerColor();
+
   function showView(viewId) {
+    // 發生「切換頁面/Tab」行為時，光條顏色才允許整體改變
+    changeScannerColor();
+
     document.querySelectorAll('.view-section').forEach(section => {
       section.classList.add('hidden');
     });
@@ -199,8 +221,44 @@
         this.renderLobby();
       });
 
-      window.addEventListener('mathSprintShieldAwarded', (e) => {
-        alert(`🏆 恭喜！您累計答對 50 題，獲得了 1 個「超時防禦盾」🛡️！當前盾牌數：${e.detail.count}`);
+      // 監聽全新四維星星獎勵事件 (Gamification Reward)
+      window.addEventListener('mathSprintBonusStarAwarded', (e) => {
+        alert(e.detail.text);
+        
+        // 滿集暴擊或里程碑成就 Confetti 特效
+        if (typeof confetti !== 'undefined') {
+          if (e.detail.type === 'mission_complete') {
+            // 滿集暴擊特效：酷炫的霓虹流星暴擊雨
+            let duration = 3 * 1000;
+            let end = Date.now() + duration;
+
+            (function frame() {
+              confetti({
+                particleCount: 6,
+                angle: 60,
+                spread: 55,
+                origin: { x: 0 }
+              });
+              confetti({
+                particleCount: 6,
+                angle: 120,
+                spread: 55,
+                origin: { x: 1 }
+              });
+
+              if (Date.now() < end) {
+                requestAnimationFrame(frame);
+              }
+            }());
+          } else {
+            // 普通星星加發
+            confetti({
+              particleCount: 80,
+              spread: 50,
+              origin: { y: 0.6 }
+            });
+          }
+        }
       });
 
       // 2.0：初始化雲端認證與排行榜（非阻塞）
@@ -234,17 +292,32 @@
         showView('view-achievements');
       });
 
-      // Lobby navigation
+      // Lobby navigation (延遲註冊大廳鎖定：無帳號訪客強制進試玩)
       document.getElementById('start-levels-btn').addEventListener('click', () => {
-        this.renderLobby();
-        showView('view-lobby');
+        const hasProfile = !!localStorage.getItem('limit180_user_profile');
+        if (hasProfile) {
+          this.renderLobby();
+          showView('view-lobby');
+        } else {
+          alert("【訪客特工試玩模式】\n\n您目前為訪客身份，請先完成第一局「Mission 1 Stage 01」試玩，即可註冊身份並解鎖所有功能！");
+          this.startGame(1, 1);
+        }
       });
       document.getElementById('lobby-back-btn').addEventListener('click', () => showView('view-home'));
       
       // Result actions
       document.getElementById('result-lobby-btn').addEventListener('click', () => {
-        this.renderLobby();
-        showView('view-lobby');
+        const hasProfile = !!localStorage.getItem('limit180_user_profile');
+        if (hasProfile) {
+          this.renderLobby();
+          showView('view-lobby');
+        } else {
+          alert("【訪客身份限制】\n\n您目前為訪客身份，必須先註冊身份才能解鎖大廳！");
+          if (window.MathSprintOnboarding && window.MathSprintOnboarding.showProfileModal) {
+            const totalPending = (this._tempPendingRecord?.stars || 0) + (this._tempPendingRecord?.guest_bonus_stars || 0);
+            window.MathSprintOnboarding.showProfileModal(false, totalPending);
+          }
+        }
       });
       document.getElementById('result-retry-btn').addEventListener('click', () => {
         if (this.gameState.isReviewMode) {
@@ -256,6 +329,16 @@
 
       // 往下一關按鈕事件
       document.getElementById('result-next-btn').addEventListener('click', () => {
+        const hasProfile = !!localStorage.getItem('limit180_user_profile');
+        if (!hasProfile) {
+          alert("【訪客身份限制】\n\n您目前為訪客身份，必須註冊身份後才能解鎖後續關卡！");
+          if (window.MathSprintOnboarding && window.MathSprintOnboarding.showProfileModal) {
+            const totalPending = (this._tempPendingRecord?.stars || 0) + (this._tempPendingRecord?.guest_bonus_stars || 0);
+            window.MathSprintOnboarding.showProfileModal(false, totalPending);
+          }
+          return;
+        }
+
         let nextMission = this.gameState.currentMission;
         let nextLevel = this.gameState.currentLevel + 1;
         if (nextLevel > 20) {
@@ -274,10 +357,16 @@
 
       // Exit
       document.getElementById('game-exit-btn').addEventListener('click', () => {
-        if (confirm('確定要放棄本次挑戰，返回大廳嗎？')) {
+        const hasProfile = !!localStorage.getItem('limit180_user_profile');
+        const dest = hasProfile ? '大廳' : '首頁';
+        if (confirm(`確定要放棄本次挑戰，返回${dest}嗎？`)) {
           this.stopGame();
-          this.renderLobby();
-          showView('view-lobby');
+          if (hasProfile) {
+            this.renderLobby();
+            showView('view-lobby');
+          } else {
+            showView('view-home');
+          }
         }
       });
 
@@ -358,10 +447,11 @@
       document.getElementById('start-review-btn').addEventListener('click', () => this.startReviewMode());
       document.getElementById('review-back-btn').addEventListener('click', () => showView('view-home'));
       
-      document.getElementById('review-submit-btn').addEventListener('click', () => this.submitReviewAnswer());
+       document.getElementById('review-submit-btn').addEventListener('click', () => this.submitReviewAnswer());
       document.getElementById('review-input').addEventListener('keydown', (e) => {
         if (e.key === 'Enter') this.submitReviewAnswer();
       });
+      document.getElementById('review-input').addEventListener('input', () => this.checkReviewAutoSubmit());
 
       const reviewInput = document.getElementById('review-input');
       reviewInput.addEventListener('keydown', (e) => {
@@ -386,6 +476,7 @@
             input.value += key;
           }
           input.focus();
+          this.checkReviewAutoSubmit();
         });
       });
 
@@ -806,6 +897,23 @@
       }
     },
 
+    checkReviewAutoSubmit() {
+      const input = document.getElementById('review-input');
+      if (!input) return;
+
+      const inputVal = input.value.trim();
+      const currentItem = this.gameState.reviewCurrentItem;
+      if (!currentItem) return;
+
+      const correctAnswer = currentItem.correctAnswer;
+      if (!correctAnswer) return;
+
+      const correctLen = correctAnswer.length;
+      if (inputVal.length === correctLen && correctLen > 0) {
+        this.submitReviewAnswer();
+      }
+    },
+
     submitCalcAnswer() {
       if (this.gameState.isPaused || this.gameState.isGameOver) return;
       const inputVal = document.getElementById('calc-input').value.trim();
@@ -917,53 +1025,87 @@
         }
       }
 
-      // 實作「星數差額補給制」防刷機制
-      const localProfileForAntiExploit = window.MathSprintStorage.getProfile();
-      const levelKeyForAntiExploit = `mission-${this.gameState.currentMission}-level-${this.gameState.currentLevel}`;
-      const prevRecordForAntiExploit = localProfileForAntiExploit.level_records[levelKeyForAntiExploit];
-      const history_best_stars = prevRecordForAntiExploit ? (prevRecordForAntiExploit.stars || 0) : 0;
-      
-      let starsAdded = 0;
-      if (isPass && starsEarned > history_best_stars) {
-        starsAdded = starsEarned - history_best_stars;
-      }
-      console.log(`[防刷差額補給] 本次通關星數: ${starsEarned}★, 歷史最高星數: ${history_best_stars}★, 本次實際補給星星: ${starsAdded}★`);
+      const hasProfile = !!localStorage.getItem('limit180_user_profile');
 
-      if (isPass) {
+      if (!hasProfile) {
+        // 延遲註冊：訪客首玩第一局，不寫入本地與雲端，暫存在記憶體
+        let guest_bonus_stars = 0;
+        if (this.gameState.maxCombo === 20) {
+          guest_bonus_stars = 1;
+          console.log('[Lazy Registration] 訪客獲得 20-Combo 完美連斬加成 1 星');
+        }
+
         const minTime = validTimes.length > 0 ? Math.min(...validTimes) : 99.9;
-        window.MathSprintStorage.saveLevelRecord(
+        this._tempPendingRecord = {
+          missionNum: this.gameState.currentMission,
+          levelNum: this.gameState.currentLevel,
+          stars: starsEarned,
+          guest_bonus_stars: guest_bonus_stars,
+          avgTime: avgTime,
+          maxCombo: this.gameState.maxCombo,
+          minTime: minTime,
+          isPass: isPass,
+          correctCount: this.gameState.correctCount,
+          totalQuestions: this.gameState.totalQuestions
+        };
+        console.log('[Lazy Registration] 訪客首玩第一局，成績已暫存：', this._tempPendingRecord);
+      } else {
+        // 已註冊玩家：正常保存與同步
+        // 檢查與發放 20-Combo 獎勵
+        if (this.gameState.maxCombo === 20) {
+          const profile = window.MathSprintStorage.getProfile();
+          const levelKey = `mission-${this.gameState.currentMission}-level-${this.gameState.currentLevel}`;
+          if (!profile.claimed_milestones) profile.claimed_milestones = {};
+          if (!profile.claimed_milestones.combo_20) profile.claimed_milestones.combo_20 = [];
+          
+          if (!profile.claimed_milestones.combo_20.includes(levelKey)) {
+            profile.claimed_milestones.combo_20.push(levelKey);
+            profile.bonus_stars = (profile.bonus_stars || 0) + 1;
+            window.MathSprintStorage.recalculateTotalStars(profile);
+            window.MathSprintStorage.saveProfile(profile);
+
+            window.dispatchEvent(new CustomEvent('mathSprintBonusStarAwarded', {
+              detail: { type: 'combo_20', text: '🏆 完美連斬！您在此關卡連續答對 20 題，獲得 1 顆額外星星！' }
+            }));
+          }
+        }
+
+        if (isPass) {
+          const minTime = validTimes.length > 0 ? Math.min(...validTimes) : 99.9;
+          window.MathSprintStorage.saveLevelRecord(
+            this.gameState.currentMission,
+            this.gameState.currentLevel,
+            starsEarned,
+            avgTime,
+            this.gameState.maxCombo,
+            minTime
+          );
+          this.gameState.consecutiveFailures = 0;
+        } else {
+          this.gameState.consecutiveFailures++;
+        }
+
+        window.MathSprintStorage.logHistory(
           this.gameState.currentMission,
           this.gameState.currentLevel,
-          starsEarned,
+          this.gameState.totalQuestions,
+          this.gameState.correctCount,
           avgTime,
           this.gameState.maxCombo,
-          minTime
+          isPass
         );
-        this.gameState.consecutiveFailures = 0;
-      } else {
-        this.gameState.consecutiveFailures++;
-      }
 
-      window.MathSprintStorage.logHistory(
-        this.gameState.currentMission,
-        this.gameState.currentLevel,
-        this.gameState.totalQuestions,
-        this.gameState.correctCount,
-        avgTime,
-        this.gameState.maxCombo,
-        isPass
-      );
-
-      // 2.0：雲端防作弊驗證 + 排行榜提交（非阻塞）
-      if (isPass && starsEarned >= 1) {
-        this._submitCloudResult(
-          this.gameState.currentMission,
-          this.gameState.currentLevel,
-          this.gameState.questionTimes,
-          this.gameState.correctCount,
-          this.gameState.totalQuestions,
-          avgTime
-        );
+        // 2.0：雲端防作弊驗證 + 排行榜提交（非阻塞）
+        if (isPass && starsEarned >= 1) {
+          this._submitCloudResult(
+            this.gameState.currentMission,
+            this.gameState.currentLevel,
+            this.gameState.questionTimes,
+            this.gameState.correctCount,
+            this.gameState.totalQuestions,
+            avgTime
+          );
+        }
       }
 
 
@@ -1072,8 +1214,19 @@
           }, 800);
         }
       }
-
+      
       showView('view-result');
+
+      // 延遲註冊：如果當前是訪客，播放完結算後彈出註冊身分彈窗
+      const hasProfile = !!localStorage.getItem('limit180_user_profile');
+      if (!hasProfile) {
+        const totalPendingStars = starsEarned + (this._tempPendingRecord?.guest_bonus_stars || 0);
+        setTimeout(() => {
+          if (window.MathSprintOnboarding && window.MathSprintOnboarding.showProfileModal) {
+            window.MathSprintOnboarding.showProfileModal(false, totalPendingStars);
+          }
+        }, 1500);
+      }
     },
 
     // --- SCAFFOLDED VISUAL AIDS DRAWING ---
@@ -1240,7 +1393,6 @@
       const profile = window.MathSprintStorage.getProfile();
       this.gameState.isReviewMode = true;
       this.gameState.reviewList = [...profile.wrong_questions_db];
-      this.gameState.reviewIndex = 0;
       this.gameState.reviewCorrectStrike = 0;
       this.gameState.isPaused = false;
       this.gameState.isGameOver = false;
@@ -1271,7 +1423,7 @@
       this.gameState.reviewList.forEach((item, index) => {
         const row = document.createElement('div');
         row.className = `p-3 bg-slate-950 border text-xs font-tech flex justify-between items-center rounded ${
-          index === this.gameState.reviewIndex ? 'border-pink-500' : 'border-slate-800'
+          index === 0 ? 'border-pink-500 bg-pink-950/10' : 'border-slate-800'
         }`;
         
         row.innerHTML = `
@@ -1286,12 +1438,12 @@
     },
 
     loadReviewQuestion() {
-      if (this.gameState.reviewIndex >= this.gameState.reviewList.length) {
+      if (this.gameState.reviewList.length === 0) {
         this.startReviewMode();
         return;
       }
 
-      const item = this.gameState.reviewList[this.gameState.reviewIndex];
+      const item = this.gameState.reviewList[0];
       this.gameState.reviewCurrentItem = item;
       this.gameState.reviewCorrectStrike = item.solvedCount || 0;
 
@@ -1323,16 +1475,17 @@
         
         setTimeout(() => {
           if (result && result.removed) {
-            this.gameState.reviewList.splice(this.gameState.reviewIndex, 1);
+            this.gameState.reviewList.shift();
             if (this.gameState.reviewList.length === 0) {
               this.startReviewMode();
               return;
             }
-            if (this.gameState.reviewIndex >= this.gameState.reviewList.length) {
-              this.gameState.reviewIndex = 0;
-            }
           } else {
-            this.gameState.reviewIndex = (this.gameState.reviewIndex + 1) % this.gameState.reviewList.length;
+            const current = this.gameState.reviewList.shift();
+            if (current) {
+              current.solvedCount = (current.solvedCount || 0) + 1;
+              this.gameState.reviewList.push(current);
+            }
           }
           this.loadReviewQuestion();
         }, 1200);
@@ -1346,7 +1499,11 @@
         feedbackBox.className = "p-3 mb-4 rounded text-center text-xs font-pixel bg-red-950/80 border border-red-500 text-red-400";
         
         setTimeout(() => {
-          this.gameState.reviewIndex = (this.gameState.reviewIndex + 1) % this.gameState.reviewList.length;
+          const current = this.gameState.reviewList.shift();
+          if (current) {
+            current.solvedCount = 0;
+            this.gameState.reviewList.push(current);
+          }
           this.loadReviewQuestion();
         }, 2200);
       }

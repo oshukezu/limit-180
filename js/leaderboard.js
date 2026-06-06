@@ -286,8 +286,7 @@
                 const myAvg = typeof myRec.best_avg_time === 'number' ? myRec.best_avg_time.toFixed(2) : '99.90';
                 const myMin = typeof myRec.min_time === 'number' ? myRec.min_time.toFixed(2) : '99.90';
                 rankBlock.innerHTML = `
-                  <div>🎯 我的速度排名：第 <span class="text-green-400 font-bold">${myMissionRank + 1}</span> 名</div>
-                  <div>成績：均速 <span class="text-green-400 font-bold">${myAvg}s</span> | 最快：${myMin}s</div>
+                  <div class="w-full text-center">🎯 ${myMissionRank + 1} ${this._escapeHtml(currentUser.nickname)} ${currentUser.grade_class} ${myAvg}s</div>
                 `;
               }
             }
@@ -372,6 +371,9 @@
       const switchTab = (tabName) => {
         this.currentTab = tabName;
         
+        // 發生「切換頁面/Tab」行為時，光條顏色才允許整體改變
+        if (window.changeScannerColor) window.changeScannerColor();
+
         // 更新 Tab 按鈕樣式
         Object.keys(tabs).forEach(k => {
           if (!tabs[k]) return;

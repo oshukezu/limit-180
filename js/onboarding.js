@@ -50,14 +50,29 @@
     if (profileStr) {
       updateUserProfileBar(JSON.parse(profileStr));
     } else {
-      // 未綁定身分，強制跳出彈窗並鎖定背景
-      showProfileModal(false);
+      // 匿名首玩：不強制跳出彈窗，改為在首頁身份欄提示訪客特工
+      updateUserProfileBar({
+        grade_class: '訪客',
+        seat_number: '0',
+        nickname: '未註冊特工'
+      });
     }
   }
 
   // 3. 顯示/隱藏綁定彈窗
-  function showProfileModal(isEditMode = false) {
+  function showProfileModal(isEditMode = false, pendingStars = null) {
     if (!modal) return;
+    
+    // 動態更新局後攔截星數提示語 (Lazy Registration)
+    const promo = document.getElementById('profile-modal-promo');
+    if (promo) {
+      if (pendingStars !== null) {
+        promo.textContent = `🏆 特工，你剛剛拿下了 ${pendingStars} 顆星！請立刻輸入您的身份，將此極速紀錄永久同步至雲端排行榜！`;
+        promo.classList.remove('hidden');
+      } else {
+        promo.classList.add('hidden');
+      }
+    }
     
     const inputClass = document.getElementById('profile-class');
     const inputSeat = document.getElementById('profile-seat');
@@ -200,7 +215,7 @@
       }
     }
 
-    // 封裝 JSON 並寫入 LocalStorage
+    // 封裝 JSON
     const userProfile = {
       grade_class: inputClass,
       seat_number: inputSeat,
@@ -214,7 +229,55 @@
       submitBtn.textContent = "傳輸中...";
       submitBtn.disabled = true;
 
-      // 呼叫 Supabase 進行 Upsert 雲端掛號 (針對每個已通關的 Mission 上傳其最佳成績)
+      // 1. 先寫入玩家身份資訊至 localStorage，以便後續 saveLevelRecord 與 Supabase 能讀取到合法身分
+      localStorage.setItem('limit180_user_profile', JSON.stringify(userProfile));
+      updateUserProfileBar(userProfile);
+
+      // 2. 處理延遲註冊 (Lazy Registration) 暫存成績寫入
+      const tempRecord = window.MathSprintGame?._tempPendingRecord;
+      if (tempRecord) {
+        // 合流運算：若有 20-Combo 額外星星，寫入 bonus_stars
+        if (tempRecord.guest_bonus_stars > 0) {
+          const profile = window.MathSprintStorage.getProfile();
+          profile.bonus_stars = (profile.bonus_stars || 0) + tempRecord.guest_bonus_stars;
+          const levelKey = `mission-${tempRecord.missionNum}-level-${tempRecord.levelNum}`;
+          if (!profile.claimed_milestones) profile.claimed_milestones = {};
+          if (!profile.claimed_milestones.combo_20) profile.claimed_milestones.combo_20 = [];
+          if (!profile.claimed_milestones.combo_20.includes(levelKey)) {
+            profile.claimed_milestones.combo_20.push(levelKey);
+          }
+          window.MathSprintStorage.recalculateTotalStars(profile);
+          window.MathSprintStorage.saveProfile(profile);
+        }
+
+        // 保存第一局關卡成績至本地
+        if (tempRecord.isPass) {
+          window.MathSprintStorage.saveLevelRecord(
+            tempRecord.missionNum,
+            tempRecord.levelNum,
+            tempRecord.stars,
+            tempRecord.avgTime,
+            tempRecord.maxCombo,
+            tempRecord.minTime
+          );
+        }
+
+        // 記錄遊玩歷史日誌
+        window.MathSprintStorage.logHistory(
+          tempRecord.missionNum,
+          tempRecord.levelNum,
+          tempRecord.totalQuestions,
+          tempRecord.correctCount,
+          tempRecord.avgTime,
+          tempRecord.maxCombo,
+          tempRecord.isPass
+        );
+
+        // 清除暫存變數
+        delete window.MathSprintGame._tempPendingRecord;
+      }
+
+      // 3. 呼叫 Supabase 進行 Upsert 雲端掛號 (針對每個已通關的 Mission 上傳其最佳成績)
       if (window.MathSprintSupabaseService) {
         let hasUploaded = false;
         for (let m = 1; m <= 10; m++) {
@@ -237,6 +300,10 @@
                   minTime = rec.min_time;
                 }
               }
+            }
+            // 延遲註冊合流運算：若是 Mission 1，則把本地所有 bonus_stars 一併加進來同步到雲端！
+            if (m === 1) {
+              missionStars += (localProfile.bonus_stars || 0);
             }
           }
 
@@ -274,9 +341,6 @@
         }
       }
 
-      localStorage.setItem('limit180_user_profile', JSON.stringify(userProfile));
-      updateUserProfileBar(userProfile);
-      
       submitBtn.textContent = originalText;
       submitBtn.disabled = false;
       modal.classList.add('hidden');
@@ -298,6 +362,16 @@
   // 5. 更新首頁右上角的身份顯示
   function updateUserProfileBar(profile) {
     if (!profileBar || !profileInfo) return;
+    
+    const editBtn = document.getElementById('edit-profile-btn');
+    if (profile.grade_class === '訪客') {
+      profileInfo.textContent = `[訪客特工] 通關首局後綁定成績`;
+      if (editBtn) editBtn.classList.add('hidden');
+      profileBar.classList.remove('hidden');
+      return;
+    }
+    
+    if (editBtn) editBtn.classList.remove('hidden');
     
     // 解析班級名稱 (e.g. 501 轉為 五年一班，或者直接顯示 [501班])
     const grade = profile.grade_class.charAt(0);
@@ -340,6 +414,11 @@
             minTime = rec.min_time;
           }
         }
+      }
+
+      // 延遲註冊合流運算：若是 Mission 1，則把本地所有 bonus_stars 一併加進來同步到雲端！
+      if (Number(missionId) === 1) {
+        missionStars += (localProfile.bonus_stars || 0);
       }
 
       const avgTime = count > 0 ? parseFloat((totalTime / count).toFixed(3)) : 999;

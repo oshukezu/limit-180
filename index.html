@@ -29,7 +29,7 @@
       </div>
       <nav id="main-nav" class="flex items-center gap-2 text-sm">
         <button id="nav-home-btn" class="cyber-btn px-3 py-1.5 text-xs text-cyan-400 font-pixel">首頁選單</button>
-        <a href="rules.html" target="_blank" class="cyber-btn px-3 py-1.5 text-xs text-green-400 border-green-500 font-pixel flex items-center justify-center no-underline">遊戲規則</a>
+        <button id="nav-rules-btn" class="cyber-btn px-3 py-1.5 text-xs text-green-400 border-green-500 font-pixel" onclick="document.getElementById('rules-modal').classList.remove('hidden')">遊戲規則</button>
         <button id="nav-dashboard-btn" class="cyber-btn px-3 py-1.5 text-xs text-cyan-400 border-cyan-500 font-pixel">家長戰報</button>
         <button id="nav-achievements-btn" class="cyber-btn px-3 py-1.5 text-xs text-pink-400 border-pink-500 font-pixel">成就牆</button>
         <!-- 2.0：帳號按鈕 -->
@@ -84,5 +84,47 @@
   <!-- 元件載入器，必須在主遊戲邏輯 game.js 之前載入 -->
   <script src="js/loader.js"></script>
   <script src="js/game.js"></script>
+
+  <!-- 規則說明浮動彈窗 -->
+  <div id="rules-modal" class="fixed inset-0 bg-black/85 flex items-center justify-center hidden z-50 p-4" onclick="if(event.target===this)this.classList.add('hidden')">
+    <div class="hud-panel p-6 bg-slate-950 max-w-md w-full relative" style="border-color: #39ff14; box-shadow: 0 0 20px #39ff1440;">
+      <!-- 右上角關閉按鈕 -->
+      <button onclick="document.getElementById('rules-modal').classList.add('hidden')" class="absolute top-3 right-4 text-slate-500 hover:text-slate-300 font-pixel text-xs cursor-pointer">✕</button>
+      
+      <div class="text-center mb-6 border-b border-green-500/30 pb-4">
+        <span class="text-xs font-pixel text-pink-500 glow-pink block mb-1">// SYSTEM CORE MANUAL //</span>
+        <h3 class="text-base font-pixel text-green-400 glow-green">LIMIT 180 行動簡報</h3>
+      </div>
+      
+      <div class="text-left font-pixel text-xs space-y-5 text-slate-200 leading-loose py-2">
+        <p class="flex items-start gap-2">
+          <span>⚔️</span>
+          <span>在 180 秒禁區內，極速秒殺 20 回合心算難關</span>
+        </p>
+        <p class="flex items-start gap-2">
+          <span>⭐</span>
+          <span>速度決定一切！答題越快，星等越高</span>
+        </p>
+        <p class="flex items-start gap-2">
+          <span>🔥</span>
+          <span>輸入相同「班級代號」，全隊得分將自動累加，衝刺全台團隊榜</span>
+        </p>
+        <p class="flex items-start gap-2">
+          <span>⚠️</span>
+          <span>重玩已過關卡可刷新個人「答題速度」，但不會重複刷星</span>
+        </p>
+        <p class="flex items-start gap-2">
+          <span>🛡️</span>
+          <span>每項「四維刻意練習」挑戰，均可獲贈額外星星獎勵</span>
+        </p>
+      </div>
+      
+      <div class="border-t border-green-500/30 pt-4 flex justify-center">
+        <button onclick="document.getElementById('rules-modal').classList.add('hidden')" class="cyber-btn px-6 py-2.5 font-pixel text-xs text-cyan-400">
+          關閉，執行任務
+        </button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

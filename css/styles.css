@@ -471,6 +471,26 @@ body.body-in-game main {
   #view-game .mt-2 {
     margin-top: 4px !important;
   }
+
+  /* 縮小錯題消除畫面的元件間距 */
+  #view-review {
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+  }
+  #view-review .hud-panel {
+    padding: 10px !important;
+  }
+  #view-review .bg-slate-900.border {
+    min-height: 70px !important;
+    padding: 8px !important;
+    margin-bottom: 10px !important;
+  }
+  #view-review #review-question-text {
+    font-size: 1.5rem !important;
+  }
+  #review-controls-container {
+    margin-top: 4px !important;
+  }
 }
 
 /* 極矮螢幕高度 (高度小於 500px，例如橫置的手機) */
