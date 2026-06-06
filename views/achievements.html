@@ -1,7 +1,12 @@
 <section id="view-achievements" class="view-section hidden py-6">
-  <div class="flex justify-between items-center mb-6">
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
     <h2 class="text-2xl font-pixel text-pink-400 glow-pink">成就徽章牆</h2>
-    <button id="achievements-back-btn" class="cyber-btn px-4 py-1.5 font-pixel text-xs text-slate-400 border-slate-600">返回首頁</button>
+    <div class="flex items-center gap-2">
+      <span class="text-xs font-pixel text-slate-400">選擇任務:</span>
+      <select id="achievements-mission-select" class="bg-slate-950 border border-pink-500 text-pink-400 font-pixel text-xs px-3 py-1.5 rounded focus:outline-none focus:border-pink-300">
+        <!-- JS 將會動態生成 Mission 1-10 選項 -->
+      </select>
+    </div>
   </div>
 
   <div id="achievements-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

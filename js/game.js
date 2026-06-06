@@ -316,10 +316,13 @@ window.CFG = window.MATH_SPRINT_CONFIG;
 
     bindEvents() {
       // Navigation
-      document.getElementById('nav-home-btn').addEventListener('click', () => {
-        this.stopGame();
-        showView('view-home');
-      });
+      const logoTitle = document.getElementById('nav-logo-title');
+      if (logoTitle) {
+        logoTitle.addEventListener('click', () => {
+          this.stopGame();
+          showView('view-home');
+        });
+      }
       document.getElementById('nav-dashboard-btn').addEventListener('click', () => {
         this.stopGame();
         if (window.MathSprintDashboard) {
@@ -330,7 +333,9 @@ window.CFG = window.MATH_SPRINT_CONFIG;
       document.getElementById('nav-achievements-btn').addEventListener('click', () => {
         this.stopGame();
         if (window.MathSprintAchievements) {
-          window.MathSprintAchievements.renderAchievements();
+          const select = document.getElementById('achievements-mission-select');
+          if (select) select.value = this.gameState.currentMission;
+          window.MathSprintAchievements.renderAchievements(this.gameState.currentMission);
         }
         showView('view-achievements');
       });
@@ -1512,6 +1517,16 @@ window.CFG = window.MATH_SPRINT_CONFIG;
         playSound('correct');
         const result = window.MathSprintStorage.solveWrongQuestion(item.questionText);
         
+        // 累計答對錯題數
+        const profile = window.MathSprintStorage.getProfile();
+        profile.total_review_correct_count = (profile.total_review_correct_count || 0) + 1;
+        window.MathSprintStorage.saveProfile(profile);
+
+        // 答對 20 題解鎖「錯題終結者」
+        if (profile.total_review_correct_count >= 20 && window.MathSprintAchievements) {
+          window.MathSprintAchievements.unlock('error_buster');
+        }
+
         feedbackBox.textContent = "回答正確！消除進度增加！";
         feedbackBox.className = "p-3 mb-4 rounded text-center text-xs font-pixel bg-green-950/80 border border-green-500 text-green-400";
         

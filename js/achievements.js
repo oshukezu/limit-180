@@ -2,69 +2,48 @@
 // 負責成就檢查、持久存檔、霓虹通知更新與成就牆渲染。
 
 (function() {
-  // 10 個核心成就配置
-  const ACHIEVEMENTS = [
-    { id: 'first_step', name: '初試身手', desc: '成功通過 Stage 01 考驗', icon: '🐣', color: 'cyan' },
-    { id: 'speed_demon', name: '神速反射', desc: '在 1.5 秒內答對任意題目', icon: '⚡', color: 'yellow' },
-    { id: 'combo_master', name: '連擊大師', desc: '在任意關卡達成 20 Combo', icon: '🔥', color: 'pink' },
-    { id: 'error_buster', name: '錯題終結者', desc: '從錯題消除模式中累計做對 50 題', icon: '🧹', color: 'green' },
-    { id: 'legend', name: '踏入傳奇', desc: '成功解鎖 Mission 10 傳奇殿堂', icon: '👑', color: 'yellow' },
-    { id: 'stars_collector_30', name: '星空初現', desc: '累計獲得 30 顆星星', icon: '⭐', color: 'cyan' },
-    { id: 'stars_collector_100', name: '繁星點點', desc: '累計獲得 100 顆星星', icon: '✨', color: 'yellow' },
-    { id: 'speed_god', name: '閃電速算', desc: '在 1.0 秒內答對任意題目', icon: '⚡', color: 'pink' },
-    { id: 'no_error_run', name: '完美無瑕', desc: '以 100% 正確率通關任意關卡', icon: '💎', color: 'green' },
-    { id: 'shield_hoarder', name: '鋼鐵防線', desc: '累計擁有 5 個超時防禦盾', icon: '🛡️', color: 'cyan' }
-  ];
+  const RANK_ICONS = { 1: '🥇', 2: '🥈', 3: '🥉' };
 
   const Achievements = {
+    currentMission: 1,
+
     // 檢查依賴於關卡統計數據的成就
     checkAllAchievements(mission, level, avgTime, maxCombo, isPass, correctCount, totalQuestions) {
       const profile = window.MathSprintStorage.getProfile();
       
-      // 1. 初試身手 (M1 Stage 1 通關)
-      if (mission === 1 && level === 1 && isPass) {
-        this.unlock('first_step');
+      // 1. 初試身手 (M[M] Stage 1 通關)
+      if (level === 1 && isPass) {
+        this.unlock(`m${mission}_first_step`);
       }
 
-      // 2. 連擊大師
-      if (maxCombo >= 20) {
-        this.unlock('combo_master');
+      // 2. 達成任務 (M[M] Stage 20 以 3 顆星完美通關)
+      // 3星門檻：正確率 90%
+      if (level === 20 && isPass && correctCount !== undefined && totalQuestions !== undefined && (correctCount / totalQuestions) >= 0.90) {
+        this.unlock(`m${mission}_mission_clear`);
       }
 
-      // 3. 踏入傳奇 (Mission 10 解鎖)
-      if (window.MathSprintStorage.isMissionUnlocked(10)) {
-        this.unlock('legend');
+      // 3. 繁星點點 (個人雲端總星數達到 50 個星以上)
+      if (profile.total_stars >= 50) {
+        this.unlock('stars_50');
       }
 
-      // 6. 星空初現 (累計 30 星)
-      if (profile.total_stars >= 30) {
-        this.unlock('stars_collector_30');
+      // 4. 完美達標 (該大關 Mission 20 個 Stages 全部拿下 3 顆星)
+      let isPerfect = true;
+      for (let l = 1; l <= 20; l++) {
+        const key = `mission-${mission}-level-${l}`;
+        const rec = profile.level_records[key];
+        if (!rec || rec.stars < 3) {
+          isPerfect = false;
+          break;
+        }
       }
-
-      // 7. 繁星點點 (累計 100 星)
-      if (profile.total_stars >= 100) {
-        this.unlock('stars_collector_100');
-      }
-
-      // 9. 完美無瑕 (正確率 100% 且通關)
-      if (isPass && correctCount !== undefined && totalQuestions !== undefined && correctCount === totalQuestions) {
-        this.unlock('no_error_run');
-      }
-
-      // 10. 鋼鐵防線 (防呆：若已持有 5 盾以上且先前未觸發，亦在此點亮)
-      if ((profile.shields_count || 0) >= 5) {
-        this.unlock('shield_hoarder');
+      if (isPerfect) {
+        this.unlock(`m${mission}_mission_perfect`);
       }
     },
 
-    // 檢查單題答題速度的成就 (由 game.js 答題時即時呼叫)
+    // 檢查單題答題速度的成就 (已廢止，保持相容空實作)
     checkSpeed(timeTaken) {
-      if (timeTaken > 0 && timeTaken < 1.5) {
-        this.unlock('speed_demon');
-      }
-      if (timeTaken > 0 && timeTaken < 1.0) {
-        this.unlock('speed_god');
-      }
     },
 
     // 解鎖成就 (調用 storage.js 寫入)
@@ -76,9 +55,9 @@
     showToast(ach) {
       // 合成音效
       try {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        if (AudioContext) {
-          const ctx = new AudioContext();
+        const _audioCtx = window.AudioContext || window.webkitAudioContext;
+        if (_audioCtx) {
+          const ctx = new _audioCtx();
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
           osc.connect(gain);
@@ -117,7 +96,7 @@
     },
 
     // 渲染成就牆
-    renderAchievements() {
+    renderAchievements(missionId) {
       const profile = window.MathSprintStorage.getProfile();
       const unlocked = profile.unlocked_achievements || [];
       const listContainer = document.getElementById('achievements-list');
@@ -125,25 +104,90 @@
       if (!listContainer) return;
       listContainer.innerHTML = '';
 
-      ACHIEVEMENTS.forEach(ach => {
-        const isUnlocked = unlocked.includes(ach.id);
+      const mId = missionId || this.currentMission;
+      this.currentMission = mId;
+
+      // 檢查此 Mission 的解鎖與星數狀況
+      const recordL1 = profile.level_records[`mission-${mId}-level-1`];
+      const isFirstStepUnlocked = unlocked.includes(`m${mId}_first_step`) || (recordL1 && recordL1.stars > 0);
+      const isErrorBusterUnlocked = (profile.total_review_correct_count || 0) >= 20;
+      
+      const recordL20 = profile.level_records[`mission-${mId}-level-20`];
+      const isMissionClearUnlocked = unlocked.includes(`m${mId}_mission_clear`) || (recordL20 && recordL20.stars === 3);
+      const isStars50Unlocked = (profile.total_stars || 0) >= 50;
+
+      let all3Stars = true;
+      for (let l = 1; l <= 20; l++) {
+        const rec = profile.level_records[`mission-${mId}-level-${l}`];
+        if (!rec || rec.stars < 3) {
+          all3Stars = false;
+          break;
+        }
+      }
+      const isMissionPerfectUnlocked = unlocked.includes(`m${mId}_mission_perfect`) || all3Stars;
+
+      // 當前 Mission 的動態徽章列表
+      const badges = [
+        { 
+          id: `m${mId}_first_step`, 
+          name: '初試身手', 
+          desc: `成功通過 Mission ${mId} Stage 01 考驗`, 
+          icon: '🐣', 
+          color: 'cyan',
+          isUnlocked: isFirstStepUnlocked
+        },
+        { 
+          id: 'error_buster', 
+          name: '錯題終結者', 
+          desc: `在錯題消除模式中，累計答對 20 題 (當前: ${profile.total_review_correct_count || 0}/20)`, 
+          icon: '🧹', 
+          color: 'green',
+          isUnlocked: isErrorBusterUnlocked
+        },
+        { 
+          id: `m${mId}_mission_clear`, 
+          name: '達成任務', 
+          desc: `Mission ${mId} Stage 20 以 3 顆星完美通關`, 
+          icon: '👑', 
+          color: 'yellow',
+          isUnlocked: isMissionClearUnlocked
+        },
+        { 
+          id: 'stars_50', 
+          name: '繁星點點', 
+          desc: `個人雲端總星數達到 50 顆星以上 (當前: ${profile.total_stars || 0}/50)`, 
+          icon: '✨', 
+          color: 'pink',
+          isUnlocked: isStars50Unlocked
+        },
+        { 
+          id: `m${mId}_mission_perfect`, 
+          name: '完美達標', 
+          desc: `Mission ${mId} 旗下的 20 個 Stages 全部拿下 3 顆星`, 
+          icon: '💎', 
+          color: 'pink',
+          isUnlocked: isMissionPerfectUnlocked
+        }
+      ];
+
+      badges.forEach(ach => {
         const card = document.createElement('div');
         
         let borderClass = 'border-slate-800 opacity-50';
         let titleColor = 'text-slate-500';
         
-        if (isUnlocked) {
+        if (ach.isUnlocked) {
           borderClass = `border-glow-${ach.color}`;
-          titleColor = ach.color === 'cyan' ? 'text-cyan-400' : ach.color === 'pink' ? 'text-pink-500' : 'text-yellow-400';
+          titleColor = ach.color === 'cyan' ? 'text-cyan-400' : ach.color === 'pink' ? 'text-pink-500' : ach.color === 'green' ? 'text-green-400' : 'text-yellow-400';
         }
 
-        card.className = `hud-panel p-6 bg-slate-900/80 flex flex-col items-center text-center ${borderClass}`;
+        card.className = `hud-panel p-6 bg-slate-900/80 flex flex-col items-center text-center transition-all duration-300 ${borderClass}`;
         card.innerHTML = `
-          <div class="text-4xl mb-3 ${isUnlocked ? 'scale-110' : 'filter grayscale'}">${ach.icon}</div>
+          <div class="text-4xl mb-3 ${ach.isUnlocked ? 'scale-110' : 'filter grayscale'}">${ach.icon}</div>
           <h3 class="text-base font-pixel ${titleColor} mb-2">${ach.name}</h3>
           <p class="text-xs text-slate-400 font-tech leading-relaxed">${ach.desc}</p>
           <div class="mt-4 text-[10px] font-pixel text-slate-600">
-            ${isUnlocked ? '// UNLOCKED //' : '// LOCKED //'}
+            ${ach.isUnlocked ? '// UNLOCKED //' : '// LOCKED //'}
           </div>
         `;
 
@@ -155,28 +199,50 @@
       // 監聽成就解鎖事件並播放動畫與音效
       window.addEventListener('mathSprintAchievementUnlocked', (e) => {
         const achId = e.detail.id;
-        const ach = ACHIEVEMENTS.find(a => a.id === achId);
-        if (ach) {
-          this.showToast(ach);
-        }
-      });
-
-      // 監聽錯題清除事件，解鎖錯題終結者
-      window.addEventListener('mathSprintWrongQuestionCleared', () => {
-        const profile = window.MathSprintStorage.getProfile();
-        profile.cleared_wrong_count = (profile.cleared_wrong_count || 0) + 1;
-        window.MathSprintStorage.saveProfile(profile);
         
-        if (profile.cleared_wrong_count >= 50) {
-          this.unlock('error_buster');
+        let typeId = achId;
+        let mNum = '';
+        if (achId.startsWith('m') && achId.includes('_')) {
+          const parts = achId.split('_');
+          mNum = parts[0].replace('m', '');
+          typeId = parts.slice(1).join('_');
+        }
+
+        const badgeMeta = {
+          first_step: { name: '初試身手', desc: `成功通過 Mission ${mNum} Stage 01 考驗`, icon: '🐣', color: 'cyan' },
+          error_buster: { name: '錯題終結者', desc: '在錯題消除模式中，累計答對 20 題', icon: '🧹', color: 'green' },
+          mission_clear: { name: '達成任務', desc: `Mission ${mNum} Stage 20 以 3 顆星完美通關`, icon: '👑', color: 'yellow' },
+          stars_50: { name: '繁星點點', desc: '個人雲端總星數達到 50 顆星以上', icon: '✨', color: 'pink' },
+          mission_perfect: { name: '完美達標', desc: `Mission ${mNum} 旗下的 20 個 Stages 全部拿下 3 顆星`, icon: '💎', color: 'pink' }
+        };
+
+        const meta = badgeMeta[typeId];
+        if (meta) {
+          this.showToast({
+            name: meta.name,
+            desc: meta.desc,
+            icon: meta.icon,
+            color: meta.color
+          });
         }
       });
 
-      // 監聽獲得盾牌事件，解鎖鋼鐵防線
-      window.addEventListener('mathSprintShieldAwarded', (e) => {
-        const count = e.detail.count;
-        if (count >= 5) {
-          this.unlock('shield_hoarder');
+      // 監聽錯題清除事件 (已廢止，保持相容空實作)
+      window.addEventListener('mathSprintWrongQuestionCleared', () => {
+      });
+
+      // 監聽獲得盾牌事件 (已廢止，保持相容空實作)
+      window.addEventListener('mathSprintShieldAwarded', () => {
+      });
+
+      // 初始化下拉選單
+      window.addEventListener('limit180ComponentsLoaded', () => {
+        const select = document.getElementById('achievements-mission-select');
+        if (select) {
+          select.innerHTML = Array.from({ length: 10 }, (_, i) => `<option value="${i + 1}">Mission ${i + 1}</option>`).join('');
+          select.addEventListener('change', (e) => {
+            this.renderAchievements(parseInt(e.target.value));
+          });
         }
       });
     }

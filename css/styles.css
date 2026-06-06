@@ -507,3 +507,17 @@ body.body-in-game main {
   }
 }
 
+/* 錯題消除模式極致緊湊與滾動清單 */
+#review-list-items {
+  max-height: 140px !important;
+  overflow-y: auto !important;
+}
+#view-review .hud-panel {
+  padding: 14px !important;
+}
+#view-review .bg-slate-900.border {
+  margin-bottom: 8px !important;
+  padding: 12px !important;
+  min-height: 80px !important;
+}
+
