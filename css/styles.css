@@ -483,7 +483,7 @@ body.body-in-game main {
   #view-review .bg-slate-900.border {
     min-height: 70px !important;
     padding: 8px !important;
-    margin-bottom: 10px !important;
+    margin-bottom: 4px !important;
   }
   #view-review #review-question-text {
     font-size: 1.5rem !important;
@@ -516,7 +516,7 @@ body.body-in-game main {
   padding: 14px !important;
 }
 #view-review .bg-slate-900.border {
-  margin-bottom: 8px !important;
+  margin-bottom: 4px !important;
   padding: 12px !important;
   min-height: 80px !important;
 }
