@@ -1,8 +1,8 @@
 <div id="profile-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-50 p-4">
-  <div class="hud-panel p-6 bg-slate-950 border-2 border-cyan-500 max-w-md w-full relative glow-blue text-shadow">
+  <div class="hud-panel p-6 bg-slate-950 border-2 border-cyan-500 max-w-md w-full relative">
     <div class="text-center mb-6">
       <span class="text-xs font-pixel text-pink-500 glow-pink block mb-1">// IDENTITY INITIALIZATION //</span>
-      <h3 class="text-base font-pixel text-white">建立特工身份</h3>
+      <h3 class="text-base font-pixel text-cyan-400 glow-blue">建立特工身份</h3>
     </div>
     
     <form id="profile-form" class="space-y-4" onsubmit="return false;">
@@ -10,11 +10,11 @@
       <div>
         <label for="profile-class" class="block text-[10px] font-pixel text-slate-400 mb-1">年級班別:</label>
         <div class="text-[8px] font-pixel text-slate-500 mb-1.5 leading-normal">
-          本校請輸入 3 位數字（如 501）。外校聯賽請於班級前加上學校英文縮寫或區域代碼（如：西屯國小 501 班請填 ST501、大墩國小 602 班請填 DD602）。
+          班級一律以英文字母 2 位 + 數字 3 位做定義（例如：ST501、DD602）。
         </div>
-        <input type="text" id="profile-class" name="grade_class" required pattern="^[a-zA-Z0-9]{3,8}$" 
+        <input type="text" id="profile-class" name="grade_class" required pattern="^[a-zA-Z]{2}[0-9]{3}$" maxlength="5"
                class="w-full bg-slate-900 border-2 border-slate-800 p-2.5 font-pixel text-[11px] text-cyan-400 focus:outline-none focus:border-cyan-500 rounded"
-               placeholder="501 或 ST501">
+               placeholder="例如: ST501">
       </div>
       
       <!-- 座號 -->
@@ -30,7 +30,7 @@
         <label for="profile-nickname" class="block text-[10px] font-pixel text-slate-400 mb-1.5">遊戲暱稱 (2-8 字元):</label>
         <input type="text" id="profile-nickname" name="nickname" required minlength="2" maxlength="8"
                class="w-full bg-slate-900 border-2 border-slate-800 p-2.5 font-pixel text-[11px] text-cyan-400 focus:outline-none focus:border-cyan-500 rounded"
-               placeholder="例如: 西屯路李相赫">
+               placeholder="例如: 暱稱或英文名字">
       </div>
 
       <!-- 錯誤/提示訊息區 -->

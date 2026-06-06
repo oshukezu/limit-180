@@ -28,7 +28,11 @@
     if (inputClass) {
       inputClass.addEventListener('input', (e) => {
         // 自動將英文轉大寫，並剔除空格、特殊符號與中文
-        e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+        let val = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+        // 限制前兩位只能是英文字母，後面三位只能是數字，總長度最多 5 位
+        let letterPart = val.substring(0, 2).replace(/[^A-Z]/g, '');
+        let digitPart = val.substring(2, 5).replace(/[^0-9]/g, '');
+        e.target.value = letterPart + digitPart;
       });
     }
 
@@ -106,9 +110,9 @@
     const inputSeat = document.getElementById('profile-seat').value.trim();
     const inputNickname = document.getElementById('profile-nickname').value.trim();
 
-    // 驗證班級 (需為 3 至 8 位英數字組合)
-    if (!/^[A-Z0-9]{3,8}$/.test(inputClass)) {
-      showError("班級格式錯誤，須為 3 至 8 位英數字組合（如 501 或 ST501）");
+    // 驗證班級 (一律以英文字母 2 位 + 數字 3 位做定義，如 ST501)
+    if (!/^[A-Z]{2}[0-9]{3}$/.test(inputClass)) {
+      showError("班級格式錯誤，須為 2 位英文字母 + 3 位數字組合（例如：ST501）");
       return;
     }
 
@@ -125,12 +129,51 @@
       return;
     }
 
-    // 防霸凌過濾
+    // 防霸警過濾
     const lowercaseNick = inputNickname.toLowerCase();
     const containsSensitive = SENSITIVE_WORDS.some(word => lowercaseNick.includes(word));
     if (containsSensitive) {
       showError("暱稱包含敏感詞，請重新輸入");
       return;
+    }
+
+    // 檢查是否為首次綁定（若是首次綁定，班級與座號輸入框不是唯讀的）
+    const isEditMode = document.getElementById('profile-class').readOnly;
+
+    // 比對資料庫：同一個班級裡面座號不能一樣 (只在首次註冊時檢查)
+    if (!isEditMode && window.MathSprintSupabaseService) {
+      try {
+        const db = window.MathSprintSupabaseService.initSupabase();
+        if (db) {
+          const { data, error } = await db
+            .from('users_profile')
+            .select('nickname')
+            .eq('grade_class', inputClass)
+            .eq('seat_number', inputSeat)
+            .limit(1);
+
+          if (error) {
+            throw error;
+          }
+
+          if (data && data.length > 0) {
+            showError(`該班級與座號已被註冊（暱稱: "${data[0].nickname}" 佔用），座號不能重複！`);
+            return;
+          }
+        }
+      } catch (dbErr) {
+        console.warn("[Onboarding] 無法連接資料庫檢查座號重複性：", dbErr.message || dbErr);
+      }
+    }
+
+    // 送出之前確認警示框 (只在首次註冊時提示)
+    if (!isEditMode) {
+      const confirmSubmit = confirm(
+        `【確定要建立此特工身份嗎？】\n\n班級：${inputClass}\n座號：${inputSeat} 號\n暱稱：${inputNickname}\n\n⚠️ 注意：一經送出後，班級與座號將無法再修改！`
+      );
+      if (!confirmSubmit) {
+        return; // 使用者取消送出
+      }
     }
 
     errorMsg.classList.add('hidden');
