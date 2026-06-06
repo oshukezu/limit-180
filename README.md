@@ -1,60 +1,56 @@
-# Limit 180｜心算極速挑戰
+# Limit 180 ｜ 心算極速挑戰
 
-[繁體中文](#繁體中文) | [English](#english) | [日本語](#日本語)
-
----
-
-## 繁體中文
-
-「Limit 180」是一款主打極速心算與刻意練習的網頁遊戲。玩家的終極目標是挑戰在 3 分鐘（180 秒）內做完 100 題心算。
-
-### 🌟 核心特色
-- 快速答題：當玩家鍵入的答案位數與正確答案位數一致時，系統將在輸入的瞬間立即自動送出判定，無需按下 any 確認鍵或 Enter，作答體驗極致流暢。
-- 關卡解鎖：遊戲包含 10 個 Missions，各含 20 個 Level。每個 Mission 只要累計獲得大於等於 3 顆星，就能立刻解鎖下一個 Mission。
-- 防作弊機制：每關僅提供 3 次免費暫停。從第 4 次暫停起，遊戲畫面雖會顯示暫停，但後台計時器將繼續扣減時間。
-- 校園聯賽排行：
-  - 綁定Google帳號，防止重複註冊。
-  - 資料寫入時會附加雜湊簽名，讀取排行榜時若發現資料遭直接修改，將會自動過濾，確保比賽公平性。
-
-### 🛠️ 技術架構
-- Core: HTML5, Vanilla JavaScript, CSS3 (Cyberpunk 霓虹視覺風格)
-- Database (Serverless): Supabase (UMD SDK) & Web Crypto API (SHA-256)
-- Data Visualization: Chart.js (用於結算數據分析)
+「Limit 180」是一款專為國中小學童設計的高頻心算電競挑戰平台，融入 Cyberpunk 像素風的極致視覺體驗，主打「刻意練習」與「防錯消除」。玩家的核心挑戰是克服時間壓力，在限時內極速完成挑戰，激發心算反應潛能。
 
 ---
 
-## English
+## 🌟 聯賽版核心特色
 
-"Limit 180" is a web-based game designed for rapid mental arithmetic and deliberate practice. The ultimate goal is to complete 100 questions within 3 minutes (180 seconds).
+### ⚡ 極致答題體驗與超時防護
+* **免確認即時送出**：當輸入的答案位數與正確答案長度一致時，系統將在瞬間自動送出判定，無須點選確認或按下 Enter，作答流暢度極致提升。
+* **超時自動提交**：當單題作答時間到期時，若輸入框中已填有答案，系統會自動提交該答案進行評判，避免因輸入不及而遭判定超時。
+* **暫停限次防作弊**：每關僅提供 3 次凍結計時的暫停機會。自第 4 次起，雖然畫面仍會顯示暫停，但後台計時器將繼續扣減時間，杜絕切換視窗查表或思考。
 
-### 🌟 Key Features
-- **Fast Answering**: The game automatically validates and submits the answer the instant the input length matches the correct answer's digit length. No need to click any confirm button or press Enter, providing an extremely smooth user experience.
-- **Mission Unlock**: Consists of 10 Missions, each with 20 levels. Acquiring at least 3 stars in a Mission immediately unlocks the next Mission.
-- **Anti-Cheat Mechanism**: Players are allowed up to 3 free pauses per level. Starting from the 4th pause, the timer in the background will continue to count down despite the pause screen being active.
-- **Campus League Leaderboard**:
-  - Bound with Google account to prevent duplicate registrations.
-  - Generates a hash signature when writing data. The leaderboard automatically filters out records that were modified directly in the database, ensuring competition fairness.
+### 🛡️ 超時防禦盾系統
+* **自動獎勵機制**：特工可透過以下兩種管道獲得「超時防禦盾」：
+  1. **心算挑戰**：每累計答對 50 題心算題目。
+  2. **錯題消除**：錯題本中每成功消除（連續答對 3 次）10 題錯題。
+* **主動救磚功能**：當時間扣減完畢時，若手頭持有超時防禦盾，系統會自動消耗一個防禦盾並凍結該題時間，使特工免受超時失敗懲罰，多一次挽回機會。
 
-### 🛠️ Tech Stack
-- **Core**: HTML5, Vanilla JavaScript, CSS3 (Cyberpunk Neon Aesthetic Style)
-- **Database (Serverless)**: Supabase (UMD SDK) & Web Crypto API (SHA-256)
-- **Data Visualization**: Chart.js (for statistics screen and analysis)
+### 🧠 逆向認知與防作弊演算法
+* **去連續答案防禦機制**：系統會動態暫存上一題的答案，若新產生的題目正確答案與上一題相同，將自動重試抽題，確保連續兩題的正確答案絕對不重複，消滅盲猜連點空間。
+* **逆向認知乘載優化**：在加法與乘法任務中，提高「前方操作數為小數，後方操作數為大數」的出現機率至 65% 以上（例如將 `78 + 3` 對調為 `3 + 78`，將 `19 × 4` 對調為 `4 × 19`），加強兒童心算時的逆向思維廣度。
+
+### 📊 錯題消除訓練系統
+* 遊戲中所有答錯或超時的題目，都會自動記入本地「錯題本」。
+* 錯題消除模式無時間限制，特工必須對每道錯題「連續答對 3 次」才能徹底將其從錯題本中消除，協助學童針對弱點紮實奠定數學基礎。
+
+### 🏆 單表多關卡 Supabase 排行榜
+系統採用單一資料表 `users_profile` 及複合唯一約束 `(grade_class, seat_number, mission_id)` 來儲存關卡成績，提供三個視圖分頁：
+1. **個人總榜**：前端依班級座號加總各關最高星數與計算總平均秒數，總星數降序，平均秒數升序排列，並內含「我的排名」獨立隔離渲染卡片。
+2. **團隊對抗榜**：前端聚合各班級所有參賽特工的星數總和與團隊均速，進行全台班級對抗排序，激發群體凝聚力。
+3. **答題速度榜**（原關卡分類榜）：完全不看星星，依 Mission 篩選嚴格按平均答題秒數進行升序（Ascending）排序，欄位精簡為「名次、暱稱、班級座號、平均秒數、單題最快」，移除星星數顯示，進行純粹的反應速度對決。
+
+### 🚫 星數差額補給防刷限制
+* 當重玩已通關的 Stage 時，系統禁止直接累加星星。
+* **計算演算法**：系統會對比該 Stage 的 `history_best_stars` 歷史最高星數。若本次得分大於歷史紀錄，僅補給其差額（如 2 星變 3 星只增加 1 顆總星星）；若小於或等於歷史紀錄，總星數維持不變，防範學童反覆重玩簡單關卡刷榜。
+
+### 🔒 安全防改機制
+* 每次寫入進度時，前端皆會利用校園聯賽混淆鹽值（Salt）配合 Web Crypto API 計算出 `integrity_hash`（SHA-256 簽名）。
+* 讀取排行榜時，將會重新進行雜湊比對，一旦發現有人從後台非法修改數值，排行榜將自動排除該條遭竄改的非法紀錄。
+* 首次綁定身份時，將會自動為特工在 Mission 1 建立一筆 0 星佔位紀錄，以利排行榜渲染。
+
+### 🎮 元件化關卡架構與精美視覺
+* **模組化 Mission 拆分**：各關卡的題目生成演算法已徹底解耦，拆分至 `js/missions/mission1.js` 到 `mission10.js` 獨立元件中，方便未來隨時擴充 Mission 11 等新題目類型或重新定義難度。
+* **平行雙軌流光背景**：採用 `@keyframes scan-double` 動畫在背景繪製藍粉平行的雙軌掃描線，營造極具動感的電競感。
+* **本機成就牆**：提供 10 個趣味的特工徽章，搭配 confetti 動態灑花與錯誤時的螢幕震動特效。
+* **自適應滿版佈局**：觸控行動裝置自動隱藏虛擬按鍵面板以呼叫原生數字鍵盤，並自動針對小螢幕自適應縮放，實現滿版無滾動條的電競體驗。
 
 ---
 
-## 日本語
+## 🛠️ 技術棧與部署
 
-「Limit 180」は、極限状態での暗算トレーニングと反復練習に焦点を当てたウェブゲームです。プレイヤーの最終目標は、3分間（180秒）以内に100問の暗算を解くことです。
-
-### 🌟 主な機能
-- **迅速な解答**: 入力された回答の桁数が正解の桁数と一致した瞬間、システムが自動的に検証して判定を行います。確認ボタンや Enter キーを押す手間がなく、極めてスムーズに解答を続けられます。
-- **ミッション解放**: 10のミッションで構成され、それぞれ20のレベルを含んでいます。各ミッションで累計 3つ以上の星（★）を獲得すると、次のミッションが即座に解放されます。
-- **不正防止機能**: 1ステージにつき3回まで無料でポーズ可能です。4回目のポーズからは、ポーズ画面が表示されてもタイマーのカウントダウンは裏で継続します。
-- **校内対抗ランキング**:
-  - Googleアカウントと連携し、重複登録を防止します。
-  - データ書き込み時にハッシュ署名を付与します。データベースが直接書き換えられた場合、ランキング読み込み時に自動的に除外され、公平な大会運営を保証します。
-
-### 🛠️ 技術スタック
-- **コア**: HTML5, Vanilla JavaScript, CSS3 (サイバーパンク・ネオンデザイン)
-- **データベース (Serverless)**: Supabase (UMD SDK) & Web Crypto API (SHA-256)
-- **データ可視化**: Chart.js (リザルト画面でのデータ分析用)
+* **前端核心**：HTML5, Vanilla JavaScript, Tailwind CSS (用於快速佈局與自適應), Vanilla CSS (動態視覺微調)
+* **後端與資料庫**：Supabase JS SDK (RLS 安全防護)
+* **圖表繪製**：Chart.js (家長戰報 - 用於弱點雷達圖與 7 日反應速度趨勢線)
+* **本地快取**：LocalStorage (支援 100% 離線遊玩與同步機制)

@@ -476,6 +476,10 @@
     startGame(missionNum, levelNum) {
       this.stopGame();
 
+      if (window.MathSprintGenerator && window.MathSprintGenerator.resetLastAnswer) {
+        window.MathSprintGenerator.resetLastAnswer();
+      }
+
       // 只有當切換到與上一次不同的關卡時，才重置連續失敗次數
       if (this.gameState.currentMission !== missionNum || this.gameState.currentLevel !== levelNum) {
         this.gameState.consecutiveFailures = 0;

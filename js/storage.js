@@ -9,6 +9,7 @@
     total_stars: 0,
     shields_count: 0,
     total_correct_count: 0, // Used for computing shields (every 50 correct answers adds 1 shield)
+    total_cleared_wrong_count: 0, // 成功消除錯題累計數（每 10 題獲得 1 個盾）
     level_records: {}, // Keyed by: mission-[M]-level-[L]
     wrong_questions_db: [], // Wrong answers ledger
     unlocked_achievements: [], // Achievement list
@@ -195,6 +196,17 @@
         if (item.solvedCount >= 3) {
           profile.wrong_questions_db.splice(index, 1);
           removed = true;
+
+          // 累計成功消除的錯題數
+          profile.total_cleared_wrong_count = (profile.total_cleared_wrong_count || 0) + 1;
+          
+          // 錯題消除每滿 10 題獎勵 1 個超時防禦盾
+          if (profile.total_cleared_wrong_count > 0 && profile.total_cleared_wrong_count % 10 === 0) {
+            profile.shields_count = (profile.shields_count || 0) + 1;
+            // 發送超時防禦盾獲獎自訂事件（彈出提示）
+            window.dispatchEvent(new CustomEvent('mathSprintShieldAwarded', { detail: { count: profile.shields_count } }));
+          }
+
           // Trigger custom event for achievement tracking
           window.dispatchEvent(new CustomEvent('mathSprintWrongQuestionCleared'));
         }
