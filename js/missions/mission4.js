@@ -29,8 +29,9 @@
       
       a = aTens * 10 + aUnits;
       b = bTens * 10 + bUnits;
-      if (a === b) {
-        a += 10;
+      if (a === b || a < b) {
+        // 確保 a > b 且 a <= 50
+        a = b + Gen.randInt(1, Math.min(9, 50 - b));
       }
       
       qText = `${a} - ${b} = ?`;

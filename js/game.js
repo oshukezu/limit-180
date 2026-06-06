@@ -3,25 +3,32 @@
 
 (function() {
   // Mission Configurations (10 Missions difficulty metadata & speed ranges)
+  // Mission Configurations — passRate 已移除（統一使用 0.60 通關門檻）
   const MISSION_CONFIGS = {
-    1: { name: "Mission 1", totalQuestions: 20, passRate: 0.90, desc: "20以內加減法（含進/借位）", initStart: 6.0, initEnd: 3.0, targetStart: 4.0, targetEnd: 1.5 },
-    2: { name: "Mission 2", totalQuestions: 20, passRate: 0.90, desc: "九九乘法表", initStart: 5.5, initEnd: 2.5, targetStart: 3.5, targetEnd: 1.5 },
-    3: { name: "Mission 3", totalQuestions: 20, passRate: 0.90, desc: "81以內除法（被除數81以內）", initStart: 5.0, initEnd: 2.5, targetStart: 3.0, targetEnd: 1.5 },
-    4: { name: "Mission 4", totalQuestions: 25, passRate: 0.90, desc: "50以內加減法（無進/借位）", initStart: 4.5, initEnd: 2.0, targetStart: 2.5, targetEnd: 1.3 },
-    5: { name: "Mission 5 [魔王]", totalQuestions: 30, passRate: 0.95, desc: "100以內加減法（有進/借位）", initStart: 4.0, initEnd: 2.0, targetStart: 2.2, targetEnd: 1.3 },
-    6: { name: "Mission 6", totalQuestions: 35, passRate: 0.95, desc: "九九乘法與基本除法", initStart: 3.5, initEnd: 1.8, targetStart: 2.0, targetEnd: 1.2 },
-    7: { name: "Mission 7 [魔王]", totalQuestions: 40, passRate: 0.95, desc: "兩步驟四則混合運算", initStart: 3.0, initEnd: 1.8, targetStart: 1.8, targetEnd: 1.2 },
-    8: { name: "Mission 8", totalQuestions: 50, passRate: 0.95, desc: "分數/小數/百分比混搭二選一", initStart: 2.5, initEnd: 1.5, targetStart: 1.8, targetEnd: 0.9 }, // 14yo limits for binary
-    9: { name: "Mission 9", totalQuestions: 60, passRate: 0.98, desc: "國中正負數代數與高難度比大小", initStart: 2.0, initEnd: 1.5, targetStart: 1.8, targetEnd: 1.0 },
-    10: { name: "Limit 180 終極挑戰", totalQuestions: 100, passRate: 1.00, desc: "在 3 分鐘 (180秒) 內挑戰做完 100 題！", initStart: 1.8, initEnd: 1.8, targetStart: 1.8, targetEnd: 1.8 }
+    1: { name: "Mission 1", totalQuestions: 20, desc: "20以內加減法（含進/借位）", initStart: 6.0, initEnd: 3.0, targetStart: 4.0, targetEnd: 1.5 },
+    2: { name: "Mission 2", totalQuestions: 20, desc: "九九乘法表", initStart: 5.5, initEnd: 2.5, targetStart: 3.5, targetEnd: 1.5 },
+    3: { name: "Mission 3", totalQuestions: 20, desc: "81以內除法（被除數81以內）", initStart: 5.0, initEnd: 2.5, targetStart: 3.0, targetEnd: 1.5 },
+    4: { name: "Mission 4", totalQuestions: 25, desc: "50以內加減法（無進/借位）", initStart: 4.5, initEnd: 2.0, targetStart: 2.5, targetEnd: 1.3 },
+    5: { name: "Mission 5 [魔王]", totalQuestions: 30, desc: "100以內加減法（有進/借位）", initStart: 4.0, initEnd: 2.0, targetStart: 2.2, targetEnd: 1.3 },
+    6: { name: "Mission 6", totalQuestions: 35, desc: "九九乘法與基本除法", initStart: 3.5, initEnd: 1.8, targetStart: 2.0, targetEnd: 1.2 },
+    7: { name: "Mission 7 [魔王]", totalQuestions: 40, desc: "兩步驟四則混合運算", initStart: 3.0, initEnd: 1.8, targetStart: 1.8, targetEnd: 1.2 },
+    8: { name: "Mission 8", totalQuestions: 50, desc: "分數/小數/百分比混搭二選一", initStart: 2.5, initEnd: 1.5, targetStart: 1.8, targetEnd: 0.9 },
+    9: { name: "Mission 9", totalQuestions: 60, desc: "國中正負數代數與高難度比大小", initStart: 2.0, initEnd: 1.5, targetStart: 1.8, targetEnd: 1.0 },
+    10: { name: "Limit 180 終極挑戰", totalQuestions: 100, desc: "在 3 分鐘 (180秒) 內挑戰做完 100 題！", initStart: 1.8, initEnd: 1.8, targetStart: 1.8, targetEnd: 1.8 }
   };
 
-  // Sound generator using Web Audio API
+  // Sound generator using Web Audio API（模組級單例 AudioContext 以避免快速答題時超出瀏覽器限制）
+  const _audioCtx = (function() {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    return AC ? new AC() : null;
+  })();
+
   function playSound(type) {
     try {
-      const AudioContext = window.AudioContext || window.webkitAudioContext;
-      if (!AudioContext) return;
-      const ctx = new AudioContext();
+      if (!_audioCtx) return;
+      // 自動恢復被瀏覽器暫停的 AudioContext（需要使用者互動後才會生效）
+      if (_audioCtx.state === 'suspended') _audioCtx.resume();
+      const ctx = _audioCtx;
       
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
@@ -372,7 +379,7 @@
       // Unlocked highest category text calculation
       let maxUnlockedMission = 1;
       for (let m = 1; m <= 10; m++) {
-        if (window.MathSprintStorage.isMissionUnlocked(m)) {
+        if (window.MathSprintStorage.isMissionUnlocked(m, profile)) {
           maxUnlockedMission = m;
         }
       }
@@ -380,7 +387,7 @@
 
       for (let i = 1; i <= 10; i++) {
         const config = MISSION_CONFIGS[i];
-        const isMUnlocked = window.MathSprintStorage.isMissionUnlocked(i);
+        const isMUnlocked = window.MathSprintStorage.isMissionUnlocked(i, profile);
         
         // Sum stars earned in this mission
         let starsInM = 0;
@@ -430,7 +437,7 @@
           // Draw the 20 levels grids inside
           const subGrid = card.querySelector('.mission-levels-grid');
           for (let L = 1; L <= 20; L++) {
-            const isLUnlocked = window.MathSprintStorage.isLevelUnlocked(i, L);
+            const isLUnlocked = window.MathSprintStorage.isLevelUnlocked(i, L, profile);
             const key = `mission-${i}-level-${L}`;
             const record = profile.level_records[key] || { stars: 0, best_avg_time: null, max_combo: 0 };
             
@@ -592,8 +599,8 @@
 
       this.gameState.questionIndex++;
       
-      // 動態梯度計時：根據目前題號更新本題限時
-      this.gameState.limitTime = this.getRoundTimeLimit(this.gameState.currentMission, this.gameState.questionIndex);
+      // 動態梯度計時：依 sub-level 基準 + 題號微調 + combo 加速計算本題限時
+      this.gameState.limitTime = this.getRoundTimeLimit(this.gameState.questionIndex);
       
       document.getElementById('game-progress').textContent = `${this.gameState.questionIndex}/${this.gameState.totalQuestions}`;
       document.getElementById('game-combo').textContent = this.gameState.combo;
@@ -681,9 +688,11 @@
 
       const profile = window.MathSprintStorage.getProfile();
       if (profile.shields_count > 0) {
+        // Bug 5 修正：先扣除盾牌，再讀取最新 profile 更新 UI（避免 race condition）
         window.MathSprintStorage.useShield();
+        const updatedProfile = window.MathSprintStorage.getProfile();
         playSound('shield');
-        document.getElementById('game-shields').textContent = profile.shields_count - 1;
+        document.getElementById('game-shields').textContent = updatedProfile.shields_count;
         document.getElementById('shield-alert').classList.remove('hidden');
         
         this.gameState.questionTimes.push(this.gameState.limitTime);
@@ -699,23 +708,37 @@
       }
     },
 
-    getRoundTimeLimit(level, round) {
-      const LEVEL_LIMITS = {
-        1: 7.5, 2: 7.0, 3: 6.5, 4: 6.0, 5: 5.5,
-        6: 5.0, 7: 4.5, 8: 4.0, 9: 3.5, 10: 3.0
-      };
-      const base = LEVEL_LIMITS[level] || 3.0;
+    /**
+     * 動態計時核心函式（Bug 1/2/3 修正）
+     * 整合三大因素：sub-level 梯度基準 + 題號熱身微調 + combo 連擊加速
+     * @param {number} round - 當前第幾題（1-based）
+     * @returns {number} 本題的限時秒數
+     */
+    getRoundTimeLimit(round) {
+      // 基準時間：來自 startGame() 依 sub-level 插值計算的 initLimitTime
+      const base = this.gameState.initLimitTime;
+      let timeLimit;
       
+      // 題號熱身微調：前幾題給較多時間，後段壓榨
       if (round >= 1 && round <= 5) {
-        if (level === 1) {
-          return base + 2.0; // LV1 新手防禦：第 1-5 題加給 2.0 秒 (即 9.5 秒)
+        if (this.gameState.currentMission === 1 && this.gameState.currentLevel <= 3) {
+          timeLimit = base + 2.0; // Mission 1 前 3 個子關卡新手防禦：第 1-5 題加給 2.0 秒
+        } else {
+          timeLimit = base + 1.0; // 起跑熱身：第 1-5 題加給 1.0 秒
         }
-        return base + 1.0; // 起跑熱身：第 1-5 題加給 1.0 秒
       } else if (round >= 6 && round <= 15) {
-        return base + 0.5; // 中段加速：第 6-15 題加給 0.5 秒
+        timeLimit = base + 0.5; // 中段加速：第 6-15 題加給 0.5 秒
       } else {
-        return base; // 壓榨極限：第 16 題以後回歸基準秒數
+        timeLimit = base; // 壓榨極限：第 16 題以後回歸基準秒數
       }
+
+      // Combo 連擊加速（M10 不受 combo 影響）
+      if (this.gameState.currentMission !== 10) {
+        const comboReduction = Math.floor(this.gameState.combo / 4) * 0.5;
+        timeLimit = Math.max(this.gameState.targetSpeed, timeLimit - comboReduction);
+      }
+
+      return timeLimit;
     },
 
     checkAutoSubmit() {
@@ -779,13 +802,7 @@
       this.gameState.combo++;
       this.gameState.maxCombo = Math.max(this.gameState.maxCombo, this.gameState.combo);
 
-      // Speed controller combo increments (does not scale on M10)
-      if (this.gameState.currentMission !== 10) {
-        if (this.gameState.combo > 0 && this.gameState.combo % 4 === 0) {
-          this.gameState.limitTime = Math.max(this.gameState.targetSpeed, this.gameState.limitTime - 0.5);
-        }
-      }
-
+      // Combo 加速已整合進 getRoundTimeLimit()，不再在此處直接修改 limitTime
       this.nextQuestion();
     },
 
@@ -793,8 +810,8 @@
       playSound('wrong');
       clearInterval(this.timerInterval);
 
+      // combo 歸零即可，limitTime 重置由 nextQuestion → getRoundTimeLimit 自動處理
       this.gameState.combo = 0;
-      this.gameState.limitTime = this.gameState.initLimitTime;
 
       const mainBody = document.querySelector('body');
       mainBody.classList.add('shake');
@@ -987,19 +1004,21 @@
         if (this.gameState.consecutiveFailures >= 3 && (this.gameState.currentMission > 1 || this.gameState.currentLevel > 1)) {
           this.gameState.consecutiveFailures = 0;
           
-          // Re-bind modal buttons specifically for this session's back-level paths
+          // 使用 AbortController 管理 listener（取代 cloneNode 避免 DOM 替換開銷與記憶體洩漏）
+          if (this._demoteAbortController) {
+            this._demoteAbortController.abort();
+          }
+          this._demoteAbortController = new AbortController();
+
           const demoteBtn = document.getElementById('demote-modal-prev-btn');
-          const newDemoteBtn = demoteBtn.cloneNode(true);
-          demoteBtn.parentNode.replaceChild(newDemoteBtn, demoteBtn);
-          
-          newDemoteBtn.addEventListener('click', () => {
+          demoteBtn.addEventListener('click', () => {
             document.getElementById('demote-modal').classList.add('hidden');
             if (this.gameState.currentLevel > 1) {
               this.startGame(this.gameState.currentMission, this.gameState.currentLevel - 1);
             } else {
               this.startGame(Math.max(1, this.gameState.currentMission - 1), 20);
             }
-          });
+          }, { signal: this._demoteAbortController.signal });
 
           setTimeout(() => {
             document.getElementById('demote-modal').classList.remove('hidden');

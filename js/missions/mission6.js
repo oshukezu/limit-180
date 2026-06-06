@@ -13,7 +13,7 @@
       [a, b] = Gen.adjustReverseOrder(a, b); // 套用逆向認知乘載
       qText = `${a} &times; ${b} = ?`;
       ans = (a * b).toString();
-      key = `L6:mul:${a}:${b}`;
+      key = `L6:mul:${Math.min(a,b)}:${Math.max(a,b)}`;
     } else {
       b = Gen.randInt(2, 9);
       ans = Gen.randInt(2, 9);

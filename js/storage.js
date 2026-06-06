@@ -67,31 +67,36 @@
 
     // --- MISSION & LEVEL LOCK LOGIC ---
 
-    // Check if a Mission is unlocked (M1-M10)
-    isMissionUnlocked(missionNum) {
+    // 檢查 Mission 是否已解鎖 (M1-M10)
+    // 優化：迭代式判斷（避免遞迴造成大量 getProfile / JSON.parse）
+    isMissionUnlocked(missionNum, _profile) {
       if (missionNum === 1) return true;
-      const profile = this.getProfile();
+      const profile = _profile || this.getProfile();
 
-      const prevMission = missionNum - 1;
-      let starsInPrevMission = 0;
-      for (let l = 1; l <= 20; l++) {
-        const record = profile.level_records[`mission-${prevMission}-level-${l}`];
-        starsInPrevMission += record ? record.stars : 0;
+      // 從 Mission 1 往上依序檢查，任何一關前置條件不滿足就中斷
+      for (let m = 2; m <= missionNum; m++) {
+        const prevMission = m - 1;
+        let starsInPrevMission = 0;
+        for (let l = 1; l <= 20; l++) {
+          const record = profile.level_records[`mission-${prevMission}-level-${l}`];
+          starsInPrevMission += record ? record.stars : 0;
+        }
+        if (starsInPrevMission < 3) return false;
       }
-
-      return starsInPrevMission >= 3 && this.isMissionUnlocked(prevMission);
+      return true;
     },
 
-    // Check if a Sub-level within a Mission is unlocked (L1-L20)
-    isLevelUnlocked(missionNum, levelNum) {
-      // Must be mission unlocked first
-      if (!this.isMissionUnlocked(missionNum)) return false;
+    // 檢查 Sub-level 是否已解鎖 (L1-L20)
+    isLevelUnlocked(missionNum, levelNum, _profile) {
+      const profile = _profile || this.getProfile();
 
-      // Level 1 is always unlocked when the mission is unlocked
+      // 必須先解鎖所屬 Mission
+      if (!this.isMissionUnlocked(missionNum, profile)) return false;
+
+      // Level 1 在 Mission 解鎖時自動開放
       if (levelNum === 1) return true;
 
-      // Other levels: previous level stars must be > 0 (passed)
-      const profile = this.getProfile();
+      // 其他 Level：前一關星數必須 > 0 (已通過)
       const prevKey = `mission-${missionNum}-level-${levelNum - 1}`;
       const prevRecord = profile.level_records[prevKey];
       

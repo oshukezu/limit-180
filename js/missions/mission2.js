@@ -10,7 +10,7 @@
     
     const qText = `${a} &times; ${b} = ?`;
     const ans = (a * b).toString();
-    const key = `L2:mul:${a}:${b}`;
+    const key = `L2:mul:${Math.min(a,b)}:${Math.max(a,b)}`;
 
     return {
       type: 'calc',

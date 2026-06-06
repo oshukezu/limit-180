@@ -13,7 +13,7 @@
       [a, b] = Gen.adjustReverseOrder(a, b); // 套用逆向認知乘載
       qText = `${a} + ${b} = ?`;
       ans = (a + b).toString();
-      key = `L1:add:${a}:${b}`;
+      key = `L1:add:${Math.min(a,b)}:${Math.max(a,b)}`;
     } else {
       a = Gen.randInt(2, 20);
       b = Gen.randInt(1, a - 1);
