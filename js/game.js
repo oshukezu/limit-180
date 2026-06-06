@@ -1,6 +1,29 @@
 // MathSprint Game Core Module (Missions & Sub-levels Edition)
 // Controls SPA screens, Missions selection grids, Game Loop, timer, input restrictions, sound generator and visual scaffolds.
 
+// 全域環境變數配置與獨立徽章配置 (原 config.js)
+if (!window.MATH_SPRINT_CONFIG) {
+  window.MATH_SPRINT_CONFIG = {
+    CLOUD_ENABLED: true,
+    SUPABASE_URL: "https://kzlvuyxsijsffigmcnti.supabase.co",
+    SUPABASE_ANON_KEY: "sb_publishable_U1YrJqNz18LedymnrjcoTg_2SxZQhd_",
+    EDGE_FUNCTION_URL: ""
+  };
+
+  window.MATH_SPRINT_CONFIG.STAGE_BADGES = {};
+  for (let m = 1; m <= 10; m++) {
+    window.MATH_SPRINT_CONFIG.STAGE_BADGES[m] = {};
+    for (let l = 1; l <= 20; l++) {
+      window.MATH_SPRINT_CONFIG.STAGE_BADGES[m][l] = {
+        badgeId: `badge-m${m}-l${l}`,
+        name: `Mission ${m} Stage ${l} 探索者`,
+        description: `成功通關 Mission ${m} 關卡 ${l}`
+      };
+    }
+  }
+}
+window.CFG = window.MATH_SPRINT_CONFIG;
+
 (function() {
   // Mission Configurations (10 Missions difficulty metadata & speed ranges)
   // Mission Configurations — passRate 已移除（統一使用 0.60 通關門檻）
@@ -198,77 +221,95 @@
     },
 
     async init() {
-      // 雲端身份校驗（改為非阻塞非同步，避免網路延遲卡死主執行緒）
-      const profileStr = localStorage.getItem('limit180_user_profile');
-      if (profileStr) {
-        try {
-          const profile = JSON.parse(profileStr);
-          if (profile && profile.grade_class && profile.seat_number) {
-            this.verifySession(profile).catch(e => {
-              console.error('[Session Verification] 驗證過程出錯:', e);
-            });
+      try {
+        // 舊快取防呆：檢查本地 profile 班級規格是否為全新的「2英+3數」
+        const profileStr = localStorage.getItem('limit180_user_profile');
+        if (profileStr) {
+          try {
+            const profile = JSON.parse(profileStr);
+            const gradeClass = profile.grade_class || '';
+            // 正則校驗：必須是 2 位字母 + 3 位數字
+            if (!/^[A-Z]{2}[0-9]{3}$/i.test(gradeClass)) {
+              console.warn('[Session Verification] 本地班級格式不符 2英+3數 規格，清除髒資料並重新整理網頁...');
+              localStorage.clear();
+              window.location.reload();
+              return;
+            }
+            
+            // 雲端身份校驗（非阻塞非同步，優雅降級）
+            if (profile.grade_class && profile.seat_number) {
+              this.verifySession(profile).catch(e => {
+                console.error('[Session Verification] 驗證過程出錯:', e);
+              });
+            }
+          } catch (e) {
+            console.error('[Session Verification] 解析本地 profile 錯誤，清除資料:', e);
+            localStorage.clear();
+            window.location.reload();
+            return;
           }
-        } catch (e) {
-          console.error('[Session Verification] 解析本地 profile 錯誤:', e);
         }
-      }
 
-      this.bindEvents();
-      this.renderHome();
-      this.renderLobby();
-      this.initScanner();
-      
-      window.addEventListener('mathSprintProfileUpdated', () => {
+        this.bindEvents();
         this.renderHome();
         this.renderLobby();
-      });
+        this.initScanner();
 
-      // 監聽全新四維星星獎勵事件 (Gamification Reward)
-      window.addEventListener('mathSprintBonusStarAwarded', (e) => {
-        alert(e.detail.text);
-        
-        // 滿集暴擊或里程碑成就 Confetti 特效
-        if (typeof confetti !== 'undefined') {
-          if (e.detail.type === 'mission_complete') {
-            // 滿集暴擊特效：酷炫的霓虹流星暴擊雨
-            let duration = 3 * 1000;
-            let end = Date.now() + duration;
+        window.addEventListener('mathSprintProfileUpdated', () => {
+          this.renderHome();
+          this.renderLobby();
+        });
 
-            (function frame() {
+        // 監聽全新四維星星獎勵事件 (Gamification Reward)
+        window.addEventListener('mathSprintBonusStarAwarded', (e) => {
+          alert(e.detail.text);
+          
+          // 滿集暴擊或里程碑成就 Confetti 特效
+          if (typeof confetti !== 'undefined') {
+            if (e.detail.type === 'mission_complete') {
+              // 滿集暴擊特效：酷炫的霓虹流星暴擊雨
+              let duration = 3 * 1000;
+              let end = Date.now() + duration;
+
+              (function frame() {
+                confetti({
+                  particleCount: 6,
+                  angle: 60,
+                  spread: 55,
+                  origin: { x: 0 }
+                });
+                confetti({
+                  particleCount: 6,
+                  angle: 120,
+                  spread: 55,
+                  origin: { x: 1 }
+                });
+
+                if (Date.now() < end) {
+                  requestAnimationFrame(frame);
+                }
+              }());
+            } else {
+              // 普通星星加發
               confetti({
-                particleCount: 6,
-                angle: 60,
-                spread: 55,
-                origin: { x: 0 }
+                particleCount: 80,
+                spread: 50,
+                origin: { y: 0.6 }
               });
-              confetti({
-                particleCount: 6,
-                angle: 120,
-                spread: 55,
-                origin: { x: 1 }
-              });
-
-              if (Date.now() < end) {
-                requestAnimationFrame(frame);
-              }
-            }());
-          } else {
-            // 普通星星加發
-            confetti({
-              particleCount: 80,
-              spread: 50,
-              origin: { y: 0.6 }
-            });
+            }
           }
-        }
-      });
+        });
 
-      // 2.0：初始化雲端認證與排行榜（非阻塞）
-      if (window.MathSprintAuth) {
-        window.MathSprintAuth.init().catch(() => {});
-      }
-      if (window.MathSprintLeaderboard) {
-        window.MathSprintLeaderboard.init().catch(() => {});
+        // 2.0：初始化雲端認證與排行榜（非阻塞）
+        if (window.MathSprintAuth) {
+          window.MathSprintAuth.init().catch(() => {});
+        }
+        if (window.MathSprintLeaderboard) {
+          window.MathSprintLeaderboard.init().catch(() => {});
+        }
+      } catch (globalErr) {
+        // 連線與解析降級：一律優雅降級為匿名 Guest 模式，絕不允許中斷 JavaScript 執行
+        console.warn('[Game Init] 發生非預期錯誤，已自動降級為 Guest 試玩模式：', globalErr);
       }
     },
 
@@ -1220,7 +1261,6 @@
       showView('view-result');
 
       // 延遲註冊：如果當前是訪客，播放完結算後彈出註冊身分彈窗
-      const hasProfile = !!localStorage.getItem('limit180_user_profile');
       if (!hasProfile) {
         const totalPendingStars = starsEarned + (this._tempPendingRecord?.guest_bonus_stars || 0);
         setTimeout(() => {

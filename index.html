@@ -8,6 +8,28 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Supabase JS CDN (2.0 雲端功能) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <!-- 全域環境變數與徽章配置 (取代 config.js) -->
+  <script>
+    window.MATH_SPRINT_CONFIG = {
+      CLOUD_ENABLED: true,
+      SUPABASE_URL: "https://kzlvuyxsijsffigmcnti.supabase.co",
+      SUPABASE_ANON_KEY: "sb_publishable_U1YrJqNz18LedymnrjcoTg_2SxZQhd_",
+      EDGE_FUNCTION_URL: ""
+    };
+
+    window.MATH_SPRINT_CONFIG.STAGE_BADGES = {};
+    for (let m = 1; m <= 10; m++) {
+      window.MATH_SPRINT_CONFIG.STAGE_BADGES[m] = {};
+      for (let l = 1; l <= 20; l++) {
+        window.MATH_SPRINT_CONFIG.STAGE_BADGES[m][l] = {
+          badgeId: `badge-m${m}-l${l}`,
+          name: `Mission ${m} Stage ${l} 探索者`,
+          description: `成功通關 Mission ${m} 關卡 ${l}`
+        };
+      }
+    }
+    window.CFG = window.MATH_SPRINT_CONFIG;
+  </script>
   <!-- Supabase 服務封裝 (確保先於其它核心邏輯加載) -->
   <script src="js/supabase-service.js"></script>
   <!-- Custom Cyberpunk Styles -->
@@ -59,7 +81,6 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <!-- Core Javascript Modules (Global namespace object model) -->
-  <script src="js/config.js"></script>
   <script src="js/onboarding.js"></script>
   <script src="js/storage.js"></script>
   <script src="js/generator.js"></script>
