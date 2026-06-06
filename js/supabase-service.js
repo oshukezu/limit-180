@@ -19,11 +19,11 @@
   }
 
   // 2. 內部 SHA-256 雜湊產生器 (防改雜湊，由前端邏輯防護)
-  async function generateHash(gradeClass, seatNumber, nickname, stars, avgTime) {
+  async function generateHash(gradeClass, seatNumber, nickname, missionId, stars, avgTime, minTime) {
     // 固定的校園聯賽混淆鹽值 (Salt)
-    const salt = "Limit180_School_League_Salt_2026";
+    const salt = "Limit180_School_League_Salt_2026_V2";
     // 組合要防竄改的關鍵欄位資訊
-    const message = `${gradeClass}:${seatNumber}:${nickname}:${stars}:${avgTime}:${salt}`;
+    const message = `${gradeClass}:${seatNumber}:${nickname}:${missionId}:${stars}:${avgTime}:${minTime}:${salt}`;
     
     // 使用 Web Crypto API 進行 SHA-256 計算
     const encoder = new TextEncoder();
@@ -36,28 +36,30 @@
   }
 
   // 3. 儲存或更新用戶紀錄 (UPSERT)
-  async function saveRecord(gradeClass, seatNumber, nickname, stars, avgTime) {
+  async function saveRecord(gradeClass, seatNumber, nickname, missionId, stars, avgTime, minTime) {
     const db = getSupabaseClient();
     if (!db) {
       throw new Error("Supabase 未初始化");
     }
 
     // 計算前端防改雜湊
-    const integrityHash = await generateHash(gradeClass, seatNumber, nickname, stars, avgTime);
+    const integrityHash = await generateHash(gradeClass, seatNumber, nickname, missionId, stars, avgTime, minTime);
 
-    // 呼叫 upsert 語法，依據唯一約束的衝突鍵 grade_class 與 seat_number 覆蓋更新
+    // 呼叫 upsert 語法，依據唯一約束的衝突鍵 grade_class, seat_number 與 mission_id 覆蓋更新
     const { data, error } = await db
       .from('users_profile')
       .upsert({
         grade_class: gradeClass,
         seat_number: seatNumber,
         nickname: nickname,
-        total_stars: stars,
+        mission_id: missionId,
+        stars: stars,
         best_avg_time: avgTime,
+        min_time: minTime,
         integrity_hash: integrityHash,
         updated_at: new Date().toISOString()
       }, {
-        onConflict: 'grade_class,seat_number'
+        onConflict: 'grade_class,seat_number,mission_id'
       })
       .select();
 
@@ -70,7 +72,7 @@
     return data;
   }
 
-  // 4. 取得排行榜前 50 名資料 (總星數降序，平均答題時間升序)
+  // 4. 取得全校排行榜資料 (可用於前端分組與定位)
   async function getLeaderboard(limitNum = 50) {
     const db = getSupabaseClient();
     if (!db) {
@@ -80,8 +82,6 @@
     const { data, error } = await db
       .from('users_profile')
       .select('*')
-      .order('total_stars', { ascending: false })
-      .order('best_avg_time', { ascending: true })
       .limit(limitNum);
 
     if (error) {
@@ -96,106 +96,9 @@
         row.grade_class,
         row.seat_number,
         row.nickname,
-        row.total_stars,
-        row.best_avg_time
-      );
-
-      if (row.integrity_hash === calculatedHash) {
-        validatedData.push(row);
-      } else {
-        console.warn(
-          `[SupabaseService] 偵測到可能遭竄改的非法紀錄！已排除：${row.grade_class} 班 ${row.seat_number} 號 ${row.nickname}`
-        );
-      }
-    }
-
-    return validatedData;
-  }
-
-  // 4.5. 內部 SHA-256 關卡雜湊產生器 (防改雜湊，由前端邏輯防護)
-  async function generateMissionHash(gradeClass, seatNumber, nickname, missionNum, stars, avgTime, minTime) {
-    // 固定的關卡聯賽混淆鹽值 (Salt)
-    const salt = "Limit180_School_League_Mission_Salt_2026";
-    // 組合要防竄改的關鍵欄位資訊
-    const message = `${gradeClass}:${seatNumber}:${nickname}:${missionNum}:${stars}:${avgTime}:${minTime}:${salt}`;
-    
-    // 使用 Web Crypto API 進行 SHA-256 計算
-    const encoder = new TextEncoder();
-    const data = encoder.encode(message);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    
-    // 轉為十六進位字串 (Hex String)
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-  }
-
-  // 4.6. 儲存或更新關卡紀錄 (UPSERT)
-  async function saveMissionRecord(gradeClass, seatNumber, nickname, missionNum, stars, avgTime, minTime) {
-    const db = getSupabaseClient();
-    if (!db) {
-      throw new Error("Supabase 未初始化");
-    }
-
-    // 計算前端防改雜湊
-    const integrityHash = await generateMissionHash(gradeClass, seatNumber, nickname, missionNum, stars, avgTime, minTime);
-
-    // 呼叫 upsert 語法，依據唯一約束的衝突鍵 grade_class, seat_number 與 mission_num 覆蓋更新
-    const { data, error } = await db
-      .from('mission_records')
-      .upsert({
-        grade_class: gradeClass,
-        seat_number: seatNumber,
-        nickname: nickname,
-        mission_num: missionNum,
-        stars: stars,
-        avg_time: avgTime,
-        min_time: minTime,
-        integrity_hash: integrityHash,
-        updated_at: new Date().toISOString()
-      }, {
-        onConflict: 'grade_class,seat_number,mission_num'
-      })
-      .select();
-
-    if (error) {
-      console.error("[SupabaseService] saveMissionRecord 發生錯誤：", error.message);
-      throw error;
-    }
-
-    console.log("[SupabaseService] saveMissionRecord 成功：", data);
-    return data;
-  }
-
-  // 4.7. 取得特定關卡排行榜前 50 名資料 (獲得星星數降序，平均答題時間升序)
-  async function getMissionLeaderboard(missionNum) {
-    const db = getSupabaseClient();
-    if (!db) {
-      throw new Error("Supabase 未初始化");
-    }
-
-    const { data, error } = await db
-      .from('mission_records')
-      .select('*')
-      .eq('mission_num', missionNum)
-      .order('stars', { ascending: false })
-      .order('avg_time', { ascending: true })
-      .limit(50);
-
-    if (error) {
-      console.error("[SupabaseService] getMissionLeaderboard 發生錯誤：", error.message);
-      throw error;
-    }
-
-    // 進行前端防改雜湊校驗
-    const validatedData = [];
-    for (const row of data) {
-      const calculatedHash = await generateMissionHash(
-        row.grade_class,
-        row.seat_number,
-        row.nickname,
-        row.mission_num,
+        row.mission_id,
         row.stars,
-        row.avg_time,
+        row.best_avg_time,
         row.min_time
       );
 
@@ -203,7 +106,7 @@
         validatedData.push(row);
       } else {
         console.warn(
-          `[SupabaseService] 偵測到可能遭竄改的非法 Mission 紀錄！已排除：${row.grade_class} 班 ${row.seat_number} 號 ${row.nickname} Mission ${row.mission_num}`
+          `[SupabaseService] 偵測到可能遭竄改的非法紀錄！已排除：${row.grade_class} 班 ${row.seat_number} 號 ${row.nickname} Mission ${row.mission_id}`
         );
       }
     }
@@ -213,10 +116,8 @@
 
   // 掛載到 window 全域命名空間中
   window.MathSprintSupabaseService = {
-    initSupabase: getSupabaseClient, // 保持相容性命名
+    initSupabase: getSupabaseClient,
     saveRecord,
-    getLeaderboard,
-    saveMissionRecord,
-    getMissionLeaderboard
+    getLeaderboard
   };
 })();

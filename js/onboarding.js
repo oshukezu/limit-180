@@ -171,15 +171,60 @@
       submitBtn.textContent = "傳輸中...";
       submitBtn.disabled = true;
 
-      // 呼叫 Supabase 進行 Upsert 雲端掛號
+      // 呼叫 Supabase 進行 Upsert 雲端掛號 (針對每個已通關的 Mission 上傳其最佳成績)
       if (window.MathSprintSupabaseService) {
-        await window.MathSprintSupabaseService.saveRecord(
-          inputClass,
-          inputSeat,
-          inputNickname,
-          totalStars,
-          bestAvgTime
-        );
+        let hasUploaded = false;
+        for (let m = 1; m <= 10; m++) {
+          let missionStars = 0;
+          let totalTime = 0;
+          let count = 0;
+          let minTime = 999;
+
+          if (window.MathSprintStorage) {
+            const localProfile = window.MathSprintStorage.getProfile();
+            for (let l = 1; l <= 20; l++) {
+              const rec = localProfile.level_records[`mission-${m}-level-${l}`];
+              if (rec) {
+                missionStars += rec.stars || 0;
+                if (rec.stars > 0 && rec.best_avg_time && rec.best_avg_time < 999) {
+                  totalTime += rec.best_avg_time;
+                  count++;
+                }
+                if (rec.min_time && rec.min_time < minTime) {
+                  minTime = rec.min_time;
+                }
+              }
+            }
+          }
+
+          const avgTime = count > 0 ? parseFloat((totalTime / count).toFixed(3)) : 999;
+          if (missionStars > 0 && avgTime < 999) {
+            await window.MathSprintSupabaseService.saveRecord(
+              inputClass,
+              inputSeat,
+              inputNickname,
+              m,
+              missionStars,
+              avgTime,
+              minTime === 999 ? 99.9 : parseFloat(minTime.toFixed(3))
+            );
+            hasUploaded = true;
+          }
+        }
+        
+        // 如果這個玩家是剛註冊且本機完全無成績，我們也幫他建一筆 Mission 1 的 0 星記錄，用來在資料庫中佔位掛號
+        if (!hasUploaded) {
+          await window.MathSprintSupabaseService.saveRecord(
+            inputClass,
+            inputSeat,
+            inputNickname,
+            1,
+            0,
+            99.9,
+            99.9
+          );
+        }
+
         // 實時重新整理首頁排行榜
         if (window.MathSprintLeaderboard && window.MathSprintLeaderboard.renderLeaderboard) {
           window.MathSprintLeaderboard.renderLeaderboard().catch(() => {});
@@ -226,54 +271,9 @@
     profileBar.classList.remove('hidden');
   }
 
-  // 6. 全域同步最新成績至雲端方法 (供 storage.js 連動)
-  async function syncCurrentStatsToCloud() {
-    const profileStr = localStorage.getItem('limit180_user_profile');
-    if (!profileStr) return;
-    const u = JSON.parse(profileStr);
-
-    let totalStars = 0;
-    let bestAvgTime = 999;
-    if (window.MathSprintStorage) {
-      const localProfile = window.MathSprintStorage.getProfile();
-      totalStars = localProfile.total_stars || 0;
-      
-      let totalTime = 0;
-      let count = 0;
-      for (let key in localProfile.level_records) {
-        const rec = localProfile.level_records[key];
-        if (rec && rec.stars > 0 && rec.best_avg_time && rec.best_avg_time < 999) {
-          totalTime += rec.best_avg_time;
-          count++;
-        }
-      }
-      if (count > 0) {
-        bestAvgTime = parseFloat((totalTime / count).toFixed(3));
-      }
-    }
-
-    try {
-      if (window.MathSprintSupabaseService) {
-        await window.MathSprintSupabaseService.saveRecord(
-          u.grade_class,
-          u.seat_number,
-          u.nickname,
-          totalStars,
-          bestAvgTime
-        );
-        console.log("[Onboarding] 雲端遊戲進度同步成功。");
-        // 實時重新整理首頁排行榜
-        if (window.MathSprintLeaderboard && window.MathSprintLeaderboard.renderLeaderboard) {
-          window.MathSprintLeaderboard.renderLeaderboard().catch(() => {});
-        }
-      }
-    } catch (e) {
-      console.warn("[Onboarding] 雲端遊戲進度自動同步失敗：", e.message);
-    }
-  }
-
-  // 6.5. 同步特定 Mission 成績至雲端 (分關排行榜)
-  async function syncMissionStatsToCloud(missionNum) {
+  // 6. 全域同步特定關卡成績至雲端 (單表 users_profile，以 mission_id 為約束鍵)
+  async function syncCurrentStatsToCloud(missionId) {
+    if (!missionId) return;
     const profileStr = localStorage.getItem('limit180_user_profile');
     if (!profileStr) return;
     const u = JSON.parse(profileStr);
@@ -286,7 +286,7 @@
       let minTime = 999;
 
       for (let l = 1; l <= 20; l++) {
-        const rec = localProfile.level_records[`mission-${missionNum}-level-${l}`];
+        const rec = localProfile.level_records[`mission-${missionId}-level-${l}`];
         if (rec) {
           missionStars += rec.stars || 0;
           if (rec.stars > 0 && rec.best_avg_time && rec.best_avg_time < 999) {
@@ -303,20 +303,24 @@
       
       // 只有在真的有星數或通關紀錄時才上傳
       if (missionStars > 0 && avgTime < 999) {
-        if (window.MathSprintSupabaseService && window.MathSprintSupabaseService.saveMissionRecord) {
+        if (window.MathSprintSupabaseService && window.MathSprintSupabaseService.saveRecord) {
           try {
-            await window.MathSprintSupabaseService.saveMissionRecord(
+            await window.MathSprintSupabaseService.saveRecord(
               u.grade_class,
               u.seat_number,
               u.nickname,
-              missionNum,
+              missionId,
               missionStars,
               avgTime,
               minTime === 999 ? 99.9 : parseFloat(minTime.toFixed(3))
             );
-            console.log(`[Onboarding] 雲端 Mission ${missionNum} 進度同步成功。`);
+            console.log(`[Onboarding] 雲端 Mission ${missionId} 進度同步成功。`);
+            // 實時重新整理首頁排行榜
+            if (window.MathSprintLeaderboard && window.MathSprintLeaderboard.renderLeaderboard) {
+              window.MathSprintLeaderboard.renderLeaderboard().catch(() => {});
+            }
           } catch (e) {
-            console.warn(`[Onboarding] 雲端 Mission ${missionNum} 同步失敗：`, e.message);
+            console.warn(`[Onboarding] 雲端 Mission ${missionId} 進度自動同步失敗：`, e.message);
           }
         }
       }
@@ -326,7 +330,6 @@
   // 掛載到全域
   window.MathSprintOnboarding = {
     showProfileModal,
-    syncCurrentStatsToCloud,
-    syncMissionStatsToCloud
+    syncCurrentStatsToCloud
   };
 })();

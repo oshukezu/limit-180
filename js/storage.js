@@ -125,14 +125,9 @@
 
       this.saveProfile(profile);
 
-      // 同步新進度到 Supabase 雲端
-      if (window.MathSprintOnboarding) {
-        if (window.MathSprintOnboarding.syncCurrentStatsToCloud) {
-          window.MathSprintOnboarding.syncCurrentStatsToCloud().catch(() => {});
-        }
-        if (window.MathSprintOnboarding.syncMissionStatsToCloud) {
-          window.MathSprintOnboarding.syncMissionStatsToCloud(missionNum).catch(() => {});
-        }
+      // 同步新進度到 Supabase 雲端 (單表 users_profile)
+      if (window.MathSprintOnboarding && window.MathSprintOnboarding.syncCurrentStatsToCloud) {
+        window.MathSprintOnboarding.syncCurrentStatsToCloud(missionNum).catch(() => {});
       }
 
       return profile;
