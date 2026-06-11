@@ -2,7 +2,12 @@
 // 負責處理各分頁的「X」關閉按鈕點擊事件，並確保在退出時觸發正確的清理與保存邏輯。
 (function() {
   const UIController = {
+    hasInitialized: false,
+
     init() {
+      if (this.hasInitialized) return;
+      this.hasInitialized = true;
+
       // 綁定大廳的 X 按鈕
       const lobbyClose = document.getElementById('lobby-close-btn');
       if (lobbyClose) {
@@ -42,6 +47,8 @@
           this.closeGame();
         });
       }
+
+      console.log('[UIController] 成功初始化並綁定各視圖的右上角「X」關閉按鈕事件。');
     },
 
     closeToHome() {
@@ -73,10 +80,26 @@
     }
   };
 
+  const checkAndInit = () => {
+    // 雙重防禦：如果 DOM 中已經加載了任何一個 X 按鈕，則直接開始初始化事件綁定
+    if (document.getElementById('lobby-close-btn') || 
+        document.getElementById('game-close-btn') || 
+        document.getElementById('review-close-btn')) {
+      UIController.init();
+    }
+  };
+
   // 當 SPA 元件加載完成後自動初始化
   window.addEventListener('limit180ComponentsLoaded', () => {
     UIController.init();
   });
+
+  // 立即檢查一次（防止在事件監聽註冊前就已經完成了 fetch 載入的競態問題）
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', checkAndInit);
+  } else {
+    checkAndInit();
+  }
 
   window.MathSprintUIController = UIController;
 })();
