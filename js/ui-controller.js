@@ -1,0 +1,93 @@
+// Limit 180 — UI & 導航控制器 (UI & Navigation Controller)
+// 負責處理各分頁的「X」關閉按鈕點擊事件，並確保在退出時觸發正確的清理與保存邏輯。
+(function() {
+  const UIController = {
+    init() {
+      // 綁定大廳的 X 按鈕
+      const lobbyClose = document.getElementById('lobby-close-btn');
+      if (lobbyClose) {
+        lobbyClose.addEventListener('click', () => {
+          this.closeToHome();
+        });
+      }
+
+      // 綁定家長戰報的 X 按鈕
+      const dashboardClose = document.getElementById('dashboard-close-btn');
+      if (dashboardClose) {
+        dashboardClose.addEventListener('click', () => {
+          this.closeToHome();
+        });
+      }
+
+      // 綁定成就牆的 X 按鈕
+      const achievementsClose = document.getElementById('achievements-close-btn');
+      if (achievementsClose) {
+        achievementsClose.addEventListener('click', () => {
+          this.closeToHome();
+        });
+      }
+
+      // 綁定錯題消除的 X 按鈕
+      const reviewClose = document.getElementById('review-close-btn');
+      if (reviewClose) {
+        reviewClose.addEventListener('click', () => {
+          this.closeReview();
+        });
+      }
+
+      // 綁定遊戲介面的 X 按鈕
+      const gameClose = document.getElementById('game-close-btn');
+      if (gameClose) {
+        gameClose.addEventListener('click', () => {
+          this.closeGame();
+        });
+      }
+    },
+
+    closeToHome() {
+      if (window.MathSprintGame && window.MathSprintGame.stopGame) {
+        window.MathSprintGame.stopGame();
+      }
+      if (window.showView) {
+        window.showView('view-home');
+      }
+    },
+
+    closeReview() {
+      // 觸發錯題消除進度序列化保存
+      if (window.MathSprintGame && window.MathSprintGame.saveReviewProgress) {
+        window.MathSprintGame.saveReviewProgress();
+      }
+      this.closeToHome();
+    },
+
+    closeGame() {
+      const hasProfile = !!localStorage.getItem('limit180_user_profile');
+      const dest = hasProfile ? '大廳' : '首頁';
+      if (confirm(`確定要放棄本次挑戰，返回${dest}嗎？`)) {
+        if (window.MathSprintGame && window.MathSprintGame.interruptGame) {
+          window.MathSprintGame.interruptGame();
+        }
+        if (hasProfile) {
+          if (window.MathSprintGame && window.MathSprintGame.renderLobby) {
+            window.MathSprintGame.renderLobby();
+          }
+          if (window.showView) {
+            window.showView('view-lobby');
+          }
+        } else {
+          if (window.showView) {
+            window.showView('view-home');
+          }
+        }
+      }
+    }
+  };
+
+  // 當 SPA 元件加載完成後自動初始化
+  window.addEventListener('limit180ComponentsLoaded', () => {
+    UIController.init();
+  });
+
+  window.MathSprintUIController = UIController;
+})();

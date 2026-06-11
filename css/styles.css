@@ -567,5 +567,33 @@ body.body-in-game main {
   transform: scale(0.95) !important;
 }
 
+/* ============================================================ */
+/* 右上角高對比翠綠色霓虹關閉按鈕 (Close Button Styles)         */
+/* ============================================================ */
+.close-btn {
+  position: absolute !important;
+  top: 1rem !important;
+  right: 1rem !important;
+  font-size: 1.875rem !important; /* text-3xl */
+  font-weight: 700 !important; /* font-bold */
+  color: var(--neon-green) !important;
+  cursor: pointer !important;
+  background: none !important;
+  border: none !important;
+  transition: color 0.2s ease-in-out, text-shadow 0.2s ease-in-out, transform 0.2s ease-in-out !important;
+  z-index: 50 !important;
+  line-height: 1 !important;
+}
+
+.close-btn:hover {
+  color: #ffffff !important;
+  text-shadow: 0 0 8px var(--neon-green), 0 0 15px var(--neon-green) !important;
+}
+
+.close-btn:active {
+  transform: scale(0.9) !important;
+}
+
+
 
 

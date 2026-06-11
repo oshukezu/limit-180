@@ -402,22 +402,8 @@ window.CFG = window.MATH_SPRINT_CONFIG;
           this.startGame(nextMission, nextLevel);
         }
       });
-
-      // Exit
-      document.getElementById('game-exit-btn').addEventListener('click', () => {
-        const hasProfile = !!localStorage.getItem('limit180_user_profile');
-        const dest = hasProfile ? '大廳' : '首頁';
-        if (confirm(`確定要放棄本次挑戰，返回${dest}嗎？`)) {
-          this.stopGame();
-          if (hasProfile) {
-            this.renderLobby();
-            showView('view-lobby');
-          } else {
-            showView('view-home');
-          }
-        }
-      });
-
+      // 舊有 game-exit-btn 已移除，改由 ui-controller.js 統一處理右上角 X 關閉事件
+      
       // Input submitting (Calc Mode)
       document.getElementById('calc-submit-btn').addEventListener('click', () => this.submitCalcAnswer());
       document.getElementById('calc-input').addEventListener('keydown', (e) => {
@@ -725,6 +711,29 @@ window.CFG = window.MATH_SPRINT_CONFIG;
       clearInterval(this.timerInterval);
       this.timerInterval = null;
       document.getElementById('scaffold-canvas-container').innerHTML = '';
+    },
+
+    interruptGame() {
+      // 1. 計時器斷電
+      this.stopGame();
+      
+      // 2. 記憶體重置
+      this.gameState.combo = 0;
+      this.gameState.maxCombo = 0;
+      this.gameState.correctCount = 0;
+      this.gameState.questionTimes = [];
+      this.gameState.recentQueue = [];
+      
+      // 3. 拒絕寫入：將暫存成績標記為 null 且絕對禁止 Supabase 數據發送
+      this._tempPendingRecord = null;
+      console.log('[Game] 挑戰已安全中斷，記憶體已歸零，已拒絕寫入雲端與本地存檔。');
+    },
+
+    saveReviewProgress() {
+      if (this.gameState.isReviewMode) {
+        localStorage.setItem('error_questions_queue', JSON.stringify(this.gameState.reviewList));
+        console.log('[Game] 錯題消除進度已即時序列化並保存至本機快取。');
+      }
     },
 
     // 2.0：非同步提交雲端成績（不阻塞結算畫面顯示）
@@ -1439,7 +1448,21 @@ window.CFG = window.MATH_SPRINT_CONFIG;
     startReviewMode() {
       const profile = window.MathSprintStorage.getProfile();
       this.gameState.isReviewMode = true;
-      this.gameState.reviewList = [...profile.wrong_questions_db];
+      
+      // 優先讀取本機快取以實現續接
+      const cachedQueue = localStorage.getItem('error_questions_queue');
+      if (cachedQueue) {
+        try {
+          this.gameState.reviewList = JSON.parse(cachedQueue);
+          console.log('[Game] 成功載入本機快取的錯題消除進度，續接上次挑戰。');
+        } catch (e) {
+          console.warn('[Game] 解析本機錯題快取失敗，將 fallback 讀取資料庫：', e);
+          this.gameState.reviewList = [...profile.wrong_questions_db];
+        }
+      } else {
+        this.gameState.reviewList = [...profile.wrong_questions_db];
+      }
+
       this.gameState.reviewCorrectStrike = 0;
       this.gameState.isPaused = false;
       this.gameState.isGameOver = false;
@@ -1534,6 +1557,8 @@ window.CFG = window.MATH_SPRINT_CONFIG;
           if (result && result.removed) {
             this.gameState.reviewList.shift();
             if (this.gameState.reviewList.length === 0) {
+              localStorage.removeItem('error_questions_queue');
+              console.log('[Game] 所有錯題已完全消除，本機快取已清空。');
               this.startReviewMode();
               return;
             }
@@ -1544,6 +1569,8 @@ window.CFG = window.MATH_SPRINT_CONFIG;
               this.gameState.reviewList.push(current);
             }
           }
+          // 在每次答題進度更新時，也即時同步寫入快取，以防突發關閉
+          localStorage.setItem('error_questions_queue', JSON.stringify(this.gameState.reviewList));
           this.loadReviewQuestion();
         }, 1200);
 
@@ -1561,6 +1588,8 @@ window.CFG = window.MATH_SPRINT_CONFIG;
             current.solvedCount = 0;
             this.gameState.reviewList.push(current);
           }
+          // 答錯進度重置時，也更新本機快取
+          localStorage.setItem('error_questions_queue', JSON.stringify(this.gameState.reviewList));
           this.loadReviewQuestion();
         }, 2200);
       }
