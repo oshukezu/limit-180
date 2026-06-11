@@ -8,47 +8,24 @@
       if (this.hasInitialized) return;
       this.hasInitialized = true;
 
-      // 綁定大廳的 X 按鈕
-      const lobbyClose = document.getElementById('lobby-close-btn');
-      if (lobbyClose) {
-        lobbyClose.addEventListener('click', () => {
-          this.closeToHome();
-        });
-      }
+      // 使用事件代理 (Event Delegation) 監聽全域點擊事件，防止 Race Condition 與動態渲染 DOM 失效
+      document.addEventListener('click', (e) => {
+        const closeBtn = e.target.closest('.close-btn');
+        if (!closeBtn) return;
 
-      // 綁定家長戰報的 X 按鈕
-      const dashboardClose = document.getElementById('dashboard-close-btn');
-      if (dashboardClose) {
-        dashboardClose.addEventListener('click', () => {
-          this.closeToHome();
-        });
-      }
+        const id = closeBtn.id;
+        console.log(`[UIController] 偵測到關閉按鈕點擊，ID: ${id}`);
 
-      // 綁定成就牆的 X 按鈕
-      const achievementsClose = document.getElementById('achievements-close-btn');
-      if (achievementsClose) {
-        achievementsClose.addEventListener('click', () => {
+        if (id === 'lobby-close-btn' || id === 'dashboard-close-btn' || id === 'achievements-close-btn') {
           this.closeToHome();
-        });
-      }
-
-      // 綁定錯題消除的 X 按鈕
-      const reviewClose = document.getElementById('review-close-btn');
-      if (reviewClose) {
-        reviewClose.addEventListener('click', () => {
+        } else if (id === 'review-close-btn') {
           this.closeReview();
-        });
-      }
-
-      // 綁定遊戲介面的 X 按鈕
-      const gameClose = document.getElementById('game-close-btn');
-      if (gameClose) {
-        gameClose.addEventListener('click', () => {
+        } else if (id === 'game-close-btn') {
           this.closeGame();
-        });
-      }
+        }
+      });
 
-      console.log('[UIController] 成功初始化並綁定各視圖的右上角「X」關閉按鈕事件。');
+      console.log('[UIController] 成功以事件代理 (Event Delegation) 初始化全域「X」關閉監聽。');
     },
 
     closeToHome() {
@@ -80,26 +57,8 @@
     }
   };
 
-  const checkAndInit = () => {
-    // 雙重防禦：如果 DOM 中已經加載了任何一個 X 按鈕，則直接開始初始化事件綁定
-    if (document.getElementById('lobby-close-btn') || 
-        document.getElementById('game-close-btn') || 
-        document.getElementById('review-close-btn')) {
-      UIController.init();
-    }
-  };
-
-  // 當 SPA 元件加載完成後自動初始化
-  window.addEventListener('limit180ComponentsLoaded', () => {
-    UIController.init();
-  });
-
-  // 立即檢查一次（防止在事件監聽註冊前就已經完成了 fetch 載入的競態問題）
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', checkAndInit);
-  } else {
-    checkAndInit();
-  }
+  // 立即初始化（事件代理不需要等待 DOMContentLoaded 或元件異步 fetch 載入）
+  UIController.init();
 
   window.MathSprintUIController = UIController;
 })();

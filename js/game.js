@@ -341,7 +341,8 @@ window.CFG = window.MATH_SPRINT_CONFIG;
       });
 
       // Lobby navigation (延遲註冊大廳鎖定：無帳號訪客強制進試玩)
-      document.getElementById('start-levels-btn').addEventListener('click', () => {
+      const lobbyBtnHandler = () => {
+        this.stopGame();
         const hasProfile = !!localStorage.getItem('limit180_user_profile');
         if (hasProfile) {
           this.renderLobby();
@@ -350,7 +351,16 @@ window.CFG = window.MATH_SPRINT_CONFIG;
           alert("【訪客特工試玩模式】\n\n您目前為訪客身份，請先完成第一局「Mission 1 Stage 01」試玩，即可註冊身份並解鎖所有功能！");
           this.startGame(1, 1);
         }
-      });
+      };
+
+      const startLevelsBtn = document.getElementById('start-levels-btn');
+      if (startLevelsBtn) {
+        startLevelsBtn.addEventListener('click', lobbyBtnHandler);
+      }
+      const navLobbyBtn = document.getElementById('nav-lobby-btn');
+      if (navLobbyBtn) {
+        navLobbyBtn.addEventListener('click', lobbyBtnHandler);
+      }
       
       
       // Result actions
