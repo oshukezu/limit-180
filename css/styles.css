@@ -521,3 +521,51 @@ body.body-in-game main {
   min-height: 80px !important;
 }
 
+/* ============================================================ */
+/* 電光翠綠 (Neon Green) 核心巨大化按鈕                         */
+/* ============================================================ */
+.neon-green-btn {
+  background-color: #000000 !important;
+  border: 2px solid var(--neon-green) !important;
+  color: var(--neon-green) !important;
+  transition: all 0.2s ease-in-out !important;
+  cursor: pointer;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+.neon-green-btn:hover {
+  background-color: #000000 !important;
+  box-shadow: 0 0 20px var(--neon-green), inset 0 0 8px var(--neon-green) !important;
+  text-shadow: 0 0 8px var(--neon-green) !important;
+}
+
+.neon-green-btn:active {
+  transform: scale(0.98) !important;
+  box-shadow: 0 0 30px var(--neon-green), inset 0 0 12px var(--neon-green) !important;
+  text-shadow: 0 0 12px var(--neon-green) !important;
+}
+
+/* ============================================================ */
+/* 低調導航按鈕 (Header Navigation Buttons - Noise Reduction)  */
+/* ============================================================ */
+.nav-btn {
+  border: 1px solid #1e293b !important;
+  background: rgba(0, 0, 0, 0.6) !important;
+  color: #94a3b8 !important;
+  transition: all 0.2s ease-in-out !important;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.nav-btn:hover {
+  border-color: #94a3b8 !important;
+  color: #ffffff !important;
+}
+
+.nav-btn:active {
+  transform: scale(0.95) !important;
+}
+
+
+

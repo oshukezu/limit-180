@@ -1,67 +1,61 @@
 <section id="view-home" class="view-section py-8 flex flex-col items-center">
   <!-- 用戶身份綁定右上角顯示區 -->
   <div id="user-profile-bar" class="w-full max-w-4xl flex justify-center items-center mb-6 px-4 hidden">
-    <div class="flex items-center gap-3 bg-slate-950/80 border border-cyan-800/50 p-2.5 rounded shadow-[0_0_10px_rgba(0,240,255,0.1)] text-[10px] font-pixel text-slate-300 mx-auto text-center">
-      👤 <span id="user-profile-info" class="text-cyan-400"></span>
-      <button id="edit-profile-btn" class="cyber-btn px-2 py-1 text-[8px] text-pink-400 border-pink-500 font-pixel">修改暱稱</button>
+    <div class="flex items-center gap-3 bg-slate-950/80 border border-slate-800 p-2.5 rounded shadow-none text-[10px] font-pixel text-slate-400 mx-auto text-center">
+      👤 <span id="user-profile-info" class="text-white"></span>
+      <button id="edit-profile-btn" class="cyber-btn px-2 py-1 text-[8px] text-slate-400 border-slate-600 font-pixel">修改暱稱</button>
     </div>
   </div>
 
-  <div class="text-center mb-8">
-    <p class="text-xs font-pixel text-pink-500 mb-2 glow-pink">// NEON ARCADIA SPORTS //</p>
-    <h2 class="text-4xl md:text-5xl font-pixel text-green-400 glow-green tracking-widest uppercase">Limit 180</h2>
+  <div class="text-center mb-10">
+    <p class="text-xs font-pixel text-slate-500 mb-2">// CORE ENGINE SYSTEM //</p>
+    <h2 class="text-4xl md:text-5xl font-pixel text-white tracking-widest uppercase">Limit 180</h2>
     <p class="text-slate-400 text-sm mt-3 font-tech max-w-lg mx-auto">
       正式代號「Limit 180」！你的目標是挑戰 100 題在 3 分鐘 (180 秒) 內做完的極速心算極限。
     </p>
   </div>
 
-  <!-- Quick Action Panels -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl mb-8">
-    <!-- Play Panel -->
-    <div class="hud-panel p-6 bg-slate-900/80 flex flex-col justify-between">
-      <div>
-        <h3 class="text-lg font-pixel text-cyan-400 mb-4">速算挑戰模式</h3>
-        <p class="text-sm text-slate-300 leading-relaxed mb-4">
-          挑戰 10 個由淺入深的關卡。累積星星以解鎖更高等級，解鎖終極的「Limit 180 終極挑戰」！
-        </p>
+  <!-- 核心入口按鈕垂直置中堆疊 -->
+  <div class="flex flex-col items-center space-y-6 w-full max-w-md mx-auto mb-10 font-pixel">
+    <!-- 速算挑戰模式按鈕組 -->
+    <div class="w-full flex flex-col items-center">
+      <button id="start-levels-btn" class="neon-green-btn w-full py-6 text-2xl font-black rounded-2xl tracking-widest">
+        速算挑戰模式
+      </button>
+      <div class="flex items-center gap-2 mt-2 text-xs text-slate-400">
+        <span>當前星數:</span>
+        <span id="profile-total-stars" class="text-[#39ff14] font-bold">0</span>
+        <span>★</span>
       </div>
-      <div class="flex items-center justify-between mt-4">
-        <span class="text-xs font-pixel text-slate-400">當前星數: <span id="profile-total-stars" class="text-green-400">0</span> ★</span>
-        <button id="start-levels-btn" class="cyber-btn px-6 py-2.5 font-pixel text-xs text-cyan-400">
-          進入大廳
-        </button>
-      </div>
+      <p class="text-slate-500 text-[10px] mt-1 font-tech text-center">挑戰 10 個由淺入深的點陣心算關卡</p>
     </div>
 
-    <!-- Wrong Questions Panel -->
-    <div class="hud-panel p-6 bg-slate-900/80 border-glow-pink flex flex-col justify-between">
-      <div>
-        <h3 class="text-lg font-pixel text-pink-500 mb-4">錯題消除訓練</h3>
-        <p class="text-sm text-slate-300 leading-relaxed mb-4">
-          凡是在遊戲中做錯或超時的題目，都會自動載入此防錯系統。無時間限制，將每道錯題「重新答對 3 次」即可消除它，紮實奠定數學基礎！
-        </p>
+    <!-- 錯題消除訓練按鈕組 -->
+    <div class="w-full flex flex-col items-center">
+      <button id="start-review-btn" class="neon-green-btn w-full py-6 text-2xl font-black rounded-2xl tracking-widest">
+        錯題消除訓練
+      </button>
+      <div class="flex items-center gap-2 mt-2 text-xs text-slate-400">
+        <span>待消除錯題:</span>
+        <span id="profile-wrong-count" class="text-white font-bold">0</span>
+        <span>題</span>
       </div>
-      <div class="flex items-center justify-between mt-4">
-        <span class="text-xs font-pixel text-slate-400">待消除錯題: <span id="profile-wrong-count" class="text-pink-500">0</span> 題</span>
-        <button id="start-review-btn" class="cyber-btn cyber-btn-pink px-6 py-2.5 font-pixel text-xs text-pink-400">
-          錯題消除
-        </button>
-      </div>
+      <p class="text-slate-500 text-[10px] mt-1 font-tech text-center">重新答對 3 次即可消除做錯題目</p>
     </div>
   </div>
 
   <!-- 2.0：全台速算秒殺榜 -->
   <div class="w-full max-w-4xl">
-    <div class="hud-panel p-5 bg-slate-900/80">
+    <div class="hud-panel p-5 bg-slate-900/80 border-slate-800">
       <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
         <div class="flex items-center gap-2">
-          <span class="text-base font-pixel text-green-400 glow-green">⚡ 全台速算秒殺榜</span>
-          <span id="leaderboard-live-dot" class="inline-block w-2 h-2 rounded-full bg-neon-green transition-all duration-300" style="background: #39ff14; box-shadow: 0 0 6px #39ff14;"></span>
+          <span class="text-base font-pixel text-white">⚡ 全台速算秒殺榜</span>
+          <span id="leaderboard-live-dot" class="inline-block w-2 h-2 rounded-full bg-slate-500 transition-all duration-300" style="background: #39ff14; box-shadow: 0 0 6px #39ff14;"></span>
           <span class="text-[9px] font-pixel text-slate-500">即時</span>
         </div>
         <div id="leaderboard-select-container" class="flex items-center gap-2 hidden">
           <span class="text-[10px] font-pixel text-slate-400">Mission</span>
-          <select id="leaderboard-mission-select" class="bg-slate-950 border border-cyan-800 text-cyan-400 font-pixel text-[10px] px-2 py-1 rounded focus:outline-none focus:border-cyan-400">
+          <select id="leaderboard-mission-select" class="bg-slate-950 border border-slate-800 text-white font-pixel text-[10px] px-2 py-1 rounded focus:outline-none focus:border-slate-500">
             <!-- 由 JS 動態生成 -->
           </select>
         </div>
@@ -69,13 +63,13 @@
 
       <!-- 排行榜 Tab 分頁切換 -->
       <div class="flex border-b border-slate-800 mb-4 font-pixel text-[10px]">
-        <button id="tab-leaderboard-personal" class="flex-1 text-center py-2.5 text-cyan-400 border-b-2 border-cyan-500 font-bold focus:outline-none cursor-pointer">個人總榜</button>
-        <button id="tab-leaderboard-team" class="flex-1 text-center py-2.5 text-slate-400 hover:text-cyan-400 focus:outline-none cursor-pointer">團隊對抗榜</button>
-        <button id="tab-leaderboard-mission" class="flex-1 text-center py-2.5 text-slate-400 hover:text-cyan-400 focus:outline-none cursor-pointer">答題速度榜</button>
+        <button id="tab-leaderboard-personal" class="flex-1 text-center py-2.5 text-white border-b-2 border-white font-bold focus:outline-none cursor-pointer">個人總榜</button>
+        <button id="tab-leaderboard-team" class="flex-1 text-center py-2.5 text-slate-400 hover:text-white border-b border-slate-800 focus:outline-none cursor-pointer">團隊對抗榜</button>
+        <button id="tab-leaderboard-mission" class="flex-1 text-center py-2.5 text-slate-400 hover:text-white border-b border-slate-800 focus:outline-none cursor-pointer">答題速度榜</button>
       </div>
 
       <!-- 我的排名固定 Block -->
-      <div id="leaderboard-my-rank-block" class="mb-3 p-3 bg-cyan-950/30 border border-cyan-800/80 rounded flex justify-between items-center text-[10px] font-pixel text-slate-300">
+      <div id="leaderboard-my-rank-block" class="mb-3 p-3 bg-slate-950/50 border border-slate-800 rounded flex justify-between items-center text-[10px] font-pixel text-slate-300">
         <!-- 由 JS 動態渲染當前登入玩家排名 -->
       </div>
 
@@ -94,3 +88,4 @@
     </div>
   </div>
 </section>
+

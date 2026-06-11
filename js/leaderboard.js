@@ -379,10 +379,10 @@
           if (!tabs[k]) return;
           if (k === tabName) {
             tabs[k].classList.remove('text-slate-400');
-            tabs[k].classList.add('text-cyan-400', 'border-b-2', 'border-cyan-500', 'font-bold');
+            tabs[k].classList.add('text-white', 'border-b-2', 'border-white', 'font-bold');
           } else {
             tabs[k].classList.add('text-slate-400');
-            tabs[k].classList.remove('text-cyan-400', 'border-b-2', 'border-cyan-500', 'font-bold');
+            tabs[k].classList.remove('text-white', 'border-b-2', 'border-white', 'font-bold');
           }
         });
 

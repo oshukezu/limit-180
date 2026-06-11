@@ -351,7 +351,7 @@ window.CFG = window.MATH_SPRINT_CONFIG;
           this.startGame(1, 1);
         }
       });
-      document.getElementById('lobby-back-btn').addEventListener('click', () => showView('view-home'));
+      
       
       // Result actions
       document.getElementById('result-lobby-btn').addEventListener('click', () => {
@@ -493,7 +493,7 @@ window.CFG = window.MATH_SPRINT_CONFIG;
 
       // --- Review Mode Events ---
       document.getElementById('start-review-btn').addEventListener('click', () => this.startReviewMode());
-      document.getElementById('review-back-btn').addEventListener('click', () => showView('view-home'));
+      
       
        document.getElementById('review-submit-btn').addEventListener('click', () => this.submitReviewAnswer());
       document.getElementById('review-input').addEventListener('keydown', (e) => {
