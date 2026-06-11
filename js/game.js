@@ -262,41 +262,14 @@ window.CFG = window.MATH_SPRINT_CONFIG;
 
         // 監聽全新四維星星獎勵事件 (Gamification Reward)
         window.addEventListener('mathSprintBonusStarAwarded', (e) => {
-          alert(e.detail.text);
-          
-          // 滿集暴擊或里程碑成就 Confetti 特效
-          if (typeof confetti !== 'undefined') {
-            if (e.detail.type === 'mission_complete') {
-              // 滿集暴擊特效：酷炫的霓虹流星暴擊雨
-              let duration = 3 * 1000;
-              let end = Date.now() + duration;
-
-              (function frame() {
-                confetti({
-                  particleCount: 6,
-                  angle: 60,
-                  spread: 55,
-                  origin: { x: 0 }
-                });
-                confetti({
-                  particleCount: 6,
-                  angle: 120,
-                  spread: 55,
-                  origin: { x: 1 }
-                });
-
-                if (Date.now() < end) {
-                  requestAnimationFrame(frame);
-                }
-              }());
-            } else {
-              // 普通星星加發
-              confetti({
-                particleCount: 80,
-                spread: 50,
-                origin: { y: 0.6 }
-              });
-            }
+          // 只有在遊戲進行中 (view-game / view-review 且 isGameOver 為 false) 才進行暫存防打斷
+          const inGame = (currentView === 'view-game' && !this.gameState.isGameOver) ||
+                         (currentView === 'view-review' && !this.gameState.isGameOver);
+          if (inGame) {
+            this._pendingRewards = this._pendingRewards || [];
+            this._pendingRewards.push(e.detail);
+          } else {
+            this.showBonusStarAlert(e.detail);
           }
         });
 
@@ -740,6 +713,45 @@ window.CFG = window.MATH_SPRINT_CONFIG;
       if (this.gameState.isReviewMode) {
         localStorage.setItem('error_questions_queue', JSON.stringify(this.gameState.reviewList));
         console.log('[Game] 錯題消除進度已即時序列化並保存至本機快取。');
+      }
+    },
+
+    showBonusStarAlert(detail) {
+      alert(detail.text);
+      
+      // 滿集暴擊或里程碑成就 Confetti 特效
+      if (typeof confetti !== 'undefined') {
+        if (detail.type === 'mission_complete') {
+          // 滿集暴擊特效：酷炫的霓虹流星暴擊雨
+          let duration = 3 * 1000;
+          let end = Date.now() + duration;
+
+          (function frame() {
+            confetti({
+              particleCount: 6,
+              angle: 60,
+              spread: 55,
+              origin: { x: 0 }
+            });
+            confetti({
+              particleCount: 6,
+              angle: 120,
+              spread: 55,
+              origin: { x: 1 }
+            });
+
+            if (Date.now() < end) {
+              requestAnimationFrame(frame);
+            }
+          }());
+        } else {
+          // 普通星星加發
+          confetti({
+            particleCount: 80,
+            spread: 50,
+            origin: { y: 0.6 }
+          });
+        }
       }
     },
 
@@ -1255,6 +1267,16 @@ window.CFG = window.MATH_SPRINT_CONFIG;
             window.MathSprintOnboarding.showProfileModal(false, totalPendingStars);
           }
         }, 1500);
+      }
+
+      // 處理被暫存的星星獎勵提示，在遊戲結束後再顯示
+      if (this._pendingRewards && this._pendingRewards.length > 0) {
+        setTimeout(() => {
+          this._pendingRewards.forEach(detail => {
+            this.showBonusStarAlert(detail);
+          });
+          this._pendingRewards = [];
+        }, 600);
       }
     },
 

@@ -50,6 +50,16 @@
         if (window.MathSprintGame.interruptGame) {
           window.MathSprintGame.interruptGame();
         }
+
+        // 顯示被暫存的星星獎勵提示
+        if (window.MathSprintGame._pendingRewards && window.MathSprintGame._pendingRewards.length > 0) {
+          setTimeout(() => {
+            window.MathSprintGame._pendingRewards.forEach(detail => {
+              window.MathSprintGame.showBonusStarAlert(detail);
+            });
+            window.MathSprintGame._pendingRewards = [];
+          }, 500);
+        }
       }
     },
 
