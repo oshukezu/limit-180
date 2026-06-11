@@ -62,23 +62,12 @@
     },
 
     closeGame() {
-      const hasProfile = !!localStorage.getItem('limit180_user_profile');
-      const dest = hasProfile ? '大廳' : '首頁';
-      if (confirm(`確定要放棄本次挑戰，返回${dest}嗎？`)) {
+      if (confirm(`確定要放棄本次挑戰，返回首頁嗎？`)) {
         if (window.MathSprintGame && window.MathSprintGame.interruptGame) {
           window.MathSprintGame.interruptGame();
         }
-        if (hasProfile) {
-          if (window.MathSprintGame && window.MathSprintGame.renderLobby) {
-            window.MathSprintGame.renderLobby();
-          }
-          if (window.showView) {
-            window.showView('view-lobby');
-          }
-        } else {
-          if (window.showView) {
-            window.showView('view-home');
-          }
+        if (window.showView) {
+          window.showView('view-home');
         }
       }
     }
