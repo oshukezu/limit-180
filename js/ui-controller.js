@@ -29,16 +29,32 @@
     },
 
     closeToHome() {
-      if (window.MathSprintGame && window.MathSprintGame.stopGame) {
-        window.MathSprintGame.stopGame();
+      // 1. 立即切換 UI，0.1 秒內順暢跳轉
+      document.querySelectorAll('.view-section').forEach(section => {
+        section.classList.add('hidden');
+      });
+      const home = document.getElementById('view-home');
+      if (home) {
+        home.classList.remove('hidden');
       }
-      if (window.showView) {
-        window.showView('view-home');
+      document.body.classList.remove('body-in-game');
+      const scannerLine = document.querySelector('.scanner-line');
+      if (scannerLine) scannerLine.style.display = '';
+
+      // 2. 安全停損：若在遊戲中，關閉計時器並清理記憶體暫存，絕不向 Supabase 發送請求
+      if (window.MathSprintGame) {
+        if (window.MathSprintGame.timerInterval) {
+          clearInterval(window.MathSprintGame.timerInterval);
+          window.MathSprintGame.timerInterval = null;
+        }
+        if (window.MathSprintGame.interruptGame) {
+          window.MathSprintGame.interruptGame();
+        }
       }
     },
 
     closeReview() {
-      // 觸發錯題消除進度序列化保存
+      // 3. 進度保存：若在錯題消除中，僅以 JSON 儲存回本地，完全不牽涉 Supabase 的非同步等待
       if (window.MathSprintGame && window.MathSprintGame.saveReviewProgress) {
         window.MathSprintGame.saveReviewProgress();
       }
@@ -47,12 +63,7 @@
 
     closeGame() {
       if (confirm(`確定要放棄本次挑戰，返回首頁嗎？`)) {
-        if (window.MathSprintGame && window.MathSprintGame.interruptGame) {
-          window.MathSprintGame.interruptGame();
-        }
-        if (window.showView) {
-          window.showView('view-home');
-        }
+        this.closeToHome();
       }
     }
   };

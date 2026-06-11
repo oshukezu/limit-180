@@ -97,9 +97,36 @@
   <script src="js/missions/mission10.js"></script>
   <script src="js/achievements.js"></script>
   <script src="js/dashboard.js"></script>
-  <!-- 2.0 Cloud Modules（依賴 storage.js，需在 game.js 之前載入）-->
-  <script src="js/auth.js"></script>
-  <script src="js/cloud-sync.js"></script>
+  <!-- 徹底拔除 Supabase Auth 依賴，注入虛擬 Dummy 物件以維持相容性 -->
+  <script>
+    window.MathSprintAuth = {
+      isReady: true,
+      currentUser: null,
+      getUser: () => null,
+      getNickname: () => {
+        let nick = localStorage.getItem('math_sprint_nickname');
+        if (!nick) {
+          const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+          nick = 'PIXEL-';
+          for (let i = 0; i < 4; i++) {
+            nick += chars[Math.floor(Math.random() * chars.length)];
+          }
+          localStorage.setItem('math_sprint_nickname', nick);
+        }
+        return nick;
+      },
+      signInAnonymously: async () => null,
+      signInWithGoogle: async () => null,
+      linkGoogleAccount: async () => null,
+      signOut: async () => {},
+      init: async () => {}
+    };
+    window.MathSprintCloudSync = {
+      syncToCloud: async () => {},
+      syncOnLogin: async () => {},
+      isOnline: () => navigator.onLine
+    };
+  </script>
   <script src="js/leaderboard.js"></script>
   
   <script src="js/loader.js"></script>

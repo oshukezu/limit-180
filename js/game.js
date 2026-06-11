@@ -300,10 +300,7 @@ window.CFG = window.MATH_SPRINT_CONFIG;
           }
         });
 
-        // 2.0：初始化雲端認證與排行榜（非阻塞）
-        if (window.MathSprintAuth) {
-          window.MathSprintAuth.init().catch(() => {});
-        }
+        // 2.0：初始化雲端排行榜（非阻塞）
         if (window.MathSprintLeaderboard) {
           window.MathSprintLeaderboard.init().catch(() => {});
         }
@@ -753,43 +750,9 @@ window.CFG = window.MATH_SPRINT_CONFIG;
       if (!navigator.onLine) return;
 
       try {
-        // Mission 10（傳奇）需走 Edge Function 防作弊驗證
-        if (missionNum === 10 && CFG.EDGE_FUNCTION_URL) {
-          const user = window.MathSprintAuth?.currentUser;
-          if (!user) return;
-
-          const { data: { session } } = await window.MathSprintAuth.supabase.auth.getSession();
-          if (!session?.access_token) return;
-
-          const resp = await fetch(CFG.EDGE_FUNCTION_URL, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${session.access_token}`
-            },
-            body: JSON.stringify({
-              mission_num: missionNum,
-              level_num: levelNum,
-              question_times: questionTimes,
-              correct_count: correctCount,
-              total_questions: totalQuestions
-            })
-          });
-
-          const result = await resp.json();
-          if (!resp.ok || !result.success) {
-            console.warn('[Game] Mission 10 防作弊驗證拒絕：', result.verdict || result.error);
-            // 不顯示特別提示（靜默拒絕，避免教育作弊者邊界）
-            return;
-          }
-
-          console.log('[Game] Mission 10 ✅ 防作弊通過，已記錄傳奇殿堂成績');
-
-        } else if (missionNum < 10) {
-          // Mission 1-9：直接同步排行榜
-          if (window.MathSprintOnboarding && window.MathSprintOnboarding.syncCurrentStatsToCloud) {
-            await window.MathSprintOnboarding.syncCurrentStatsToCloud(missionNum);
-          }
+        // 徹底去 Auth 化：所有 Mission 皆直接透過 Onboarding 進行單表 Upsert 同步
+        if (window.MathSprintOnboarding && window.MathSprintOnboarding.syncCurrentStatsToCloud) {
+          await window.MathSprintOnboarding.syncCurrentStatsToCloud(missionNum);
         }
       } catch (e) {
         console.warn('[Game] _submitCloudResult 例外:', e.message);
