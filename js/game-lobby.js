@@ -182,21 +182,14 @@
               btn.classList.add('locked');
               btn.innerHTML = `<span class="text-[8px]">🔒</span>`;
             } else {
-              let gradeHtml = '';
               if (grade) {
-                let colorClass = 'text-slate-400';
-                if (grade === 'S') colorClass = 'text-yellow-400 font-bold glow-yellow';
-                else if (grade === 'A') colorClass = 'text-cyan-400 font-bold glow-blue';
-                else if (grade === 'B') colorClass = 'text-green-400 font-bold glow-green';
-                else if (grade === 'C') colorClass = 'text-orange-400';
-                else if (grade === 'D') colorClass = 'text-slate-400';
-                gradeHtml = `<span class="text-[8px] font-pixel ${colorClass}" style="font-size: 8px; margin-top: 1px;">${grade}</span>`;
+                // 已過關：只顯示等級評級，移除數字與霓虹效果，S級用黃色，其餘等級用白色
+                const colorClass = (grade === 'S') ? 'text-yellow-400 font-bold' : 'text-white font-bold';
+                btn.innerHTML = `<span class="text-xs font-pixel ${colorClass}">${grade}</span>`;
+              } else {
+                // 未過關（但已解鎖）：顯示關卡數字
+                btn.innerHTML = `<span class="text-[9px] font-pixel text-slate-300">${L}</span>`;
               }
-
-              btn.innerHTML = `
-                <span class="text-[9px] font-pixel">${L}</span>
-                ${gradeHtml}
-              `;
               btn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 if (window.MathSprintGame && typeof window.MathSprintGame.startGame === 'function') {
