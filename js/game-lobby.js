@@ -30,14 +30,15 @@
 
       // Unlocked highest category text calculation
       let maxUnlockedMission = 1;
-      for (let m = 1; m <= 10; m++) {
+      const count = Object.keys(MISSION_CONFIGS).length;
+      for (let m = 1; m <= count; m++) {
         if (window.MathSprintStorage.isMissionUnlocked(m, profile)) {
           maxUnlockedMission = m;
         }
       }
       if (maxLvlEl) maxLvlEl.textContent = `Mission ${maxUnlockedMission}`;
 
-      for (let i = 1; i <= 10; i++) {
+      for (let i = 1; i <= count; i++) {
         const config = MISSION_CONFIGS[i];
         const isMUnlocked = window.MathSprintStorage.isMissionUnlocked(i, profile);
         
@@ -56,7 +57,7 @@
         card.innerHTML = `
           <div class="cursor-pointer">
             <div class="flex justify-between items-start mb-2">
-              <span class="text-xs font-pixel ${i === 5 || i === 7 ? 'text-pink-500 glow-pink' : i === 10 ? 'text-yellow-400 glow-yellow' : 'text-cyan-400'}">
+               <span class="text-xs font-pixel ${i <= 10 ? 'text-cyan-400' : i <= 25 ? 'text-green-400' : i <= 40 ? 'text-pink-500 glow-pink' : 'text-yellow-400 glow-yellow'}">
                 ${config.name.toUpperCase()}
               </span>
               <div class="text-xs font-pixel text-yellow-400">${isMUnlocked ? `★ ${starsInM} / 60` : '🔒 需前一關滿 ★3'}</div>

@@ -120,97 +120,6 @@
       profile.total_stars = totalStars + (profile.bonus_stars || 0);
     },
 
-    // 檢查 Mission 關卡獨立徽章是否全集滿 (100% Complete)
-    checkMissionCompleteReward(profile, missionNum) {
-      if (!profile.claimed_milestones) {
-        profile.claimed_milestones = {};
-      }
-      if (!profile.claimed_milestones.mission_complete) {
-        profile.claimed_milestones.mission_complete = [];
-      }
-      
-      if (profile.claimed_milestones.mission_complete.includes(missionNum)) return;
-
-      let allCleared = true;
-      for (let l = 1; l <= 20; l++) {
-        const key = `mission-${missionNum}-level-${l}`;
-        const record = profile.level_records[key];
-        if (!record || !(record.stars > 0)) {
-          allCleared = false;
-          break;
-        }
-      }
-
-      if (allCleared) {
-        profile.claimed_milestones.mission_complete.push(missionNum);
-        profile.bonus_stars = (profile.bonus_stars || 0) + 5;
-        this.recalculateTotalStars(profile);
-        this.saveProfile(profile);
-
-        // 觸發自訂事件
-        window.dispatchEvent(new CustomEvent('mathSprintBonusStarAwarded', {
-          detail: { 
-            type: 'mission_complete', 
-            text: `🔥 滿集暴擊！您已集滿 Mission ${missionNum} 所有關卡徽章！獲得 5 顆額外星星！` 
-          }
-        }));
-      }
-    },
-
-    // 檢查連續 7 天上線且每天至少玩 5 回合的獎勵
-    check7DayStreakReward(profile) {
-      if (!profile.claimed_milestones) {
-        profile.claimed_milestones = {};
-      }
-      if (profile.claimed_milestones.streak_7day) return;
-
-      const history = profile.history_log || [];
-      if (history.length < 35) return; // 每天至少5筆，連續7天
-
-      const dateCounts = {};
-      history.forEach(session => {
-        if (session.date) {
-          dateCounts[session.date] = (dateCounts[session.date] || 0) + 1;
-        }
-      });
-
-      const validDates = Object.keys(dateCounts)
-        .filter(d => dateCounts[d] >= 5)
-        .sort();
-
-      if (validDates.length < 7) return;
-
-      let consecutiveCount = 1;
-      let hasStreak = false;
-
-      for (let i = 1; i < validDates.length; i++) {
-        const prevDate = new Date(validDates[i - 1]);
-        const currDate = new Date(validDates[i]);
-        const diffTime = Math.abs(currDate - prevDate);
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-        if (diffDays === 1) {
-          consecutiveCount++;
-          if (consecutiveCount >= 7) {
-            hasStreak = true;
-            break;
-          }
-        } else if (diffDays > 1) {
-          consecutiveCount = 1;
-        }
-      }
-
-      if (hasStreak) {
-        profile.claimed_milestones.streak_7day = true;
-        profile.bonus_stars = (profile.bonus_stars || 0) + 5;
-        this.recalculateTotalStars(profile);
-        this.saveProfile(profile);
-
-        window.dispatchEvent(new CustomEvent('mathSprintBonusStarAwarded', {
-          detail: { type: 'streak_7day', text: '🏆 恭喜！您連續 7 天上線玩滿 5 回合，獲得 5 顆額外星星！' }
-        }));
-      }
-    },
 
     // Save or update level score record
     saveLevelRecord(missionNum, levelNum, stars, avgTime, maxCombo, minTime) {
@@ -250,32 +159,7 @@
       return profile;
     },
 
-    // Record correct answer and handle correct-answer milestones (every 100 correct answers adds 1 star)
-    recordCorrectAnswer() {
-      const profile = this.getProfile();
-      profile.total_correct_count = (profile.total_correct_count || 0) + 1;
-      
-      const count = profile.total_correct_count;
-      if (count > 0 && count % 100 === 0) {
-        if (!profile.claimed_milestones) {
-          profile.claimed_milestones = {};
-        }
-        if (!profile.claimed_milestones.correct_100) {
-          profile.claimed_milestones.correct_100 = [];
-        }
-        
-        if (!profile.claimed_milestones.correct_100.includes(count)) {
-          profile.claimed_milestones.correct_100.push(count);
-          profile.bonus_stars = (profile.bonus_stars || 0) + 1;
-          this.recalculateTotalStars(profile);
-          
-          window.dispatchEvent(new CustomEvent('mathSprintBonusStarAwarded', {
-            detail: { type: 'correct_100', text: `🏆 恭喜！您累計答對滿 ${count} 題，獲得 1 顆額外星星！` }
-          }));
-        }
-      }
-      this.saveProfile(profile);
-    },
+
 
     // Use a shield (已廢除，保持空實作維持相容性)
     useShield() {

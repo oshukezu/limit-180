@@ -277,68 +277,9 @@
         delete window.MathSprintGame._tempPendingRecord;
       }
 
-      // 3. 呼叫 Supabase 進行 Upsert 雲端掛號 (針對每個已通關的 Mission 上傳其最佳成績)
-      if (window.MathSprintSupabaseService) {
-        let hasUploaded = false;
-        for (let m = 1; m <= 10; m++) {
-          let missionStars = 0;
-          let totalTime = 0;
-          let count = 0;
-          let minTime = 999;
-
-          if (window.MathSprintStorage) {
-            const localProfile = window.MathSprintStorage.getProfile();
-            for (let l = 1; l <= 20; l++) {
-              const rec = localProfile.level_records[`mission-${m}-level-${l}`];
-              if (rec) {
-                missionStars += rec.stars || 0;
-                if (rec.stars > 0 && rec.best_avg_time && rec.best_avg_time < 999) {
-                  totalTime += rec.best_avg_time;
-                  count++;
-                }
-                if (rec.min_time && rec.min_time < minTime) {
-                  minTime = rec.min_time;
-                }
-              }
-            }
-            // 延遲註冊合流運算：若是 Mission 1，則把本地所有 bonus_stars 一併加進來同步到雲端！
-            if (m === 1) {
-              missionStars += (localProfile.bonus_stars || 0);
-            }
-          }
-
-          const avgTime = count > 0 ? parseFloat((totalTime / count).toFixed(3)) : 999;
-          if (missionStars > 0 && avgTime < 999) {
-            await window.MathSprintSupabaseService.saveRecord(
-              inputClass,
-              inputSeat,
-              inputNickname,
-              m,
-              missionStars,
-              avgTime,
-              minTime === 999 ? 99.9 : parseFloat(minTime.toFixed(3))
-            );
-            hasUploaded = true;
-          }
-        }
-        
-        // 如果這個玩家是剛註冊且本機完全無成績，我們也幫他建一筆 Mission 1 的 0 星記錄，用來在資料庫中佔位掛號
-        if (!hasUploaded) {
-          await window.MathSprintSupabaseService.saveRecord(
-            inputClass,
-            inputSeat,
-            inputNickname,
-            1,
-            0,
-            99.9,
-            99.9
-          );
-        }
-
-        // 實時重新整理首頁排行榜
-        if (window.MathSprintLeaderboard && window.MathSprintLeaderboard.renderLeaderboard) {
-          window.MathSprintLeaderboard.renderLeaderboard().catch(() => {});
-        }
+      // 3. 呼叫 Supabase 進行 Upsert 雲端掛號 (委派至 onboarding-sync.js)
+      if (window.MathSprintOnboarding && window.MathSprintOnboarding.uploadAllLocalStats) {
+        await window.MathSprintOnboarding.uploadAllLocalStats(inputClass, inputSeat, inputNickname);
       }
 
       submitBtn.textContent = originalText;

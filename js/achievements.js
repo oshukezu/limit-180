@@ -239,7 +239,8 @@
       window.addEventListener('limit180ComponentsLoaded', () => {
         const select = document.getElementById('achievements-mission-select');
         if (select) {
-          select.innerHTML = Array.from({ length: 10 }, (_, i) => `<option value="${i + 1}">Mission ${i + 1}</option>`).join('');
+          const count = Object.keys(window.MathSprintConfigs.MISSION_CONFIGS).length;
+          select.innerHTML = Array.from({ length: count }, (_, i) => `<option value="${i + 1}">Mission ${i + 1}</option>`).join('');
           select.addEventListener('change', (e) => {
             this.renderAchievements(parseInt(e.target.value));
           });

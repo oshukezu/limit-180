@@ -18,7 +18,7 @@
     };
 
     window.MATH_SPRINT_CONFIG.STAGE_BADGES = {};
-    for (let m = 1; m <= 10; m++) {
+    for (let m = 1; m <= 50; m++) {
       window.MATH_SPRINT_CONFIG.STAGE_BADGES[m] = {};
       for (let l = 1; l <= 20; l++) {
         window.MATH_SPRINT_CONFIG.STAGE_BADGES[m][l] = {
@@ -82,19 +82,15 @@
 
   <!-- Core Javascript Modules (Global namespace object model) -->
   <script src="js/onboarding.js"></script>
+  <script src="js/onboarding-sync.js"></script>
   <script src="js/storage.js"></script>
+  <script src="js/storage-milestones.js"></script>
   <script src="js/generator.js"></script>
   <!-- 獨立 Mission 模組 -->
-  <script src="js/missions/mission1.js"></script>
-  <script src="js/missions/mission2.js"></script>
-  <script src="js/missions/mission3.js"></script>
-  <script src="js/missions/mission4.js"></script>
-  <script src="js/missions/mission5.js"></script>
-  <script src="js/missions/mission6.js"></script>
-  <script src="js/missions/mission7.js"></script>
-  <script src="js/missions/mission8.js"></script>
-  <script src="js/missions/mission9.js"></script>
-  <script src="js/missions/mission10.js"></script>
+  <script src="js/missions/phase1.js"></script>
+  <script src="js/missions/phase2.js"></script>
+  <script src="js/missions/phase3.js"></script>
+  <script src="js/missions/phase4.js"></script>
   <script src="js/achievements.js"></script>
   <script src="js/dashboard.js"></script>
   <!-- 徹底拔除 Supabase Auth 依賴，注入虛擬 Dummy 物件以維持相容性 -->
@@ -127,6 +123,7 @@
       isOnline: () => navigator.onLine
     };
   </script>
+  <script src="js/leaderboard-renders.js"></script>
   <script src="js/leaderboard.js"></script>
   
   <script src="js/loader.js"></script>
@@ -140,7 +137,9 @@
   <script src="js/game-events.js"></script>
   <script src="js/game-result.js"></script>
   <script src="js/game-review.js"></script>
-  <script src="js/game.js"></script>
+  <script src="js/game-core.js"></script>
+  <script src="js/game-helper.js"></script>
+  <script src="js/game-play.js"></script>
 
   <!-- 規則說明浮動彈窗 -->
   <div id="rules-modal" class="fixed inset-0 bg-black/85 flex items-center justify-center hidden z-50 p-4" onclick="if(event.target===this)this.classList.add('hidden')">

@@ -4,8 +4,10 @@
 
 | 模組分類 | 檔案名稱 | 職責概要說明 |
 | :--- | :--- | :--- |
-| **遊戲核心控制** | [game.js](file:///Users/oshukezu/Documents/Knowledge%20Vault/Game/limit-180/js/game.js) | **核心遊戲循環**：管理主要遊戲生命週期（包含 `startGame`、`stopGame`、`interruptGame`），主計時器計時與 Combo 連擊演算，以及答對或答錯的邏輯處理，並調用其它 Mixin 元件。 |
-| **遊戲核心控制** | [game-config.js](file:///Users/oshukezu/Documents/Knowledge%20Vault/Game/limit-180/js/game-config.js) | **關卡配置常數**：定義了 1 至 10 大 Mission 的題目總數、中文描述、初玩限時與目標答題速度插值參數。 |
+| **遊戲核心控制** | [game-core.js](file:///Users/oshukezu/Documents/Knowledge%20Vault/Game/limit-180/js/game-core.js) | **核心生命週期管理**：控制遊戲初始化 (`init`)、開始 (`startGame`)、停止 (`stopGame`)、中斷 (`interruptGame`) 與結算 (`endGame`)。 |
+| **遊戲核心控制** | [game-helper.js](file:///Users/oshukezu/Documents/Knowledge%20Vault/Game/limit-180/js/game-helper.js) | **遊戲輔助與效果**：控制 SPA 視圖切換器 (`showView`)、雙軌流光相同霓虹顏色切換 (`changeScannerColor`)、雲端 Session 身分校驗 (`verifySession`) 與星星獎勵彈窗 (`showBonusStarAlert`)。 |
+| **遊戲核心控制** | [game-play.js](file:///Users/oshukezu/Documents/Knowledge%20Vault/Game/limit-180/js/game-play.js) | **答題與計時控制**：控制下一題產生 (`nextQuestion`)、定時器倒數 (`startTimer`)、答案提交與自動判斷 (`checkAutoSubmit`)、答對與錯誤回饋處理 (`handleSuccess` 與 `handleFailure`)，以及暫停控制。 |
+| **遊戲核心控制** | [game-config.js](file:///Users/oshukezu/Documents/Knowledge%20Vault/Game/limit-180/js/game-config.js) | **關卡配置常數**：定義了 50 個 Mission 任務的題目數量、中文描述以及各 Stage 關卡階梯倒數秒數設定。 |
 | **遊戲核心控制** | [game-audio.js](file:///Users/oshukezu/Documents/Knowledge%20Vault/Game/limit-180/js/game-audio.js) | **音效產生器**：使用 HTML5 Web Audio API 動態合成「答對」、「答錯」等 8-bit 電子風音效，不依賴外部音訊檔案加載。 |
 | **遊戲核心控制** | [game-scaffold.js](file:///Users/oshukezu/Documents/Knowledge%20Vault/Game/limit-180/js/game-scaffold.js) | **視覺心算輔助繪圖**：在 Mission 1-9 的比大小關卡中，負責將分數（圓餅分割圖）、小數與百分比（10x10 格點圖）以及整數比大小（高度條與刻度）以 SVG 動態生成輔助圖形。 |
 | **遊戲核心控制** | [game-lobby.js](file:///Users/oshukezu/Documents/Knowledge%20Vault/Game/limit-180/js/game-lobby.js) | **遊戲大廳渲染**：負責遊戲大廳 Mission 網格卡片與 20 關點陣子關卡 UI 的渲染與 DOM 操作，處理玩家選關交互。 |
@@ -13,10 +15,13 @@
 | **遊戲核心控制** | [game-result.js](file:///Users/oshukezu/Documents/Knowledge%20Vault/Game/limit-180/js/game-result.js) | **結算與獎勵彈窗**：負責遊戲結束後的結算畫面渲染，包含計算 Stars 顆數、激勵詞判定、降級警告彈窗，以及將獲得星星等暫存獎勵（`_pendingRewards`）延遲至返回大廳後彈出的機制。 |
 | **遊戲核心控制** | [game-review.js](file:///Users/oshukezu/Documents/Knowledge%20Vault/Game/limit-180/js/game-review.js) | **錯題消除模式**：控制錯題消除（Review Mode）的答題進度、渲染錯題隊列，並將答錯或答對的消除進度序列化保存至本地快取中。 |
 | **遊戲核心控制** | [generator.js](file:///Users/oshukezu/Documents/Knowledge%20Vault/Game/limit-180/js/generator.js) | **題目生成器**：依據關卡指定的數學主題（加減乘除、分數小數百分比、正負數等），動態隨機生成題幹文字、標準答案以及計算步驟解析。 |
-| **身分與同步** | [onboarding.js](file:///Users/oshukezu/Documents/Knowledge%20Vault/Game/limit-180/js/onboarding.js) | **身分攔截與綁定**：負責玩家暱稱的防霸凌過濾（敏感詞清單）、班級座號正則校驗，並在首玩結束時將暫存的成績與玩家身分合流寫入，完成雲端單表 Upsert 綁定。 |
-| **身分與同步** | [storage.js](file:///Users/oshukezu/Documents/Knowledge%20Vault/Game/limit-180/js/storage.js) | **本地 LocalStorage 控制**：負責讀寫本機存檔 `math_sprint_profile` 結構（包含累計星星數、各關最優成績紀錄、錯題資料庫、成就解鎖清單等），並提供成就與星星里程碑的發放判定。 |
+| **身分與同步** | [onboarding.js](file:///Users/oshukezu/Documents/Knowledge%20Vault/Game/limit-180/js/onboarding.js) | **身分暱稱校驗**：負責玩家暱稱的防霸廉過濾（敏感詞清單）與註冊班級座號的正則校驗。 |
+| **身分與同步** | [onboarding-sync.js](file:///Users/oshukezu/Documents/Knowledge%20Vault/Game/limit-180/js/onboarding-sync.js) | **成績合流與同步**：在首玩結束時將暫存的成績與新綁定身份同步，並提供非阻塞式的單關進度雲端同步 (`syncCurrentStatsToCloud`)。 |
+| **身分與同步** | [storage.js](file:///Users/oshukezu/Documents/Knowledge%20Vault/Game/limit-180/js/storage.js) | **本地 LocalStorage 存取**：負責讀寫本機存檔 `math_sprint_profile` 結構（包含累計星星數、各關最優成績紀錄、錯題資料庫、歷史紀錄等）的底層讀寫控制。 |
+| **身分與同步** | [storage-milestones.js](file:///Users/oshukezu/Documents/Knowledge%20Vault/Game/limit-180/js/storage-milestones.js) | **成就與里程碑星星判定**：處理集滿 Mission 中 20 個關卡徽章、連續上線 7 天，以及累計答對 100 題等核心 bonus_stars 星星獎勵判定與發放。 |
 | **身分與同步** | [supabase-service.js](file:///Users/oshukezu/Documents/Knowledge%20Vault/Game/limit-180/js/supabase-service.js) | **Supabase 數據操作層**：封裝 Supabase JS Client 初始化，提供向 `users_profile` 資料表進行 Upsert 寫入與排行榜查詢，並在前端實作 SHA-256 雜湊防篡改校驗。 |
-| **數據與展現** | [leaderboard.js](file:///Users/oshukezu/Documents/Knowledge%20Vault/Game/limit-180/js/leaderboard.js) | **聯賽排行榜**：負責拉取雲端數據，並在前端依據規則進行「個人總榜」、「團隊對抗榜（班級加總）」與「答題速度榜（單關均速排序）」的即時分組聚合與 DOM 渲染。 |
+| **數據與展現** | [leaderboard.js](file:///Users/oshukezu/Documents/Knowledge%20Vault/Game/limit-180/js/leaderboard.js) | **聯賽排行榜控制**：負責拉取雲端數據，控管排行分頁與關卡篩選切換的邏輯控制器。 |
+| **數據與展現** | [leaderboard-renders.js](file:///Users/oshukezu/Documents/Knowledge%20Vault/Game/limit-180/js/leaderboard-renders.js) | **聯賽排行榜渲染**：負責「個人總榜」、「團隊對抗榜」與「答題速度榜」的 DOM 結構動態生成與渲染。 |
 | **數據與展現** | [dashboard.js](file:///Users/oshukezu/Documents/Knowledge%20Vault/Game/limit-180/js/dashboard.js) | **學習數據儀表板**：使用 Chart.js 動態繪製個人反應速度折線圖與四維雷達圖，展示心算能力維度。 |
 | **數據與展現** | [achievements.js](file:///Users/oshukezu/Documents/Knowledge%20Vault/Game/limit-180/js/achievements.js) | **成就牆**：提供 20+ 個特工里程碑成就（如速算特工、完美連斬等）的解鎖狀態查詢與成就卡片 DOM 渲染。 |
 | **基礎基礎設施** | [ui-controller.js](file:///Users/oshukezu/Documents/Knowledge%20Vault/Game/limit-180/js/ui-controller.js) | **全域導航與關閉控制器**：以事件代理監聽所有右上角「X」關閉按鈕，實作在 0.1 秒內立即切換 DOM 隱藏、計時器停損清理以及錯題暫存保存，確保不牽涉 Supabase 的非同步等待。 |
