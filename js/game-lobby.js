@@ -44,15 +44,39 @@
         const config = MISSION_CONFIGS[i];
         const isMUnlocked = window.MathSprintStorage.isMissionUnlocked(i, profile);
         
+        function getBaseCoin(m) {
+          if (m >= 1 && m <= 5) return 200;
+          if (m >= 6 && m <= 10) return 300;
+          if (m >= 11 && m <= 15) return 1000;
+          if (m >= 16 && m <= 20) return 2000;
+          if (m >= 21 && m <= 25) return 5000;
+          if (m >= 26 && m <= 30) return 10000;
+          if (m >= 31 && m <= 35) return 20000;
+          if (m >= 36 && m <= 40) return 40000;
+          if (m >= 41 && m <= 44) return 100000;
+          if (m >= 45 && m <= 47) return 250000;
+          if (m >= 48 && m <= 49) return 500000;
+          return 0;
+        }
+
         // Sum stars earned in this mission
         let starsInM = 0;
         for (let l = 1; l <= 20; l++) {
           const record = profile.level_records[`mission-${i}-level-${l}`];
           if (record && record.stars > 0) {
             const c = record.stars;
-            if (c >= i * 600000) starsInM += 3;
-            else if (c >= i * 400000) starsInM += 2;
-            else if (c >= i * 200000) starsInM += 1;
+            let rStars = 0;
+            if (i === 50) {
+              if (c >= 1500000 * l) rStars = 3;
+              else if (c >= 1000000 * l) rStars = 2;
+              else if (c >= 500000 * l) rStars = 1;
+            } else {
+              const base = getBaseCoin(i);
+              if (c >= base * l) rStars = 3;
+              else if (c >= Math.floor(base * l * 2 / 3)) rStars = 2;
+              else if (c >= Math.floor(base * l * 1 / 3)) rStars = 1;
+            }
+            starsInM += rStars;
           }
         }
 
@@ -106,9 +130,16 @@
             // 金幣還原成星等用以顯示
             let recordStars = 0;
             const c = record.stars || 0;
-            if (c >= i * 600000) recordStars = 3;
-            else if (c >= i * 400000) recordStars = 2;
-            else if (c >= i * 200000) recordStars = 1;
+            if (i === 50) {
+              if (c >= 1500000 * L) recordStars = 3;
+              else if (c >= 1000000 * L) recordStars = 2;
+              else if (c >= 500000 * L) recordStars = 1;
+            } else {
+              const base = getBaseCoin(i);
+              if (c >= base * L) recordStars = 3;
+              else if (c >= Math.floor(base * L * 2 / 3)) recordStars = 2;
+              else if (c >= Math.floor(base * L * 1 / 3)) recordStars = 1;
+            }
 
             let btnStarsClass = '';
             let starsIndicator = '☆☆☆';

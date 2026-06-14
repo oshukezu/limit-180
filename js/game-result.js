@@ -37,16 +37,41 @@
         if (nextBtn) nextBtn.classList.remove('hidden');
 
         const starsEl = document.getElementById('result-stars');
+        
+        function getBaseCoin(m) {
+          if (m >= 1 && m <= 5) return 200;
+          if (m >= 6 && m <= 10) return 300;
+          if (m >= 11 && m <= 15) return 1000;
+          if (m >= 16 && m <= 20) return 2000;
+          if (m >= 21 && m <= 25) return 5000;
+          if (m >= 26 && m <= 30) return 10000;
+          if (m >= 31 && m <= 35) return 20000;
+          if (m >= 36 && m <= 40) return 40000;
+          if (m >= 41 && m <= 44) return 100000;
+          if (m >= 45 && m <= 47) return 250000;
+          if (m >= 48 && m <= 49) return 500000;
+          return 0;
+        }
+
+        const mId = this.gameState.currentMission;
+        const lId = this.gameState.currentLevel;
+
+        let earnedCoins = 0;
+        let maxCoins = 0;
+        if (mId === 50) {
+          maxCoins = 1500000 * lId;
+          if (starsEarned === 3) earnedCoins = maxCoins;
+          else if (starsEarned === 2) earnedCoins = 1000000 * lId;
+          else if (starsEarned === 1) earnedCoins = 500000 * lId;
+        } else {
+          const base = getBaseCoin(mId);
+          maxCoins = base * lId;
+          if (starsEarned === 3) earnedCoins = maxCoins;
+          else if (starsEarned === 2) earnedCoins = Math.floor(base * lId * 2 / 3);
+          else if (starsEarned === 1) earnedCoins = Math.floor(base * lId * 1 / 3);
+        }
+
         if (starsEl) {
-          // 計算本次獲得的金幣
-          let earnedCoins = 0;
-          if (starsEarned === 3) {
-            earnedCoins = this.gameState.currentMission * 600000;
-          } else if (starsEarned === 2) {
-            earnedCoins = this.gameState.currentMission * 400000;
-          } else if (starsEarned === 1) {
-            earnedCoins = this.gameState.currentMission * 200000;
-          }
           starsEl.textContent = `+${earnedCoins.toLocaleString('zh-TW')} 💰`;
           starsEl.className = `flex justify-center gap-4 text-3xl font-bold font-pixel my-2 ${
             starsEarned === 3 ? 'text-yellow-400 glow-yellow' : starsEarned === 2 ? 'text-cyan-400' : starsEarned === 1 ? 'text-green-400' : 'text-slate-600'
@@ -54,13 +79,13 @@
         }
 
         if (starsEarned === 3) {
-          motivationBox.textContent = `表現絕佳！您已獲得該關卡最大獎金 ${(this.gameState.currentMission * 600000).toLocaleString('zh-TW')} 💰！`;
+          motivationBox.textContent = `表現絕佳！您已獲得該關卡最大獎金 ${maxCoins.toLocaleString('zh-TW')} 💰！`;
           motivationBox.className = "p-3 bg-slate-900/60 border border-green-800 text-xs font-tech rounded text-green-300 text-center";
         } else if (starsEarned === 2) {
-          motivationBox.textContent = `表現極佳！繼續加油，將正確率提升到 90% 以上就能取得最高獎金 ${(this.gameState.currentMission * 600000).toLocaleString('zh-TW')} 💰！`;
+          motivationBox.textContent = `表現極佳！繼續加油，將正確率提升到 90% 以上就能取得最高獎金 ${maxCoins.toLocaleString('zh-TW')} 💰！`;
           motivationBox.className = "p-3 bg-slate-900/60 border border-yellow-800 text-xs font-tech rounded text-yellow-300 text-center";
         } else if (starsEarned === 1) {
-          motivationBox.textContent = `成功通過！再接再厲，將正確率提升到 80% 以上就能獲得中階獎金 ${(this.gameState.currentMission * 400000).toLocaleString('zh-TW')} 💰！`;
+          motivationBox.textContent = `成功通過！再接再厲，將正確率提升到 80% 以上就能獲得中階獎金 ${(mId === 50 ? 1000000 * lId : Math.floor(getBaseCoin(mId) * lId * 2 / 3)).toLocaleString('zh-TW')} 💰！`;
           motivationBox.className = "p-3 bg-slate-900/60 border border-cyan-800 text-xs font-tech rounded text-cyan-300 text-center";
         } else {
           motivationBox.textContent = "安全過關！挑戰更精準的心算反應，將正確率提升到 70% 以上來獲取獎金吧！";
