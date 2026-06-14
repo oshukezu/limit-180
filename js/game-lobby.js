@@ -84,7 +84,7 @@
         }
 
         const card = document.createElement('div');
-        card.className = `hud-panel p-5 bg-slate-900/90 flex flex-col justify-between transition-all duration-300 relative ${
+        card.className = `hud-panel p-5 bg-slate-900/90 flex flex-col justify-between transition-all duration-300 relative w-full md:w-[calc(50%-12px)] lg:w-[calc(33.33%-16px)] max-w-sm ${
           !isMUnlocked ? 'opacity-40 border-slate-950 pointer-events-none' : 'hover:border-cyan-400'
         }`;
         
