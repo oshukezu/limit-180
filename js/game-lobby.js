@@ -40,8 +40,8 @@
       }
       if (maxLvlEl) maxLvlEl.textContent = `Mission ${maxUnlockedMission}`;
 
-      const minMission = this.currentMinMission || 1;
-      const maxMission = this.currentMaxMission || 10;
+      const minMission = this.currentMinMission || window.MathSprintGame.currentMinMission || 1;
+      const maxMission = this.currentMaxMission || window.MathSprintGame.currentMaxMission || 10;
 
       for (let i = minMission; i <= maxMission; i++) {
         const config = MISSION_CONFIGS[i];
@@ -199,7 +199,11 @@
               `;
               btn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                this.startGame(i, L);
+                if (window.MathSprintGame && typeof window.MathSprintGame.startGame === 'function') {
+                  window.MathSprintGame.startGame(i, L);
+                } else if (typeof this.startGame === 'function') {
+                  this.startGame(i, L);
+                }
               });
             }
             subGrid.appendChild(btn);
@@ -229,9 +233,17 @@
           btn.className = "px-3 py-2 text-[10px] font-pixel rounded border border-cyan-500 bg-cyan-950/20 text-cyan-400 focus:outline-none transition-all duration-200";
           
           // 更新大廳目前的篩選區間
-          Lobby.currentMinMission = parseInt(btn.getAttribute('data-min'));
-          Lobby.currentMaxMission = parseInt(btn.getAttribute('data-max'));
-          Lobby.renderLobby();
+          const minVal = parseInt(btn.getAttribute('data-min'));
+          const maxVal = parseInt(btn.getAttribute('data-max'));
+          Lobby.currentMinMission = minVal;
+          Lobby.currentMaxMission = maxVal;
+          if (window.MathSprintGame) {
+            window.MathSprintGame.currentMinMission = minVal;
+            window.MathSprintGame.currentMaxMission = maxVal;
+            window.MathSprintGame.renderLobby();
+          } else {
+            Lobby.renderLobby();
+          }
         });
       });
     }
