@@ -23,14 +23,15 @@
 
       if (allCleared) {
         profile.claimed_milestones.mission_complete.push(missionNum);
-        profile.bonus_stars = (profile.bonus_stars || 0) + 5;
+        profile.bonus_stars = (profile.bonus_stars || 0) + 1000000;
+        profile.today_earnings = (profile.today_earnings || 0) + 1000000;
         this.recalculateTotalStars(profile);
         this.saveProfile(profile);
 
         window.dispatchEvent(new CustomEvent('mathSprintBonusStarAwarded', {
           detail: { 
             type: 'mission_complete', 
-            text: `🔥 滿集暴擊！您已集滿 Mission ${missionNum} 所有關卡徽章！獲得 5 顆額外星星！` 
+            text: `🔥 滿集暴擊！您已集滿 Mission ${missionNum} 所有關卡徽章！獲得 1,000,000 💰 額外獎金！` 
           }
         }));
       }
@@ -81,12 +82,13 @@
 
       if (hasStreak) {
         profile.claimed_milestones.streak_7day = true;
-        profile.bonus_stars = (profile.bonus_stars || 0) + 5;
+        profile.bonus_stars = (profile.bonus_stars || 0) + 1000000;
+        profile.today_earnings = (profile.today_earnings || 0) + 1000000;
         this.recalculateTotalStars(profile);
         this.saveProfile(profile);
 
         window.dispatchEvent(new CustomEvent('mathSprintBonusStarAwarded', {
-          detail: { type: 'streak_7day', text: '🏆 恭喜！您連續 7 天上線玩滿 5 回合，獲得 5 顆額外星星！' }
+          detail: { type: 'streak_7day', text: '🏆 恭喜！您連續 7 天上線玩滿 5 回合，獲得 1,000,000 💰 額外獎金！' }
         }));
       }
     },
@@ -107,11 +109,12 @@
         
         if (!profile.claimed_milestones.correct_100.includes(count)) {
           profile.claimed_milestones.correct_100.push(count);
-          profile.bonus_stars = (profile.bonus_stars || 0) + 1;
+          profile.bonus_stars = (profile.bonus_stars || 0) + 200000;
+          profile.today_earnings = (profile.today_earnings || 0) + 200000;
           this.recalculateTotalStars(profile);
           
           window.dispatchEvent(new CustomEvent('mathSprintBonusStarAwarded', {
-            detail: { type: 'correct_100', text: `🏆 恭喜！您累計答對滿 ${count} 題，獲得 1 顆額外星星！` }
+            detail: { type: 'correct_100', text: `🏆 恭喜！您累計答對滿 ${count} 題，獲得 200,000 💰 額外獎金！` }
           }));
         }
       }

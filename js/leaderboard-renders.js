@@ -8,6 +8,19 @@
     return div.innerHTML;
   }
 
+  function formatLeaderboardCoins(value) {
+    const val = Number(value) || 0;
+    if (val < 10000) {
+      return val.toLocaleString('zh-TW') + ' 💰';
+    } else if (val < 1000000) {
+      const wan = val / 10000;
+      return (wan % 1 === 0 ? wan : wan.toFixed(1)) + '萬 💰';
+    } else {
+      const million = val / 1000000;
+      return (million % 1 === 0 ? million : million.toFixed(1)) + 'M 💰';
+    }
+  }
+
   const Renders = {
     // 渲染個人總榜
     renderPersonal(container, rankBlock, allRecords, currentUser) {
@@ -62,7 +75,7 @@
             const myRec = personalList[myRank];
             rankBlock.innerHTML = `
               <div>👤 我的名次：第 <span class="text-green-400 font-bold">${myRank + 1}</span> 名</div>
-              <div>成績：<span class="text-green-400 font-bold">${myRec.total_stars} ⭐</span> (${myRec.avg_time.toFixed(2)}s)</div>
+              <div>成績：<span class="text-green-400 font-bold">${formatLeaderboardCoins(myRec.total_stars)}</span> (${myRec.avg_time.toFixed(2)}s)</div>
             `;
           }
         }
@@ -92,7 +105,7 @@
               ${isMe ? '<span class="text-[8px] bg-cyan-500 text-black px-1 font-bold rounded">我</span>' : ''}
             </div>
             <div class="text-right">
-              <span class="text-green-400 font-bold">${row.total_stars}⭐</span>
+              <span class="text-green-400 font-bold">${formatLeaderboardCoins(row.total_stars)}</span>
               <span class="text-slate-500 text-[9px] font-tech ml-1">(${row.avg_time.toFixed(2)}s)</span>
             </div>
           </div>
@@ -153,7 +166,7 @@
             const myTeamRec = teamList[myTeamRank];
             rankBlock.innerHTML = `
               <div>👥 我班排名：第 <span class="text-green-400 font-bold">${myTeamRank + 1}</span> 名 (${myTeamRec.grade_class}班)</div>
-              <div>團隊星星：<span class="text-green-400 font-bold">${myTeamRec.total_stars} ⭐</span> | 均速：${myTeamRec.avg_time}s | 人數：${myTeamRec.player_count}人</div>
+              <div>團隊獎金：<span class="text-green-400 font-bold">${formatLeaderboardCoins(myTeamRec.total_stars)}</span> | 均速：${myTeamRec.avg_time}s | 人數：${myTeamRec.player_count}人</div>
             `;
           }
         }
@@ -182,7 +195,7 @@
               <span class="text-slate-500 text-[8px] font-tech">(${row.player_count} 人參賽)</span>
             </div>
             <div class="text-right">
-              <span class="text-green-400 font-bold">${row.total_stars}⭐</span>
+              <span class="text-green-400 font-bold">${formatLeaderboardCoins(row.total_stars)}</span>
               <span class="text-slate-500 text-[9px] font-tech ml-1">(團隊均速: ${row.avg_time}s)</span>
             </div>
           </div>

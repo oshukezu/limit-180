@@ -7,8 +7,10 @@
     renderHome() {
       const profile = window.MathSprintStorage.getProfile();
       const starsEl = document.getElementById('profile-total-stars');
+      const todayEl = document.getElementById('profile-today-earnings');
       const wrongEl = document.getElementById('profile-wrong-count');
-      if (starsEl) starsEl.textContent = profile.total_stars;
+      if (starsEl) starsEl.textContent = (profile.total_stars || 0).toLocaleString('zh-TW');
+      if (todayEl) todayEl.textContent = (profile.today_earnings || 0).toLocaleString('zh-TW');
       if (wrongEl) wrongEl.textContent = profile.wrong_questions_db.length;
     },
 
@@ -20,11 +22,11 @@
       grid.innerHTML = '';
       
       const starsEl = document.getElementById('lobby-stars');
-      const shieldsEl = document.getElementById('lobby-shields');
+      const todayEl = document.getElementById('lobby-today-earnings');
       const maxLvlEl = document.getElementById('lobby-max-level');
       
-      if (starsEl) starsEl.textContent = profile.total_stars;
-      if (shieldsEl) shieldsEl.textContent = profile.shields_count;
+      if (starsEl) starsEl.textContent = (profile.total_stars || 0).toLocaleString('zh-TW');
+      if (todayEl) todayEl.textContent = (profile.today_earnings || 0).toLocaleString('zh-TW');
 
       const MISSION_CONFIGS = window.MathSprintConfigs.MISSION_CONFIGS;
 
@@ -46,7 +48,12 @@
         let starsInM = 0;
         for (let l = 1; l <= 20; l++) {
           const record = profile.level_records[`mission-${i}-level-${l}`];
-          starsInM += record ? record.stars : 0;
+          if (record && record.stars > 0) {
+            const c = record.stars;
+            if (c >= i * 600000) starsInM += 3;
+            else if (c >= i * 400000) starsInM += 2;
+            else if (c >= i * 200000) starsInM += 1;
+          }
         }
 
         const card = document.createElement('div');
@@ -96,15 +103,22 @@
             
             const btn = document.createElement('button');
             
+            // 金幣還原成星等用以顯示
+            let recordStars = 0;
+            const c = record.stars || 0;
+            if (c >= i * 600000) recordStars = 3;
+            else if (c >= i * 400000) recordStars = 2;
+            else if (c >= i * 200000) recordStars = 1;
+
             let btnStarsClass = '';
             let starsIndicator = '☆☆☆';
-            if (record.stars === 3) {
+            if (recordStars === 3) {
               btnStarsClass = 'three-stars';
               starsIndicator = '★★★';
-            } else if (record.stars === 2) {
+            } else if (recordStars === 2) {
               btnStarsClass = 'two-stars';
               starsIndicator = '★★☆';
-            } else if (record.stars === 1) {
+            } else if (recordStars === 1) {
               btnStarsClass = 'one-star';
               starsIndicator = '★☆☆';
             }

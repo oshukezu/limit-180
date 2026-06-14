@@ -11,6 +11,8 @@
     bonus_stars: 0,   // 新增：四維給星獎勵的額外星星
     total_correct_count: 0, // 累計答對題數
     total_cleared_wrong_count: 0, // 累計成功消除的錯題數
+    today_earnings: 0, // 新增：今日獲得獎金
+    last_active_date: "", // 新增：上次活躍日期 (YYYY-MM-DD)
     claimed_milestones: {
       streak_7day: false,
       combo_20: [],
@@ -47,8 +49,16 @@
           profile[key] = JSON.parse(JSON.stringify(DEFAULT_PROFILE[key]));
         }
       }
-      return profile;
 
+      // 每日清零獎金邏輯
+      const todayStr = new Date().toLocaleDateString('sv');
+      if (profile.last_active_date !== todayStr) {
+        profile.today_earnings = 0;
+        profile.last_active_date = todayStr;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+      }
+
+      return profile;
     },
 
     // Save profile to LocalStorage
@@ -80,14 +90,19 @@
     isMissionUnlocked(missionNum, _profile) {
       if (missionNum === 1) return true;
       const profile = _profile || this.getProfile();
-
+ 
       // 從 Mission 1 往上依序檢查，任何一關前置條件不滿足就中斷
       for (let m = 2; m <= missionNum; m++) {
         const prevMission = m - 1;
         let starsInPrevMission = 0;
         for (let l = 1; l <= 20; l++) {
           const record = profile.level_records[`mission-${prevMission}-level-${l}`];
-          starsInPrevMission += record ? record.stars : 0;
+          if (record && record.stars > 0) {
+            const c = record.stars;
+            if (c >= prevMission * 600000) starsInPrevMission += 3;
+            else if (c >= prevMission * 400000) starsInPrevMission += 2;
+            else if (c >= prevMission * 200000) starsInPrevMission += 1;
+          }
         }
         if (starsInPrevMission < 3) return false;
       }
@@ -128,8 +143,24 @@
       
       const record = profile.level_records[levelKey] || { stars: 0, best_avg_time: 999, max_combo: 0, min_time: 999 };
       
+      // 計算該次取得金幣數
+      let newCoins = 0;
+      if (stars === 3) {
+        newCoins = missionNum * 600000;
+      } else if (stars === 2) {
+        newCoins = missionNum * 400000;
+      } else if (stars === 1) {
+        newCoins = missionNum * 200000;
+      }
+
+      const oldCoins = record.stars || 0;
+      const diff = Math.max(0, newCoins - oldCoins);
+      if (diff > 0) {
+        profile.today_earnings = (profile.today_earnings || 0) + diff;
+      }
+
       // Update record values
-      record.stars = Math.max(record.stars, stars);
+      record.stars = Math.max(record.stars, newCoins);
       if (avgTime) {
         record.best_avg_time = Math.min(record.best_avg_time, avgTime);
       }
@@ -219,11 +250,12 @@
             
             if (!profile.claimed_milestones.wrong_cleared_10.includes(wrongClearedCount)) {
               profile.claimed_milestones.wrong_cleared_10.push(wrongClearedCount);
-              profile.bonus_stars = (profile.bonus_stars || 0) + 1;
+              profile.bonus_stars = (profile.bonus_stars || 0) + 200000;
+              profile.today_earnings = (profile.today_earnings || 0) + 200000;
               this.recalculateTotalStars(profile);
               
               window.dispatchEvent(new CustomEvent('mathSprintBonusStarAwarded', {
-                detail: { type: 'wrong_cleared_10', text: `🏆 恭喜！您累計成功消除滿 ${wrongClearedCount} 題錯題，獲得 1 顆額外星星！` }
+                detail: { type: 'wrong_cleared_10', text: `🏆 恭喜！您累計成功消除滿 ${wrongClearedCount} 題錯題，獲得 200,000 💰 額外獎金！` }
               }));
             }
           }

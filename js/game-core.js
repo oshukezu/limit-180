@@ -254,12 +254,13 @@ window.CFG = window.MATH_SPRINT_CONFIG;
           
           if (!profile.claimed_milestones.combo_20.includes(levelKey)) {
             profile.claimed_milestones.combo_20.push(levelKey);
-            profile.bonus_stars = (profile.bonus_stars || 0) + 1;
+            profile.bonus_stars = (profile.bonus_stars || 0) + 200000;
+            profile.today_earnings = (profile.today_earnings || 0) + 200000;
             window.MathSprintStorage.recalculateTotalStars(profile);
             window.MathSprintStorage.saveProfile(profile);
 
             window.dispatchEvent(new CustomEvent('mathSprintBonusStarAwarded', {
-              detail: { type: 'combo_20', text: '🏆 完美連斬！您在此關卡連續答對 20 題，獲得 1 顆額外星星！' }
+              detail: { type: 'combo_20', text: '🏆 完美連斬！您在此關卡連續答對 20 題，獲得 200,000 💰 額外獎金！' }
             }));
           }
         }

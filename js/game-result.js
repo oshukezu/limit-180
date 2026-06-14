@@ -38,27 +38,32 @@
 
         const starsEl = document.getElementById('result-stars');
         if (starsEl) {
-          let starsStr = '';
-          for (let s = 1; s <= 3; s++) {
-            starsStr += s <= starsEarned ? '★ ' : '☆ ';
+          // 計算本次獲得的金幣
+          let earnedCoins = 0;
+          if (starsEarned === 3) {
+            earnedCoins = this.gameState.currentMission * 600000;
+          } else if (starsEarned === 2) {
+            earnedCoins = this.gameState.currentMission * 400000;
+          } else if (starsEarned === 1) {
+            earnedCoins = this.gameState.currentMission * 200000;
           }
-          starsEl.textContent = starsStr.trim();
-          starsEl.className = `flex justify-center gap-4 text-4xl my-2 ${
-            starsEarned === 3 ? 'text-green-400' : starsEarned === 2 ? 'text-cyan-400' : starsEarned === 1 ? 'text-yellow-400' : 'text-slate-600'
+          starsEl.textContent = `+${earnedCoins.toLocaleString('zh-TW')} 💰`;
+          starsEl.className = `flex justify-center gap-4 text-3xl font-bold font-pixel my-2 ${
+            starsEarned === 3 ? 'text-yellow-400 glow-yellow' : starsEarned === 2 ? 'text-cyan-400' : starsEarned === 1 ? 'text-green-400' : 'text-slate-600'
           }`;
         }
 
         if (starsEarned === 3) {
-          motivationBox.textContent = "表現絕佳！您已獲得最大榮譽 3 顆星！";
+          motivationBox.textContent = `表現絕佳！您已獲得該關卡最大獎金 ${(this.gameState.currentMission * 600000).toLocaleString('zh-TW')} 💰！`;
           motivationBox.className = "p-3 bg-slate-900/60 border border-green-800 text-xs font-tech rounded text-green-300 text-center";
         } else if (starsEarned === 2) {
-          motivationBox.textContent = "表現極佳！繼續加油，將正確率提升到 90% 以上就能取得 3 星！";
+          motivationBox.textContent = `表現極佳！繼續加油，將正確率提升到 90% 以上就能取得最高獎金 ${(this.gameState.currentMission * 600000).toLocaleString('zh-TW')} 💰！`;
           motivationBox.className = "p-3 bg-slate-900/60 border border-yellow-800 text-xs font-tech rounded text-yellow-300 text-center";
         } else if (starsEarned === 1) {
-          motivationBox.textContent = "成功通過！再接再厲，將正確率提升到 80% 以上就能獲得 2 顆星！";
+          motivationBox.textContent = `成功通過！再接再厲，將正確率提升到 80% 以上就能獲得中階獎金 ${(this.gameState.currentMission * 400000).toLocaleString('zh-TW')} 💰！`;
           motivationBox.className = "p-3 bg-slate-900/60 border border-cyan-800 text-xs font-tech rounded text-cyan-300 text-center";
         } else {
-          motivationBox.textContent = "安全過關！挑戰更精準的心算反應，將正確率提升到 70% 以上來獲取星星吧！";
+          motivationBox.textContent = "安全過關！挑戰更精準的心算反應，將正確率提升到 70% 以上來獲取獎金吧！";
           motivationBox.className = "p-3 bg-slate-900/60 border border-slate-700 text-xs font-tech rounded text-slate-400 text-center";
         }
       } else {
@@ -68,7 +73,10 @@
         statusTitle.className = "text-2xl font-pixel text-red-500 glow-pink mb-2";
         
         const starsEl = document.getElementById('result-stars');
-        if (starsEl) starsEl.textContent = '☆ ☆ ☆';
+        if (starsEl) {
+          starsEl.textContent = '+0 💰';
+          starsEl.className = "flex justify-center gap-4 text-3xl font-bold font-pixel my-2 text-slate-600";
+        }
         
         const accDiff = this.gameState.correctRateTarget - accuracy;
         if (accuracy >= this.gameState.correctRateTarget && avgTime - this.gameState.targetSpeed < 0.3) {

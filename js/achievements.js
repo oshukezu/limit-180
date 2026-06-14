@@ -2,6 +2,19 @@
 // 負責成就檢查、持久存檔、霓虹通知更新與成就牆渲染。
 
 (function() {
+  function formatCoins(value) {
+    const val = Number(value) || 0;
+    if (val < 10000) {
+      return val.toLocaleString('zh-TW') + ' 💰';
+    } else if (val < 1000000) {
+      const wan = val / 10000;
+      return (wan % 1 === 0 ? wan : wan.toFixed(1)) + '萬 💰';
+    } else {
+      const million = val / 1000000;
+      return (million % 1 === 0 ? million : million.toFixed(1)) + 'M 💰';
+    }
+  }
+
   const RANK_ICONS = { 1: '🥇', 2: '🥈', 3: '🥉' };
 
   const Achievements = {
@@ -22,8 +35,8 @@
         this.unlock(`m${mission}_mission_clear`);
       }
 
-      // 3. 繁星點點 (個人雲端總星數達到 50 個星以上)
-      if (profile.total_stars >= 50) {
+      // 3. 繁星點點 (個人累積獎金達到 10,000,000 💰 以上)
+      if (profile.total_stars >= 10000000) {
         this.unlock('stars_50');
       }
 
@@ -113,8 +126,8 @@
       const isErrorBusterUnlocked = (profile.total_review_correct_count || 0) >= 20;
       
       const recordL20 = profile.level_records[`mission-${mId}-level-20`];
-      const isMissionClearUnlocked = unlocked.includes(`m${mId}_mission_clear`) || (recordL20 && recordL20.stars === 3);
-      const isStars50Unlocked = (profile.total_stars || 0) >= 50;
+      const isMissionClearUnlocked = unlocked.includes(`m${mId}_mission_clear`) || (recordL20 && recordL20.stars === (mId * 600000));
+      const isStars50Unlocked = (profile.total_stars || 0) >= 10000000;
 
       let all3Stars = true;
       for (let l = 1; l <= 20; l++) {
@@ -154,9 +167,9 @@
         },
         { 
           id: 'stars_50', 
-          name: '繁星點點', 
-          desc: `個人雲端總星數達到 50 顆星以上 (當前: ${profile.total_stars || 0}/50)`, 
-          icon: '✨', 
+          name: '大富豪特工', 
+          desc: `累積獎金達到 1,000 萬以上 (當前: ${formatCoins(profile.total_stars)}/10M)`, 
+          icon: '💰', 
           color: 'pink',
           isUnlocked: isStars50Unlocked
         },
@@ -212,7 +225,7 @@
           first_step: { name: '初試身手', desc: `成功通過 Mission ${mNum} Stage 01 考驗`, icon: '🐣', color: 'cyan' },
           error_buster: { name: '錯題終結者', desc: '在錯題消除模式中，累計答對 20 題', icon: '🧹', color: 'green' },
           mission_clear: { name: '達成任務', desc: `Mission ${mNum} Stage 20 以 3 顆星完美通關`, icon: '👑', color: 'yellow' },
-          stars_50: { name: '繁星點點', desc: '個人雲端總星數達到 50 顆星以上', icon: '✨', color: 'pink' },
+          stars_50: { name: '大富豪特工', desc: '累積獎金達到 1,000 萬以上', icon: '💰', color: 'pink' },
           mission_perfect: { name: '完美達標', desc: `Mission ${mNum} 旗下的 20 個 Stages 全部拿下 3 顆星`, icon: '💎', color: 'pink' }
         };
 
