@@ -195,10 +195,36 @@
         else if (stars === 1) newCoins = Math.floor(base * levelNum * 1 / 3);
       }
 
+      const isCleared = !!record.is_passed;
       const oldCoins = record.stars || 0;
       const diff = Math.max(0, newCoins - oldCoins);
       if (diff > 0) {
         profile.today_earnings = (profile.today_earnings || 0) + diff;
+      }
+
+      // 每日首勝 2 倍金幣動態加成邏輯
+      let dailyFirstWinBonus = 0;
+      let isDailyFirstWin = false;
+      const dateObj = new Date();
+      const yyyy = dateObj.getFullYear();
+      const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const dd = String(dateObj.getDate()).padStart(2, '0');
+      const todayStr = `${yyyy}-${mm}-${dd}`;
+
+      if (stars === 3 && profile.last_win_date !== todayStr) {
+        isDailyFirstWin = true;
+        profile.last_win_date = todayStr;
+
+        if (isCleared) {
+          // 重複刷題：獲得 [該關基礎金幣 × 階段倍數 × 60% 刷題折扣] × 2.0 = 1.2 倍
+          dailyFirstWinBonus = Math.floor(newCoins * 1.2);
+        } else {
+          // 首次通關：獲得 [該關基礎金幣 × 階段倍數] × 2.0 = 2.0 倍（正常流程加了 1.0 倍，此處補足剩餘 1.0 倍）
+          dailyFirstWinBonus = newCoins;
+        }
+
+        profile.bonus_stars = (profile.bonus_stars || 0) + dailyFirstWinBonus;
+        profile.today_earnings = (profile.today_earnings || 0) + dailyFirstWinBonus;
       }
 
       // Update record values
@@ -218,11 +244,19 @@
 
       this.saveProfile(profile);
 
+      // 每日首勝特殊事件與特效通知
+      if (isDailyFirstWin) {
+        const burstCoins = isCleared ? Math.floor(newCoins * 1.2) : (newCoins * 2);
+        window.dispatchEvent(new CustomEvent('mathSprintBonusStarAwarded', {
+          detail: { 
+            type: 'daily_first_win', 
+            text: `🔥 每日首勝！您今天首次挑戰成功（正確率達 90% 以上），獲得額外首勝 2 倍加成金幣 ${burstCoins.toLocaleString('zh-TW')} 💰！` 
+          }
+        }));
+      }
+
       // 檢查滿集暴擊成就 (100% 收集)
       this.checkMissionCompleteReward(profile, missionNum);
-
-      // 檢查連續 7 天上線玩滿 5 回合獎勵
-      this.check7DayStreakReward(profile);
 
       // 同步新進度到 Supabase 雲端 (單表 users_profile)
       if (window.MathSprintOnboarding && window.MathSprintOnboarding.syncCurrentStatsToCloud) {
@@ -292,12 +326,12 @@
             
             if (!profile.claimed_milestones.wrong_cleared_10.includes(wrongClearedCount)) {
               profile.claimed_milestones.wrong_cleared_10.push(wrongClearedCount);
-              profile.bonus_stars = (profile.bonus_stars || 0) + 200000;
-              profile.today_earnings = (profile.today_earnings || 0) + 200000;
+              profile.bonus_stars = (profile.bonus_stars || 0) + 2000;
+              profile.today_earnings = (profile.today_earnings || 0) + 2000;
               this.recalculateTotalStars(profile);
               
               window.dispatchEvent(new CustomEvent('mathSprintBonusStarAwarded', {
-                detail: { type: 'wrong_cleared_10', text: `🏆 恭喜！您累計成功消除滿 ${wrongClearedCount} 題錯題，獲得 200,000 💰 額外獎金！` }
+                detail: { type: 'wrong_cleared_10', text: `🏆 恭喜！您累計成功消除滿 ${wrongClearedCount} 題錯題，獲得 2,000 💰 額外獎金！` }
               }));
             }
           }

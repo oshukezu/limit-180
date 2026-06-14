@@ -23,74 +23,23 @@
 
       if (allCleared) {
         profile.claimed_milestones.mission_complete.push(missionNum);
-        profile.bonus_stars = (profile.bonus_stars || 0) + 1000000;
-        profile.today_earnings = (profile.today_earnings || 0) + 1000000;
+        profile.bonus_stars = (profile.bonus_stars || 0) + 2000;
+        profile.today_earnings = (profile.today_earnings || 0) + 2000;
         this.recalculateTotalStars(profile);
         this.saveProfile(profile);
 
         window.dispatchEvent(new CustomEvent('mathSprintBonusStarAwarded', {
           detail: { 
             type: 'mission_complete', 
-            text: `🔥 滿集暴擊！您已集滿 Mission ${missionNum} 所有關卡徽章！獲得 1,000,000 💰 額外獎金！` 
+            text: `🔥 滿集暴擊！您已集滿 Mission ${missionNum} 所有關卡徽章！獲得 2,000 💰 額外獎金！` 
           }
         }));
       }
     },
 
-    // 檢查連續 7 天上線且每天至少玩 5 回合的獎勵
+    // 檢查連續 7 天上線且每天至少玩 5 回合的獎勵 (已廢除)
     check7DayStreakReward(profile) {
-      if (!profile.claimed_milestones) {
-        profile.claimed_milestones = {};
-      }
-      if (profile.claimed_milestones.streak_7day) return;
-
-      const history = profile.history_log || [];
-      if (history.length < 35) return; // 每天至少5筆，連續7天
-
-      const dateCounts = {};
-      history.forEach(session => {
-        if (session.date) {
-          dateCounts[session.date] = (dateCounts[session.date] || 0) + 1;
-        }
-      });
-
-      const validDates = Object.keys(dateCounts)
-        .filter(d => dateCounts[d] >= 5)
-        .sort();
-
-      if (validDates.length < 7) return;
-
-      let consecutiveCount = 1;
-      let hasStreak = false;
-
-      for (let i = 1; i < validDates.length; i++) {
-        const prevDate = new Date(validDates[i - 1]);
-        const currDate = new Date(validDates[i]);
-        const diffTime = Math.abs(currDate - prevDate);
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-        if (diffDays === 1) {
-          consecutiveCount++;
-          if (consecutiveCount >= 7) {
-            hasStreak = true;
-            break;
-          }
-        } else if (diffDays > 1) {
-          consecutiveCount = 1;
-        }
-      }
-
-      if (hasStreak) {
-        profile.claimed_milestones.streak_7day = true;
-        profile.bonus_stars = (profile.bonus_stars || 0) + 1000000;
-        profile.today_earnings = (profile.today_earnings || 0) + 1000000;
-        this.recalculateTotalStars(profile);
-        this.saveProfile(profile);
-
-        window.dispatchEvent(new CustomEvent('mathSprintBonusStarAwarded', {
-          detail: { type: 'streak_7day', text: '🏆 恭喜！您連續 7 天上線玩滿 5 回合，獲得 1,000,000 💰 額外獎金！' }
-        }));
-      }
+      // 已取消七天連續上線獎勵
     },
 
     // Record correct answer and handle correct-answer milestones (every 100 correct answers adds 1 star)
@@ -109,12 +58,12 @@
         
         if (!profile.claimed_milestones.correct_100.includes(count)) {
           profile.claimed_milestones.correct_100.push(count);
-          profile.bonus_stars = (profile.bonus_stars || 0) + 200000;
-          profile.today_earnings = (profile.today_earnings || 0) + 200000;
+          profile.bonus_stars = (profile.bonus_stars || 0) + 2000;
+          profile.today_earnings = (profile.today_earnings || 0) + 2000;
           this.recalculateTotalStars(profile);
           
           window.dispatchEvent(new CustomEvent('mathSprintBonusStarAwarded', {
-            detail: { type: 'correct_100', text: `🏆 恭喜！您累計答對滿 ${count} 題，獲得 200,000 💰 額外獎金！` }
+            detail: { type: 'correct_100', text: `🏆 恭喜！您累計答對滿 ${count} 題，獲得 2,000 💰 額外獎金！` }
           }));
         }
       }

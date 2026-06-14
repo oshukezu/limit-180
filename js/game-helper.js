@@ -91,7 +91,7 @@
       alert(detail.text);
       
       if (typeof confetti !== 'undefined') {
-        if (detail.type === 'mission_complete') {
+        if (detail.type === 'mission_complete' || detail.type === 'daily_first_win') {
           let duration = 3 * 1000;
           let end = Date.now() + duration;
 
