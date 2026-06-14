@@ -11,6 +11,14 @@
         });
       }
       
+      const navHomeBtn = document.getElementById('nav-home-btn');
+      if (navHomeBtn) {
+        navHomeBtn.addEventListener('click', () => {
+          this.stopGame();
+          window.showView('view-home');
+        });
+      }
+      
       const navDashboard = document.getElementById('nav-dashboard-btn');
       if (navDashboard) {
         navDashboard.addEventListener('click', () => {
@@ -116,48 +124,6 @@
       const resNextBtn = document.getElementById('result-next-btn');
       if (resNextBtn) {
         resNextBtn.addEventListener('click', () => {
-          const hasProfile = !!localStorage.getItem('limit180_user_profile');
-          if (!hasProfile) {
-            alert("【訪客身份限制】\n\n您目前為訪客身份，必須註冊身份後才能解鎖後續關卡！");
-            if (window.MathSprintOnboarding && window.MathSprintOnboarding.showProfileModal) {
-              const rec = this._tempPendingRecord;
-              let totalPendingCoins = 0;
-              if (rec) {
-                const m = rec.missionNum;
-                const l = rec.levelNum;
-                const s = rec.stars;
-                function getBaseCoin(m) {
-                  if (m >= 1 && m <= 5) return 200;
-                  if (m >= 6 && m <= 10) return 300;
-                  if (m >= 11 && m <= 15) return 1000;
-                  if (m >= 16 && m <= 20) return 2000;
-                  if (m >= 21 && m <= 25) return 5000;
-                  if (m >= 26 && m <= 30) return 10000;
-                  if (m >= 31 && m <= 35) return 20000;
-                  if (m >= 36 && m <= 40) return 40000;
-                  if (m >= 41 && m <= 44) return 100000;
-                  if (m >= 45 && m <= 47) return 250000;
-                  if (m >= 48 && m <= 49) return 500000;
-                  return 0;
-                }
-                let eCoins = 0;
-                if (m === 50) {
-                  if (s === 3) eCoins = 1500000 * l;
-                  else if (s === 2) eCoins = 1000000 * l;
-                  else if (s === 1) eCoins = 500000 * l;
-                } else {
-                  const base = getBaseCoin(m);
-                  if (s === 3) eCoins = base * l;
-                  else if (s === 2) eCoins = Math.floor(base * l * 2 / 3);
-                  else if (s === 1) eCoins = Math.floor(base * l * 1 / 3);
-                }
-                totalPendingCoins = eCoins + (rec.guest_bonus_stars || 0);
-              }
-              window.MathSprintOnboarding.showProfileModal(false, totalPendingCoins);
-            }
-            return;
-          }
-
           let nextMission = this.gameState.currentMission;
           let nextLevel = this.gameState.currentLevel + 1;
           if (nextLevel > 20) {

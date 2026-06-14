@@ -40,7 +40,10 @@
       }
       if (maxLvlEl) maxLvlEl.textContent = `Mission ${maxUnlockedMission}`;
 
-      for (let i = 1; i <= count; i++) {
+      const minMission = this.currentMinMission || 1;
+      const maxMission = this.currentMaxMission || 10;
+
+      for (let i = minMission; i <= maxMission; i++) {
         const config = MISSION_CONFIGS[i];
         const isMUnlocked = window.MathSprintStorage.isMissionUnlocked(i, profile);
         
@@ -181,4 +184,26 @@
   // Mixin 到全域的 MathSprintGame 物件，維持無縫相容性
   window.MathSprintGame = window.MathSprintGame || {};
   Object.assign(window.MathSprintGame, Lobby);
+
+  // 監聽元件載入完成事件，動態為大分類按鈕綁定點擊事件
+  window.addEventListener('limit180ComponentsLoaded', () => {
+    const tabsContainer = document.getElementById('lobby-category-tabs');
+    if (tabsContainer) {
+      tabsContainer.querySelectorAll('button[data-min]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          // 清除所有 tabs 啟用樣式
+          tabsContainer.querySelectorAll('button[data-min]').forEach(b => {
+            b.className = "px-3 py-2 text-[10px] font-pixel rounded border border-slate-800 bg-slate-950 text-slate-400 hover:border-slate-700 focus:outline-none transition-all duration-200";
+          });
+          // 設定目前 tab 啟用樣式 (Cyan 霓虹)
+          btn.className = "px-3 py-2 text-[10px] font-pixel rounded border border-cyan-500 bg-cyan-950/20 text-cyan-400 focus:outline-none transition-all duration-200";
+          
+          // 更新大廳目前的篩選區間
+          Lobby.currentMinMission = parseInt(btn.getAttribute('data-min'));
+          Lobby.currentMaxMission = parseInt(btn.getAttribute('data-max'));
+          Lobby.renderLobby();
+        });
+      });
+    }
+  });
 })();
