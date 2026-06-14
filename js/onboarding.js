@@ -11,6 +11,7 @@
   let errorMsg = null;
   let profileBar = null;
   let profileInfo = null;
+  let isSubmitting = false;
 
   // 1. 初始化監聽與 UI 元件
   window.addEventListener('limit180ComponentsLoaded', () => {
@@ -139,6 +140,7 @@
   // 4. 表單提交處理
   async function handleFormSubmit(e) {
     e.preventDefault();
+    if (isSubmitting) return;
     if (!errorMsg) return;
 
     const inputClass = document.getElementById('profile-class').value.trim();
@@ -172,6 +174,17 @@
       return;
     }
 
+    // 取得提交按鈕
+    const submitBtn = document.getElementById('profile-submit-btn');
+    const originalText = submitBtn ? submitBtn.textContent : "進入 180 禁區";
+
+    // 鎖定狀態，並停用提交按鈕以防重複點擊或按 Enter
+    isSubmitting = true;
+    if (submitBtn) {
+      submitBtn.textContent = "傳輸中...";
+      submitBtn.disabled = true;
+    }
+
     // 檢查是否為首次綁定（若是首次綁定，班級與座號輸入框不是唯讀的）
     const isEditMode = document.getElementById('profile-class').readOnly;
 
@@ -193,6 +206,11 @@
 
           if (data && data.length > 0) {
             showError(`該班級與座號已被註冊（暱稱: "${data[0].nickname}" 佔用），座號不能重複！`);
+            isSubmitting = false;
+            if (submitBtn) {
+              submitBtn.textContent = originalText;
+              submitBtn.disabled = false;
+            }
             return;
           }
         }
@@ -207,6 +225,11 @@
         `【確定要建立此特工身份嗎？】\n\n班級：${inputClass}\n座號：${inputSeat} 號\n暱稱：${inputNickname}\n\n⚠️ 注意：一經送出後，班級與座號將無法再修改！`
       );
       if (!confirmSubmit) {
+        isSubmitting = false;
+        if (submitBtn) {
+          submitBtn.textContent = originalText;
+          submitBtn.disabled = false;
+        }
         return; // 使用者取消送出
       }
     }
@@ -243,12 +266,6 @@
     };
 
     try {
-      // 顯示提交中狀態
-      const submitBtn = document.getElementById('profile-submit-btn');
-      const originalText = submitBtn.textContent;
-      submitBtn.textContent = "傳輸中...";
-      submitBtn.disabled = true;
-
       // 1. 先寫入玩家身份資訊至 localStorage，以便後續 saveLevelRecord 與 Supabase 能讀取到合法身分
       localStorage.setItem('limit180_user_profile', JSON.stringify(userProfile));
       updateUserProfileBar(userProfile);
@@ -303,14 +320,20 @@
         await window.MathSprintOnboarding.uploadAllLocalStats(inputClass, inputSeat, inputNickname);
       }
 
-      submitBtn.textContent = originalText;
-      submitBtn.disabled = false;
+      isSubmitting = false;
+      if (submitBtn) {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+      }
       modal.classList.add('hidden');
     } catch (err) {
       showError(`雲端綁定失敗：${err.message || '連線中斷'}`);
+      isSubmitting = false;
       const submitBtn = document.getElementById('profile-submit-btn');
-      submitBtn.textContent = "進入 180 禁區";
-      submitBtn.disabled = false;
+      if (submitBtn) {
+        submitBtn.textContent = "進入 180 禁區";
+        submitBtn.disabled = false;
+      }
     }
   }
 
