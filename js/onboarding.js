@@ -271,48 +271,52 @@
       updateUserProfileBar(userProfile);
 
       // 2. 處理延遲註冊 (Lazy Registration) 暫存成績寫入
-      const tempRecord = window.MathSprintGame?._tempPendingRecord;
-      if (tempRecord) {
-        // 合流運算：若有 20-Combo 額外星星，寫入 bonus_stars
-        if (tempRecord.guest_bonus_stars > 0) {
-          const profile = window.MathSprintStorage.getProfile();
-          profile.bonus_stars = (profile.bonus_stars || 0) + tempRecord.guest_bonus_stars;
-          const levelKey = `mission-${tempRecord.missionNum}-level-${tempRecord.levelNum}`;
-          if (!profile.claimed_milestones) profile.claimed_milestones = {};
-          if (!profile.claimed_milestones.combo_20) profile.claimed_milestones.combo_20 = [];
-          if (!profile.claimed_milestones.combo_20.includes(levelKey)) {
-            profile.claimed_milestones.combo_20.push(levelKey);
+      const tempRecords = window.MathSprintGame?._tempPendingRecords;
+      if (tempRecords) {
+        for (let key in tempRecords) {
+          const tempRecord = tempRecords[key];
+          
+          // 合流運算：若有 20-Combo 額外星星，寫入 bonus_stars
+          if (tempRecord.guest_bonus_stars > 0) {
+            const profile = window.MathSprintStorage.getProfile();
+            profile.bonus_stars = (profile.bonus_stars || 0) + tempRecord.guest_bonus_stars;
+            const levelKey = `mission-${tempRecord.missionNum}-level-${tempRecord.levelNum}`;
+            if (!profile.claimed_milestones) profile.claimed_milestones = {};
+            if (!profile.claimed_milestones.combo_20) profile.claimed_milestones.combo_20 = [];
+            if (!profile.claimed_milestones.combo_20.includes(levelKey)) {
+              profile.claimed_milestones.combo_20.push(levelKey);
+            }
+            window.MathSprintStorage.recalculateTotalStars(profile);
+            window.MathSprintStorage.saveProfile(profile);
           }
-          window.MathSprintStorage.recalculateTotalStars(profile);
-          window.MathSprintStorage.saveProfile(profile);
-        }
 
-        // 保存第一局關卡成績至本地
-        if (tempRecord.isPass) {
-          window.MathSprintStorage.saveLevelRecord(
+          // 保存成績至本地
+          if (tempRecord.isPass) {
+            window.MathSprintStorage.saveLevelRecord(
+              tempRecord.missionNum,
+              tempRecord.levelNum,
+              tempRecord.stars,
+              tempRecord.avgTime,
+              tempRecord.maxCombo,
+              tempRecord.minTime,
+              tempRecord.accuracy
+            );
+          }
+
+          // 記錄遊玩歷史日誌
+          window.MathSprintStorage.logHistory(
             tempRecord.missionNum,
             tempRecord.levelNum,
-            tempRecord.stars,
+            tempRecord.totalQuestions,
+            tempRecord.correctCount,
             tempRecord.avgTime,
             tempRecord.maxCombo,
-            tempRecord.minTime,
-            tempRecord.accuracy
+            tempRecord.isPass
           );
         }
 
-        // 記錄遊玩歷史日誌
-        window.MathSprintStorage.logHistory(
-          tempRecord.missionNum,
-          tempRecord.levelNum,
-          tempRecord.totalQuestions,
-          tempRecord.correctCount,
-          tempRecord.avgTime,
-          tempRecord.maxCombo,
-          tempRecord.isPass
-        );
-
         // 清除暫存變數
-        delete window.MathSprintGame._tempPendingRecord;
+        delete window.MathSprintGame._tempPendingRecords;
       }
 
       // 3. 呼叫 Supabase 進行 Upsert 雲端掛號 (委派至 onboarding-sync.js)

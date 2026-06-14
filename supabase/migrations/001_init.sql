@@ -35,7 +35,7 @@ CREATE POLICY "Own profile update" ON public.user_profiles
 CREATE TABLE IF NOT EXISTS public.level_records (
   id            UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id       UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  mission_num   SMALLINT NOT NULL CHECK (mission_num BETWEEN 1 AND 10),
+  mission_num   SMALLINT NOT NULL CHECK (mission_num BETWEEN 1 AND 50),
   level_num     SMALLINT NOT NULL CHECK (level_num BETWEEN 1 AND 20),
   stars         SMALLINT NOT NULL DEFAULT 0 CHECK (stars BETWEEN 0 AND 3),
   best_avg_time REAL     NOT NULL DEFAULT 999,
@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS public.leaderboard (
   id            UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id       UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   nickname      TEXT NOT NULL,
-  mission_num   SMALLINT NOT NULL CHECK (mission_num BETWEEN 1 AND 10),
+  mission_num   SMALLINT NOT NULL CHECK (mission_num BETWEEN 1 AND 50),
   best_avg_time REAL     NOT NULL,
   recorded_at   TIMESTAMPTZ DEFAULT now(),
   UNIQUE(user_id, mission_num)

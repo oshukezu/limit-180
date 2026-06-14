@@ -235,8 +235,10 @@ window.CFG = window.MATH_SPRINT_CONFIG;
         
         // 判斷是否需要更新暫存紀錄（保留較佳紀錄）
         let shouldUpdate = true;
-        const existing = this._tempPendingRecord;
-        if (existing && existing.missionNum === this.gameState.currentMission && existing.levelNum === this.gameState.currentLevel) {
+        const levelKey = `mission-${this.gameState.currentMission}-level-${this.gameState.currentLevel}`;
+        this._tempPendingRecords = this._tempPendingRecords || {};
+        const existing = this._tempPendingRecords[levelKey];
+        if (existing) {
           if (accuracy < existing.accuracy) {
             shouldUpdate = false;
           } else if (accuracy === existing.accuracy && avgTime > existing.avgTime) {
@@ -245,10 +247,40 @@ window.CFG = window.MATH_SPRINT_CONFIG;
         }
 
         if (shouldUpdate) {
-          this._tempPendingRecord = {
-            missionNum: this.gameState.currentMission,
-            levelNum: this.gameState.currentLevel,
+          // 金幣還原與星等對應的新增金幣 (用以在 onboarding 顯示累計金額)
+          function getBaseCoin(m) {
+            if (m >= 1 && m <= 5) return 200;
+            if (m >= 6 && m <= 10) return 300;
+            if (m >= 11 && m <= 15) return 1000;
+            if (m >= 16 && m <= 20) return 2000;
+            if (m >= 21 && m <= 25) return 5000;
+            if (m >= 26 && m <= 30) return 10000;
+            if (m >= 31 && m <= 35) return 20000;
+            if (m >= 36 && m <= 40) return 40000;
+            if (m >= 41 && m <= 44) return 100000;
+            if (m >= 45 && m <= 47) return 250000;
+            if (m >= 48 && m <= 49) return 500000;
+            return 0;
+          }
+          let newCoins = 0;
+          const mNum = this.gameState.currentMission;
+          const lNum = this.gameState.currentLevel;
+          if (mNum === 50) {
+            if (starsEarned === 3) newCoins = 1500000 * lNum;
+            else if (starsEarned === 2) newCoins = 1000000 * lNum;
+            else if (starsEarned === 1) newCoins = 500000 * lNum;
+          } else {
+            const base = getBaseCoin(mNum);
+            if (starsEarned === 3) newCoins = base * lNum;
+            else if (starsEarned === 2) newCoins = Math.floor(base * lNum * 2 / 3);
+            else if (starsEarned === 1) newCoins = Math.floor(base * lNum * 1 / 3);
+          }
+
+          this._tempPendingRecords[levelKey] = {
+            missionNum: mNum,
+            levelNum: lNum,
             stars: starsEarned,
+            coins: newCoins,
             guest_bonus_stars: guest_bonus_stars,
             avgTime: avgTime,
             maxCombo: this.gameState.maxCombo,
@@ -258,7 +290,7 @@ window.CFG = window.MATH_SPRINT_CONFIG;
             totalQuestions: this.gameState.totalQuestions,
             accuracy: accuracy
           };
-          console.log('[Lazy Registration] 訪客首玩第一局，成績已暫存：', this._tempPendingRecord);
+          console.log('[Lazy Registration] 訪客關卡成績已暫存：', this._tempPendingRecords);
         } else {
           console.log('[Lazy Registration] 訪客此局成績未優於歷史暫存，保留原有紀錄。', existing);
         }

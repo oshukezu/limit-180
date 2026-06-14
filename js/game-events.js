@@ -71,38 +71,12 @@
             const skip = confirm("【建立特工身份】\n\n建議您先註冊身份，以便儲存您辛苦挑戰的成績並同步到排行榜！\n\n按「確定」前往註冊，按「取消」即可「暫時略過」並以訪客身份前往大廳。");
             if (skip) {
               if (window.MathSprintOnboarding && window.MathSprintOnboarding.showProfileModal) {
-                const rec = this._tempPendingRecord;
                 let totalPendingCoins = 0;
-                if (rec) {
-                  const m = rec.missionNum;
-                  const l = rec.levelNum;
-                  const s = rec.stars;
-                  function getBaseCoin(m) {
-                    if (m >= 1 && m <= 5) return 200;
-                    if (m >= 6 && m <= 10) return 300;
-                    if (m >= 11 && m <= 15) return 1000;
-                    if (m >= 16 && m <= 20) return 2000;
-                    if (m >= 21 && m <= 25) return 5000;
-                    if (m >= 26 && m <= 30) return 10000;
-                    if (m >= 31 && m <= 35) return 20000;
-                    if (m >= 36 && m <= 40) return 40000;
-                    if (m >= 41 && m <= 44) return 100000;
-                    if (m >= 45 && m <= 47) return 250000;
-                    if (m >= 48 && m <= 49) return 500000;
-                    return 0;
+                if (this._tempPendingRecords) {
+                  for (let key in this._tempPendingRecords) {
+                    const rec = this._tempPendingRecords[key];
+                    totalPendingCoins += (rec.coins || 0) + (rec.guest_bonus_stars || 0);
                   }
-                  let eCoins = 0;
-                  if (m === 50) {
-                    if (s === 3) eCoins = 1500000 * l;
-                    else if (s === 2) eCoins = 1000000 * l;
-                    else if (s === 1) eCoins = 500000 * l;
-                  } else {
-                    const base = getBaseCoin(m);
-                    if (s === 3) eCoins = base * l;
-                    else if (s === 2) eCoins = Math.floor(base * l * 2 / 3);
-                    else if (s === 1) eCoins = Math.floor(base * l * 1 / 3);
-                  }
-                  totalPendingCoins = eCoins + (rec.guest_bonus_stars || 0);
                 }
                 window.MathSprintOnboarding.showProfileModal(false, totalPendingCoins);
               }
@@ -150,38 +124,12 @@
             const skip = confirm("【建立特工身份】\n\n建議您先註冊身份，以便儲存您辛苦挑戰的成績並同步到排行榜！\n\n按「確定」前往註冊，按「取消」即可「暫時略過」並以訪客身份挑戰下一關。");
             if (skip) {
               if (window.MathSprintOnboarding && window.MathSprintOnboarding.showProfileModal) {
-                const rec = this._tempPendingRecord;
                 let totalPendingCoins = 0;
-                if (rec) {
-                  const m = rec.missionNum;
-                  const l = rec.levelNum;
-                  const s = rec.stars;
-                  function getBaseCoin(m) {
-                    if (m >= 1 && m <= 5) return 200;
-                    if (m >= 6 && m <= 10) return 300;
-                    if (m >= 11 && m <= 15) return 1000;
-                    if (m >= 16 && m <= 20) return 2000;
-                    if (m >= 21 && m <= 25) return 5000;
-                    if (m >= 26 && m <= 30) return 10000;
-                    if (m >= 31 && m <= 35) return 20000;
-                    if (m >= 36 && m <= 40) return 40000;
-                    if (m >= 41 && m <= 44) return 100000;
-                    if (m >= 45 && m <= 47) return 250000;
-                    if (m >= 48 && m <= 49) return 500000;
-                    return 0;
+                if (this._tempPendingRecords) {
+                  for (let key in this._tempPendingRecords) {
+                    const rec = this._tempPendingRecords[key];
+                    totalPendingCoins += (rec.coins || 0) + (rec.guest_bonus_stars || 0);
                   }
-                  let eCoins = 0;
-                  if (m === 50) {
-                    if (s === 3) eCoins = 1500000 * l;
-                    else if (s === 2) eCoins = 1000000 * l;
-                    else if (s === 1) eCoins = 500000 * l;
-                  } else {
-                    const base = getBaseCoin(m);
-                    if (s === 3) eCoins = base * l;
-                    else if (s === 2) eCoins = Math.floor(base * l * 2 / 3);
-                    else if (s === 1) eCoins = Math.floor(base * l * 1 / 3);
-                  }
-                  totalPendingCoins = eCoins + (rec.guest_bonus_stars || 0);
                 }
                 window.MathSprintOnboarding.showProfileModal(false, totalPendingCoins);
               }

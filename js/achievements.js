@@ -44,7 +44,7 @@
       for (let l = 1; l <= 20; l++) {
         const key = `mission-${mission}-level-${l}`;
         const rec = profile.level_records[key];
-        if (!rec || !rec.is_passed || rec.accuracy < 1.0) {
+        if (!rec || !rec.is_passed || !(rec.accuracy >= 1.0)) {
           isPerfect = false;
           break;
         }
@@ -131,7 +131,7 @@
       let all100Percent = true;
       for (let l = 1; l <= 20; l++) {
         const rec = profile.level_records[`mission-${mId}-level-${l}`];
-        if (!rec || !rec.is_passed || rec.accuracy < 1.0) {
+        if (!rec || !rec.is_passed || !(rec.accuracy >= 1.0)) {
           all100Percent = false;
           break;
         }

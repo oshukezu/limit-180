@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS users_profile (
     grade_class TEXT NOT NULL,
     seat_number TEXT NOT NULL,
     nickname TEXT NOT NULL,
-    mission_id INTEGER NOT NULL, -- 大關卡編號 (1-10)
+    mission_id INTEGER NOT NULL, -- 大關卡編號 (1-50)
     stars INTEGER DEFAULT 0,     -- 該關卡累計星星數
     best_avg_time NUMERIC DEFAULT 99.9, -- 該關卡最佳平均秒數
     min_time NUMERIC DEFAULT 99.9,      -- 該關卡單題最快秒數

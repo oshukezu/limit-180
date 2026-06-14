@@ -104,7 +104,7 @@ limit-180/
 此目錄的 HTML 檔案皆非獨立網頁，而是被 `loader.js` 動態讀取並注入到 `index.html` 中的 `#app` 容器中。
 
 * **[views/home.html](views/home.html)**：首頁歡迎畫面，包含「進入遊戲」與「規則介紹」按鈕。
-* **[views/lobby.html](views/lobby.html)**：遊戲大廳，呈現 Mission 1-10 的網格卡片、玩家目前的累積與今日獎金、以及各關卡點陣圖。
+* **[views/lobby.html](views/lobby.html)**：遊戲大廳，呈現 Mission 1-50 的滿版列表卡片、玩家目前的累積與今日獎金、以及各關卡點陣圖。
 * **[views/game.html](views/game.html)**：答題進行時的主畫面，包含題目卡片、答案輸入框、生命值、倒數計時器及輔助圖形容器。
 * **[views/result.html](views/result.html)**：遊戲結算介面，顯示答對題數、秒數、Combo 數、獲得金幣以及動態 Confetti 灑花特效。
 * **[views/review.html](views/review.html)**：錯題消除練習介面，無時間限制，提示玩家需連續答對 3 次方可消除錯題。
@@ -130,7 +130,7 @@ limit-180/
   * **職責**：管理遊戲答題中的細部遊玩邏輯。
   * **說明**：負責下一題產生 (`nextQuestion`)、定時器倒數 (`startTimer`)、答案提交與自動判斷 (`checkAutoSubmit`)、答對與錯誤回饋處理 (`handleSuccess` 與 `handleFailure`)，以及暫停控制。
 * **[js/game-config.js](js/game-config.js)**
-  * **職責**：儲存 10 大 Mission 的設定資料。
+  * **職責**：儲存 50 大 Mission 的設定資料。
   * **說明**：配置各關的總題數、中文名稱與描述，以及用來做動態倒數計時的初始時間與目標時間參數。
 * **[js/generator.js](js/generator.js)**
   * **職責**：數學題目生成引擎。
@@ -167,7 +167,7 @@ limit-180/
 
 * **[js/game-lobby.js](js/game-lobby.js)**
   * **職責**：大廳介面控制器。
-  * **說明**：渲染 10 個 Mission 卡片與各關卡進度。處理玩家選擇關卡、顯示獲得金幣以及差額補給防刷限制。
+  * **說明**：渲染 50 個 Mission 卡片（以階級分頁篩選）與各關卡進度。處理玩家選擇關卡、顯示獲得金幣以及差額補給防刷限制。
 * **[js/game-result.js](js/game-result.js)**
   * **職責**：結果結算控制器。
   * **說明**：計算並渲染該局得分、Combo 連擊與金幣，處理降級警告，並暫存成就解鎖的金幣獎金待大廳時再行彈出。

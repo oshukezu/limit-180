@@ -145,7 +145,15 @@
 
       // 延遲註冊：如果當前是訪客，播放完結算後彈出註冊身分彈窗
       if (!hasProfile) {
-        const totalPendingCoins = earnedCoins + (this._tempPendingRecord?.guest_bonus_stars || 0);
+        let totalPendingCoins = 0;
+        if (this._tempPendingRecords) {
+          for (let key in this._tempPendingRecords) {
+            const rec = this._tempPendingRecords[key];
+            totalPendingCoins += (rec.coins || 0) + (rec.guest_bonus_stars || 0);
+          }
+        } else {
+          totalPendingCoins = earnedCoins + (this.gameState.maxCombo === 20 ? 5000 : 0);
+        }
         setTimeout(() => {
           if (window.MathSprintOnboarding && window.MathSprintOnboarding.showProfileModal) {
             window.MathSprintOnboarding.showProfileModal(false, totalPendingCoins);

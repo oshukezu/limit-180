@@ -165,7 +165,7 @@
 
             let btnStarsClass = '';
             if (grade === 'S') {
-              btnStarsClass = 'three-stars animate-pulse'; // S級閃爍效果更炫
+              btnStarsClass = 'three-stars'; 
             } else if (grade === 'A') {
               btnStarsClass = 'three-stars';
             } else if (grade === 'B') {
