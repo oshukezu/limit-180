@@ -232,20 +232,36 @@ window.CFG = window.MATH_SPRINT_CONFIG;
         }
 
         const minTime = validTimes.length > 0 ? Math.min(...validTimes) : 99.9;
-         this._tempPendingRecord = {
-          missionNum: this.gameState.currentMission,
-          levelNum: this.gameState.currentLevel,
-          stars: starsEarned,
-          guest_bonus_stars: guest_bonus_stars,
-          avgTime: avgTime,
-          maxCombo: this.gameState.maxCombo,
-          minTime: minTime,
-          isPass: isPass,
-          correctCount: this.gameState.correctCount,
-          totalQuestions: this.gameState.totalQuestions,
-          accuracy: accuracy
-        };
-        console.log('[Lazy Registration] 訪客首玩第一局，成績已暫存：', this._tempPendingRecord);
+        
+        // 判斷是否需要更新暫存紀錄（保留較佳紀錄）
+        let shouldUpdate = true;
+        const existing = this._tempPendingRecord;
+        if (existing && existing.missionNum === this.gameState.currentMission && existing.levelNum === this.gameState.currentLevel) {
+          if (accuracy < existing.accuracy) {
+            shouldUpdate = false;
+          } else if (accuracy === existing.accuracy && avgTime > existing.avgTime) {
+            shouldUpdate = false;
+          }
+        }
+
+        if (shouldUpdate) {
+          this._tempPendingRecord = {
+            missionNum: this.gameState.currentMission,
+            levelNum: this.gameState.currentLevel,
+            stars: starsEarned,
+            guest_bonus_stars: guest_bonus_stars,
+            avgTime: avgTime,
+            maxCombo: this.gameState.maxCombo,
+            minTime: minTime,
+            isPass: isPass,
+            correctCount: this.gameState.correctCount,
+            totalQuestions: this.gameState.totalQuestions,
+            accuracy: accuracy
+          };
+          console.log('[Lazy Registration] 訪客首玩第一局，成績已暫存：', this._tempPendingRecord);
+        } else {
+          console.log('[Lazy Registration] 訪客此局成績未優於歷史暫存，保留原有紀錄。', existing);
+        }
       } else {
         if (this.gameState.maxCombo === 20) {
           const profile = window.MathSprintStorage.getProfile();
