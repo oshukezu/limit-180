@@ -62,6 +62,24 @@
         );
       }
 
+      // 同步全域狀態至 users_global
+      if (window.MathSprintStorage && window.MathSprintSupabaseService && window.MathSprintSupabaseService.saveGlobalProfile) {
+        const localProfile = window.MathSprintStorage.getProfile();
+        const coinsBalance = localProfile.total_stars || 0;
+        const purchasedItems = localProfile.purchased_items || [];
+        try {
+          await window.MathSprintSupabaseService.saveGlobalProfile(
+            inputClass,
+            inputSeat,
+            inputNickname,
+            coinsBalance,
+            purchasedItems
+          );
+        } catch (globalErr) {
+          console.warn("[OnboardingSync] 同步全域狀態至 users_global 失敗：", globalErr.message || globalErr);
+        }
+      }
+
       if (window.MathSprintLeaderboard && window.MathSprintLeaderboard.renderLeaderboard) {
         window.MathSprintLeaderboard.renderLeaderboard().catch(() => {});
       }
@@ -114,6 +132,22 @@
                 minTime === 999 ? 99.9 : parseFloat(minTime.toFixed(3))
               );
               console.log(`[Onboarding] 雲端 Mission ${missionId} 進度同步成功。`);
+
+              // 同步全域狀態至 users_global
+              if (window.MathSprintSupabaseService.saveGlobalProfile) {
+                const coinsBalance = localProfile.total_stars || 0;
+                const purchasedItems = localProfile.purchased_items || [];
+                await window.MathSprintSupabaseService.saveGlobalProfile(
+                  u.grade_class,
+                  u.seat_number,
+                  u.nickname,
+                  coinsBalance,
+                  purchasedItems
+                ).catch((err) => {
+                  console.warn("[Onboarding] 雲端全域狀態自動同步失敗：", err.message || err);
+                });
+              }
+
               if (window.MathSprintLeaderboard && window.MathSprintLeaderboard.renderLeaderboard) {
                 window.MathSprintLeaderboard.renderLeaderboard().catch(() => {});
               }

@@ -33,3 +33,32 @@ ON users_profile
 FOR ALL 
 USING (true) 
 WITH CHECK (true);
+
+-- 5. 建立 users_global 資料表 (用於管理全域虛擬資產與商店狀態)
+CREATE TABLE IF NOT EXISTS users_global (
+    grade_class TEXT NOT NULL,
+    seat_number TEXT NOT NULL,
+    nickname TEXT NOT NULL,
+    coins_balance INTEGER DEFAULT 0,
+    purchased_items TEXT[] DEFAULT '{}',
+    integrity_hash TEXT,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+    
+    PRIMARY KEY (grade_class, seat_number)
+);
+
+-- 6. 啟用 Row Level Security (RLS)
+ALTER TABLE users_global ENABLE ROW LEVEL SECURITY;
+
+-- 7. 建立全域狀態表安全性政策：允許所有人匿名讀取 (SELECT)
+CREATE POLICY "Allow public read global" 
+ON users_global 
+FOR SELECT 
+USING (true);
+
+-- 8. 建立全域狀態表安全性政策：允許所有人進行寫入與更新 (UPSERT)
+CREATE POLICY "Allow public insert and update global" 
+ON users_global 
+FOR ALL 
+USING (true) 
+WITH CHECK (true);

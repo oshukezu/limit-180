@@ -114,10 +114,60 @@
     return validatedData;
   }
 
+  // 5. 內部全域 SHA-256 雜湊產生器 (防改全域雜湊)
+  async function generateGlobalHash(gradeClass, seatNumber, nickname, coinsBalance, purchasedItems) {
+    const salt = "Limit180_School_League_Salt_2026_V2";
+    const itemsStr = Array.isArray(purchasedItems) ? purchasedItems.join(',') : '';
+    const message = `${gradeClass}:${seatNumber}:${nickname}:${coinsBalance}:${itemsStr}:${salt}`;
+    
+    const encoder = new TextEncoder();
+    const data = encoder.encode(message);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  // 6. 儲存或更新用戶全域資產狀態 (UPSERT)
+  async function saveGlobalProfile(gradeClass, seatNumber, nickname, coinsBalance, purchasedItems) {
+    const db = getSupabaseClient();
+    if (!db) {
+      throw new Error("Supabase 未初始化");
+    }
+
+    // 將非陣列的值作轉換防呆
+    const itemsArray = Array.isArray(purchasedItems) ? purchasedItems : [];
+
+    const integrityHash = await generateGlobalHash(gradeClass, seatNumber, nickname, coinsBalance, itemsArray);
+
+    const { data, error } = await db
+      .from('users_global')
+      .upsert({
+        grade_class: gradeClass,
+        seat_number: seatNumber,
+        nickname: nickname,
+        coins_balance: coinsBalance,
+        purchased_items: itemsArray,
+        integrity_hash: integrityHash,
+        updated_at: new Date().toISOString()
+      }, {
+        onConflict: 'grade_class,seat_number'
+      })
+      .select();
+
+    if (error) {
+      console.error("[SupabaseService] saveGlobalProfile 發生錯誤：", error.message);
+      throw error;
+    }
+
+    console.log("[SupabaseService] saveGlobalProfile 成功：", data);
+    return data;
+  }
+
   // 掛載到 window 全域命名空間中
   window.MathSprintSupabaseService = {
     initSupabase: getSupabaseClient,
     saveRecord,
-    getLeaderboard
+    getLeaderboard,
+    saveGlobalProfile
   };
 })();
