@@ -160,11 +160,11 @@
     },
 
 
-    saveLevelRecord(missionNum, levelNum, stars, avgTime, maxCombo, minTime) {
+    saveLevelRecord(missionNum, levelNum, stars, avgTime, maxCombo, minTime, accuracy) {
       const profile = this.getProfile();
       const levelKey = `mission-${missionNum}-level-${levelNum}`;
       
-      const record = profile.level_records[levelKey] || { stars: 0, best_avg_time: 999, max_combo: 0, min_time: 999 };
+      const record = profile.level_records[levelKey] || { stars: 0, best_avg_time: 999, max_combo: 0, min_time: 999, accuracy: 0 };
       
       // 獲取基礎金幣
       function getBaseCoin(m) {
@@ -236,6 +236,9 @@
         record.min_time = Math.min(record.min_time || 999, minTime);
       }
       record.max_combo = Math.max(record.max_combo, maxCombo);
+      if (accuracy !== undefined) {
+        record.accuracy = Math.max(record.accuracy || 0, accuracy);
+      }
       record.is_passed = true;
       profile.level_records[levelKey] = record;
 

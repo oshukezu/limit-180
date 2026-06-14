@@ -84,7 +84,7 @@
         }
 
         const card = document.createElement('div');
-        card.className = `hud-panel p-5 bg-slate-900/90 flex flex-col justify-between transition-all duration-300 relative w-full md:w-[calc(50%-12px)] lg:w-[calc(33.33%-16px)] max-w-sm ${
+        card.className = `hud-panel p-5 bg-slate-900/90 flex flex-col justify-between transition-all duration-300 relative w-full ${
           !isMUnlocked ? 'opacity-40 border-slate-950 pointer-events-none' : 'hover:border-cyan-400'
         }`;
         
@@ -144,17 +144,36 @@
               else if (c >= Math.floor(base * L * 1 / 3)) recordStars = 1;
             }
 
+            // 計算答對率的評級字母 (S, A, B, C, D)
+            let grade = '';
+            if (record && record.is_passed) {
+              if (record.accuracy !== undefined) {
+                const acc = record.accuracy;
+                if (acc >= 1.0) grade = 'S';
+                else if (acc >= 0.90) grade = 'A';
+                else if (acc >= 0.80) grade = 'B';
+                else if (acc >= 0.70) grade = 'C';
+                else if (acc >= 0.60) grade = 'D';
+              } else {
+                // 相容舊紀錄的星等估算
+                if (recordStars === 3) grade = 'A';
+                else if (recordStars === 2) grade = 'B';
+                else if (recordStars === 1) grade = 'C';
+                else grade = 'D';
+              }
+            }
+
             let btnStarsClass = '';
-            let starsIndicator = '☆☆☆';
-            if (recordStars === 3) {
+            if (grade === 'S') {
+              btnStarsClass = 'three-stars animate-pulse'; // S級閃爍效果更炫
+            } else if (grade === 'A') {
               btnStarsClass = 'three-stars';
-              starsIndicator = '★★★';
-            } else if (recordStars === 2) {
+            } else if (grade === 'B') {
               btnStarsClass = 'two-stars';
-              starsIndicator = '★★☆';
-            } else if (recordStars === 1) {
+            } else if (grade === 'C') {
               btnStarsClass = 'one-star';
-              starsIndicator = '★☆☆';
+            } else if (grade === 'D') {
+              btnStarsClass = 'one-star';
             }
 
             btn.className = `lvl-btn ${btnStarsClass}`;
@@ -163,9 +182,20 @@
               btn.classList.add('locked');
               btn.innerHTML = `<span class="text-[8px]">🔒</span>`;
             } else {
+              let gradeHtml = '';
+              if (grade) {
+                let colorClass = 'text-slate-400';
+                if (grade === 'S') colorClass = 'text-yellow-400 font-bold glow-yellow';
+                else if (grade === 'A') colorClass = 'text-cyan-400 font-bold glow-blue';
+                else if (grade === 'B') colorClass = 'text-green-400 font-bold glow-green';
+                else if (grade === 'C') colorClass = 'text-orange-400';
+                else if (grade === 'D') colorClass = 'text-slate-400';
+                gradeHtml = `<span class="text-[8px] font-pixel ${colorClass}" style="font-size: 8px; margin-top: 1px;">${grade}</span>`;
+              }
+
               btn.innerHTML = `
                 <span class="text-[9px] font-pixel">${L}</span>
-                <span class="text-[6px] tracking-tighter opacity-80" style="font-size: 5px;">${starsIndicator}</span>
+                ${gradeHtml}
               `;
               btn.addEventListener('click', (e) => {
                 e.stopPropagation();

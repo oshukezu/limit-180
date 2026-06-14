@@ -232,7 +232,7 @@ window.CFG = window.MATH_SPRINT_CONFIG;
         }
 
         const minTime = validTimes.length > 0 ? Math.min(...validTimes) : 99.9;
-        this._tempPendingRecord = {
+         this._tempPendingRecord = {
           missionNum: this.gameState.currentMission,
           levelNum: this.gameState.currentLevel,
           stars: starsEarned,
@@ -242,7 +242,8 @@ window.CFG = window.MATH_SPRINT_CONFIG;
           minTime: minTime,
           isPass: isPass,
           correctCount: this.gameState.correctCount,
-          totalQuestions: this.gameState.totalQuestions
+          totalQuestions: this.gameState.totalQuestions,
+          accuracy: accuracy
         };
         console.log('[Lazy Registration] 訪客首玩第一局，成績已暫存：', this._tempPendingRecord);
       } else {
@@ -273,7 +274,8 @@ window.CFG = window.MATH_SPRINT_CONFIG;
             starsEarned,
             avgTime,
             this.gameState.maxCombo,
-            minTime
+            minTime,
+            accuracy
           );
           this.gameState.consecutiveFailures = 0;
         } else {

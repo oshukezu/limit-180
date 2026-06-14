@@ -278,7 +278,8 @@
             tempRecord.stars,
             tempRecord.avgTime,
             tempRecord.maxCombo,
-            tempRecord.minTime
+            tempRecord.minTime,
+            tempRecord.accuracy
           );
         }
 

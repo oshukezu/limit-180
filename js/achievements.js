@@ -29,9 +29,8 @@
         this.unlock(`m${mission}_first_step`);
       }
 
-      // 2. 達成任務 (M[M] Stage 20 以 3 顆星完美通關)
-      // 3星門檻：正確率 90%
-      if (level === 20 && isPass && correctCount !== undefined && totalQuestions !== undefined && (correctCount / totalQuestions) >= 0.90) {
+      // 2. 達成任務 (M[M] Stage 20 完美過關，即答對率 100%)
+      if (level === 20 && isPass && correctCount !== undefined && totalQuestions !== undefined && (correctCount / totalQuestions) >= 1.0) {
         this.unlock(`m${mission}_mission_clear`);
       }
 
@@ -40,12 +39,12 @@
         this.unlock('stars_50');
       }
 
-      // 4. 完美達標 (該大關 Mission 20 個 Stages 全部拿下 3 顆星)
+      // 4. 完美達標 (該大關 Mission 20 個 Stages 答對率皆為 100%)
       let isPerfect = true;
       for (let l = 1; l <= 20; l++) {
         const key = `mission-${mission}-level-${l}`;
         const rec = profile.level_records[key];
-        if (!rec || rec.stars < 3) {
+        if (!rec || !rec.is_passed || rec.accuracy < 1.0) {
           isPerfect = false;
           break;
         }
@@ -126,18 +125,18 @@
       const isErrorBusterUnlocked = (profile.total_review_correct_count || 0) >= 20;
       
       const recordL20 = profile.level_records[`mission-${mId}-level-20`];
-      const isMissionClearUnlocked = unlocked.includes(`m${mId}_mission_clear`) || (recordL20 && recordL20.stars === (mId * 600000));
+      const isMissionClearUnlocked = unlocked.includes(`m${mId}_mission_clear`) || (recordL20 && recordL20.is_passed && recordL20.accuracy >= 1.0);
       const isStars50Unlocked = (profile.total_stars || 0) >= 10000000;
 
-      let all3Stars = true;
+      let all100Percent = true;
       for (let l = 1; l <= 20; l++) {
         const rec = profile.level_records[`mission-${mId}-level-${l}`];
-        if (!rec || rec.stars < 3) {
-          all3Stars = false;
+        if (!rec || !rec.is_passed || rec.accuracy < 1.0) {
+          all100Percent = false;
           break;
         }
       }
-      const isMissionPerfectUnlocked = unlocked.includes(`m${mId}_mission_perfect`) || all3Stars;
+      const isMissionPerfectUnlocked = unlocked.includes(`m${mId}_mission_perfect`) || all100Percent;
 
       // 當前 Mission 的動態徽章列表
       const badges = [
@@ -160,7 +159,7 @@
         { 
           id: `m${mId}_mission_clear`, 
           name: '達成任務', 
-          desc: `Mission ${mId} Stage 20 以 3 顆星完美通關`, 
+          desc: `Mission ${mId} Stage 20 完美過關`, 
           icon: '👑', 
           color: 'yellow',
           isUnlocked: isMissionClearUnlocked
@@ -176,7 +175,7 @@
         { 
           id: `m${mId}_mission_perfect`, 
           name: '完美達標', 
-          desc: `Mission ${mId} 旗下的 20 個 Stages 全部拿下 3 顆星`, 
+          desc: `Mission ${mId} 旗下的 20 個 Stages 答對率皆為 100%`, 
           icon: '💎', 
           color: 'pink',
           isUnlocked: isMissionPerfectUnlocked
@@ -224,9 +223,9 @@
         const badgeMeta = {
           first_step: { name: '初試身手', desc: `成功通過 Mission ${mNum} Stage 01 考驗`, icon: '🐣', color: 'cyan' },
           error_buster: { name: '錯題終結者', desc: '在錯題消除模式中，累計答對 20 題', icon: '🧹', color: 'green' },
-          mission_clear: { name: '達成任務', desc: `Mission ${mNum} Stage 20 以 3 顆星完美通關`, icon: '👑', color: 'yellow' },
+          mission_clear: { name: '達成任務', desc: `Mission ${mNum} Stage 20 完美過關`, icon: '👑', color: 'yellow' },
           stars_50: { name: '大富豪特工', desc: '累積獎金達到 1,000 萬以上', icon: '💰', color: 'pink' },
-          mission_perfect: { name: '完美達標', desc: `Mission ${mNum} 旗下的 20 個 Stages 全部拿下 3 顆星`, icon: '💎', color: 'pink' }
+          mission_perfect: { name: '完美達標', desc: `Mission ${mNum} 旗下的 20 個 Stages 答對率皆為 100%`, icon: '💎', color: 'pink' }
         };
 
         const meta = badgeMeta[typeId];
