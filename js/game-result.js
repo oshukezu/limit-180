@@ -145,14 +145,13 @@
 
       // 延遲註冊：如果當前是訪客，播放完結算後彈出註冊身分彈窗
       if (!hasProfile) {
-        const totalPendingStars = starsEarned + (this._tempPendingRecord?.guest_bonus_stars || 0);
+        const totalPendingCoins = earnedCoins + (this._tempPendingRecord?.guest_bonus_stars || 0);
         setTimeout(() => {
           if (window.MathSprintOnboarding && window.MathSprintOnboarding.showProfileModal) {
-            window.MathSprintOnboarding.showProfileModal(false, totalPendingStars);
+            window.MathSprintOnboarding.showProfileModal(false, totalPendingCoins);
           }
         }, 1500);
       }
-
       // 處理被暫存的星星獎勵提示，在遊戲結束後再顯示
       if (this._pendingRewards && this._pendingRewards.length > 0) {
         setTimeout(() => {

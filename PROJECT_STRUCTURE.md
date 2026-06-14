@@ -30,7 +30,7 @@ limit-180/
 │   ├── game-config.js          # 各關卡設定值（題數、時間限制、描述）
 │   ├── game-events.js          # 物理與虛擬鍵盤之輸入事件監聽與代理
 │   ├── game-lobby.js           # 遊戲大廳關卡卡片與子關卡選擇渲染
-│   ├── game-result.js          # 遊戲結算、降級提示與待發星星獎勵彈窗
+│   ├── game-result.js          # 遊戲結算、降級提示與待發金幣獎勵彈窗
 │   ├── game-review.js          # 錯題本管理與錯題消除練習模式
 │   ├── game-scaffold.js        # 比大小關卡中 SVG 輔助圖形動態繪製
 │   ├── game-core.js            # 核心遊戲生命週期管理
@@ -81,10 +81,10 @@ limit-180/
   * **說明**：負責初始化全域樣式、Tailwind CSS、Chart.js 與 Supabase SDK，並載入 `loader.js` 來動態抽換 `views/` 下的各個頁面片段。
 * **[rules.html](rules.html)**
   * **職責**：聯賽與遊戲規則說明頁面。
-  * **說明**：以 Cyberpunk 風格排版，向玩家說明積分機制、四維給星規則、暫停次數限制、防作弊機制等。
+  * **說明**：以 Cyberpunk 風格排版，向玩家說明積分機制、四維金幣獎勵規則、暫停次數限制、防作弊機制等。
 * **[README.md](README.md)**
   * **職責**：專案說明書。
-  * **說明**：包含專案的核心特色、給星機制、防作弊與防刷分演算法、技術棧以及部署方式。
+  * **說明**：包含專案的核心特色、金幣獎金機制、防作弊與防刷分演算法、技術棧以及部署方式。
 * **[supabase_init.sql](supabase_init.sql)**
   * **職責**：資料庫結構初始化 SQL。
   * **說明**：定義了 `users_profile` 資料表的 schema、索引、複合唯一約束 `(grade_class, seat_number, mission_id)`、以及安全防護的 RLS (Row Level Security) 規則。
@@ -104,9 +104,9 @@ limit-180/
 此目錄的 HTML 檔案皆非獨立網頁，而是被 `loader.js` 動態讀取並注入到 `index.html` 中的 `#app` 容器中。
 
 * **[views/home.html](views/home.html)**：首頁歡迎畫面，包含「進入遊戲」與「規則介紹」按鈕。
-* **[views/lobby.html](views/lobby.html)**：遊戲大廳，呈現 Mission 1-10 的網格卡片、玩家目前的星星數、以及各關卡點陣圖。
+* **[views/lobby.html](views/lobby.html)**：遊戲大廳，呈現 Mission 1-10 的網格卡片、玩家目前的累積與今日獎金、以及各關卡點陣圖。
 * **[views/game.html](views/game.html)**：答題進行時的主畫面，包含題目卡片、答案輸入框、生命值、倒數計時器及輔助圖形容器。
-* **[views/result.html](views/result.html)**：遊戲結算介面，顯示答對題數、秒數、Combo 數、獲得星等以及動態 Confetti 灑花特效。
+* **[views/result.html](views/result.html)**：遊戲結算介面，顯示答對題數、秒數、Combo 數、獲得金幣以及動態 Confetti 灑花特效。
 * **[views/review.html](views/review.html)**：錯題消除練習介面，無時間限制，提示玩家需連續答對 3 次方可消除錯題。
 * **[views/dashboard.html](views/dashboard.html)**：個人學習戰報儀表板，展示四維能力雷達圖與 7 日反應速度趨勢線。
 * **[views/achievements.html](views/achievements.html)**：徽章成就牆，展示並渲染解鎖與未解鎖的 10+ 種特工徽章。
@@ -125,7 +125,7 @@ limit-180/
   * **說明**：負責遊戲開始 (`startGame`)、停止 (`stopGame`)、中斷 (`interruptGame`) 與結算 (`endGame`)。
 * **[js/game-helper.js](js/game-helper.js)**
   * **職責**：提供遊戲輔助邏輯與效果。
-  * **說明**：負責 SPA 視圖切換器 (`showView`)、雙軌流光相同霓虹顏色切換 (`changeScannerColor`)、雲端 Session 身分校驗 (`verifySession`) 與星星獎勵彈窗 (`showBonusStarAlert`)。
+  * **說明**：負責 SPA 視圖切換器 (`showView`)、雙軌流光相同霓虹顏色切換 (`changeScannerColor`)、雲端 Session 身分校驗 (`verifySession`) 與金幣獎勵彈窗 (`showBonusStarAlert`)。
 * **[js/game-play.js](js/game-play.js)**
   * **職責**：管理遊戲答題中的細部遊玩邏輯。
   * **說明**：負責下一題產生 (`nextQuestion`)、定時器倒數 (`startTimer`)、答案提交與自動判斷 (`checkAutoSubmit`)、答對與錯誤回饋處理 (`handleSuccess` 與 `handleFailure`)，以及暫停控制。
@@ -151,8 +151,8 @@ limit-180/
   * **職責**：本地存檔管理。
   * **說明**：提供 LocalStorage 底層的讀取與寫入介面（`math_sprint_profile` 存檔），負責歷史紀錄追加與讀寫控制。
 * **[js/storage-milestones.js](js/storage-milestones.js)**
-  * **職責**：成就與里程碑星星判定。
-  * **說明**：處理集滿 Mission 中 20 個關卡徽章、連續上線 7 天且每日 5 局，以及累計答對 100 題時，自動追加 bonus_stars 的核心判定邏輯。
+  * **職責**：成就與里程碑金幣判定。
+  * **說明**：處理集滿 Mission 中 20 個關卡徽章、連續上線 7 天且每日 5 局，以及累計答對 100 題時，自動追加金幣獎勵的核心判定邏輯。
 * **[js/supabase-service.js](js/supabase-service.js)**
   * **職責**：與雲端資料庫 Supabase 互動。
   * **說明**：封裝 Supabase JS Client。在寫入成績前，會利用前端混淆鹽值與 Web Crypto API 計算 `integrity_hash` (SHA-256) 並隨同成績寫入，以進行防刷與防修改校驗。
@@ -167,10 +167,10 @@ limit-180/
 
 * **[js/game-lobby.js](js/game-lobby.js)**
   * **職責**：大廳介面控制器。
-  * **說明**：渲染 10 個 Mission 卡片與各關卡進度。處理玩家選擇關卡、顯示星等以及差額補給防刷限制。
+  * **說明**：渲染 10 個 Mission 卡片與各關卡進度。處理玩家選擇關卡、顯示獲得金幣以及差額補給防刷限制。
 * **[js/game-result.js](js/game-result.js)**
   * **職責**：結果結算控制器。
-  * **說明**：計算並渲染該局得分、Combo 連擊與給星，處理降級警告，並暫存成就解鎖的星星待大廳時再行彈出。
+  * **說明**：計算並渲染該局得分、Combo 連擊與金幣，處理降級警告，並暫存成就解鎖的金幣獎金待大廳時再行彈出。
 * **[js/game-review.js](js/game-review.js)**
   * **職責**：錯題消除模式控制器。
   * **說明**：渲染錯題本中的題目，並追蹤每一道錯題「連續答對 3 次」的消除進度。
@@ -223,7 +223,7 @@ limit-180/
   * **說明**：與根目錄 `supabase_init.sql` 相同，用於 Supabase Local Development 或雲端遷移，建立資料表、索引、RLS 策略。
 * **[supabase/functions/verify-completion/index.ts](supabase/functions/verify-completion/index.ts)**
   * **職責**：Supabase Edge Function 後端驗證。
-  * **說明**：使用 TypeScript (Deno runtime) 撰寫，當玩家提交成績時，在後端使用相同的混淆鹽值與資料重新計算雜湊，比對 `integrity_hash`。若不一致則拒絕寫入或標記異常，防止前端直接透過 HTTP 請求偽造星星。
+  * **說明**：使用 TypeScript (Deno runtime) 撰寫，當玩家提交成績時，在後端使用相同的混淆鹽值與資料重新計算雜湊，比對 `integrity_hash`。若不一致則拒絕寫入或標記異常，防止前端直接透過 HTTP 請求偽造金幣。
 
 ---
 

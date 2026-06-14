@@ -60,14 +60,14 @@
   }
 
   // 3. 顯示/隱藏綁定彈窗
-  function showProfileModal(isEditMode = false, pendingStars = null) {
+  function showProfileModal(isEditMode = false, pendingCoins = null) {
     if (!modal) return;
     
-    // 動態更新局後攔截星數提示語 (Lazy Registration)
+    // 動態更新局後攔截金幣獎金提示語 (Lazy Registration)
     const promo = document.getElementById('profile-modal-promo');
     if (promo) {
-      if (pendingStars !== null) {
-        promo.textContent = `🏆 特工，你剛剛拿下了 ${pendingStars} 顆星！請立刻輸入您的身份，將此極速紀錄永久同步至雲端排行榜！`;
+      if (pendingCoins !== null) {
+        promo.textContent = `🏆 特工，你剛剛賺取了 ${pendingCoins.toLocaleString('zh-TW')} 💰 獎金！請立刻輸入您的身份，將此極速紀錄永久同步至雲端排行榜！`;
         promo.classList.remove('hidden');
       } else {
         promo.classList.add('hidden');
