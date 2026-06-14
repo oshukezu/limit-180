@@ -1,5 +1,7 @@
 <div id="profile-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-50 p-4">
   <div class="hud-panel p-6 bg-slate-950 border-2 border-cyan-500 max-w-md w-full relative">
+    <!-- 關閉按鈕 -->
+    <button type="button" id="profile-close-btn" class="absolute top-4 right-4 text-slate-500 hover:text-white font-pixel text-sm transition-colors duration-200 focus:outline-none">✕</button>
     <div class="text-center mb-6">
       <span class="text-xs font-pixel text-pink-500 glow-pink block mb-1">// IDENTITY INITIALIZATION //</span>
       <h3 class="text-base font-pixel text-cyan-400 glow-blue">建立特工身份</h3>
@@ -39,10 +41,15 @@
         暱稱不合法，請重新輸入！
       </div>
 
-      <!-- 提交按鈕 -->
-      <button type="submit" id="profile-submit-btn" class="w-full cyber-btn cyber-btn-green py-3.5 font-pixel text-xs text-green-400 mt-2">
-        進入 180 禁區
-      </button>
+      <!-- 提交與略過按鈕 -->
+      <div class="flex gap-4 mt-2">
+        <button type="submit" id="profile-submit-btn" class="flex-1 cyber-btn cyber-btn-green py-3.5 font-pixel text-xs text-green-400">
+          進入 180 禁區
+        </button>
+        <button type="button" id="profile-skip-btn" class="flex-1 cyber-btn py-3.5 font-pixel text-xs text-slate-400 border border-slate-800 hover:bg-slate-900 rounded">
+          暫時略過
+        </button>
+      </div>
     </form>
   </div>
 </div>

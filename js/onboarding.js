@@ -41,6 +41,20 @@
       editBtn.addEventListener('click', () => showProfileModal(true));
     }
 
+    const closeBtn = document.getElementById('profile-close-btn');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => {
+        if (modal) modal.classList.add('hidden');
+      });
+    }
+
+    const skipBtn = document.getElementById('profile-skip-btn');
+    if (skipBtn) {
+      skipBtn.addEventListener('click', () => {
+        if (modal) modal.classList.add('hidden');
+      });
+    }
+
     checkUserOnboarding();
   });
 
@@ -80,7 +94,11 @@
     
     if (errorMsg) errorMsg.classList.add('hidden');
 
+    // 控制「暫時略過」按鈕的顯示/隱藏
+    const skipBtn = document.getElementById('profile-skip-btn');
     if (isEditMode) {
+      if (skipBtn) skipBtn.classList.add('hidden');
+      
       // 編輯模式：班級與座號唯讀，不能修改，防止惡意佔用他人數據
       const profile = JSON.parse(localStorage.getItem('limit180_user_profile') || '{}');
       if (inputClass) {
@@ -97,6 +115,8 @@
         inputNickname.value = profile.nickname || '';
       }
     } else {
+      if (skipBtn) skipBtn.classList.remove('hidden');
+
       // 首次綁定模式
       if (inputClass) {
         inputClass.value = '';
