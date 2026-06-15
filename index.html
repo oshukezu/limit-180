@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Limit 180//心算極速挑戰</title>
+  <title>Limit 180 心算極速挑戰</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Supabase JS CDN (2.0 雲端功能) -->
@@ -53,13 +53,18 @@
           LIMIT 180</h1>
       </div>
       <nav id="main-nav" class="grid grid-cols-6 gap-2 w-full md:w-[600px] lg:w-[700px] text-sm">
-        <button id="nav-home-btn" class="nav-btn py-3 text-[10px] sm:text-xs md:text-sm font-pixel text-center">首頁</button>
-        <button id="nav-lobby-btn" class="nav-btn py-3 text-[10px] sm:text-xs md:text-sm font-pixel text-center">遊戲大廳</button>
+        <button id="nav-home-btn"
+          class="nav-btn py-3 text-[10px] sm:text-xs md:text-sm font-pixel text-center">首頁</button>
+        <button id="nav-lobby-btn"
+          class="nav-btn py-3 text-[10px] sm:text-xs md:text-sm font-pixel text-center">遊戲大廳</button>
         <button id="nav-rules-btn" class="nav-btn py-3 text-[10px] sm:text-xs md:text-sm font-pixel text-center"
           onclick="document.getElementById('rules-modal').classList.remove('hidden')">遊戲規則</button>
-        <button id="nav-dashboard-btn" class="nav-btn py-3 text-[10px] sm:text-xs md:text-sm font-pixel text-center">反應數據</button>
-        <button id="nav-achievements-btn" class="nav-btn py-3 text-[10px] sm:text-xs md:text-sm font-pixel text-center">成就牆</button>
-        <button id="nav-store-btn" class="nav-btn py-3 text-[10px] sm:text-xs md:text-sm font-pixel text-center">商店</button>
+        <button id="nav-dashboard-btn"
+          class="nav-btn py-3 text-[10px] sm:text-xs md:text-sm font-pixel text-center">反應數據</button>
+        <button id="nav-achievements-btn"
+          class="nav-btn py-3 text-[10px] sm:text-xs md:text-sm font-pixel text-center">成就牆</button>
+        <button id="nav-store-btn"
+          class="nav-btn py-3 text-[10px] sm:text-xs md:text-sm font-pixel text-center">商店</button>
         <!-- 2.0：帳號按鈕 -->
         <button id="auth-account-btn" class="nav-btn px-3 py-1.5 text-xs font-pixel hidden"
           onclick="document.getElementById('auth-modal').classList.remove('hidden')">
@@ -150,4 +155,5 @@
   <script src="js/game-play.js"></script>
 
 </body>
+
 </html>
