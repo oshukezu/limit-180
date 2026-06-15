@@ -157,6 +157,13 @@ window.CFG = window.MATH_SPRINT_CONFIG;
       this.gameState.targetSpeed = initLimit;
       this.gameState.correctRateTarget = 0.60;
       
+      this.gameState.isStageTimer = (missionNum <= 30);
+      if (this.gameState.isStageTimer) {
+        const stageTotalTime = initLimit * this.gameState.totalQuestions;
+        this.gameState.stageTimeTotal = stageTotalTime;
+        this.gameState.stageTimeRemaining = stageTotalTime;
+      }
+      
       this.gameState.questionTimes = [];
       this.gameState.recentQueue = [];
       this.gameState.isGameOver = false;

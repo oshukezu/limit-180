@@ -47,48 +47,82 @@
       this.startTimer();
     },
 
-    startTimer() {
-      clearInterval(this.timerInterval);
-      
-      const timeBar = document.getElementById('game-time-bar');
-      if (!timeBar) return;
-      timeBar.style.width = '100%';
-      timeBar.style.backgroundColor = 'var(--neon-green)';
-      timeBar.style.boxShadow = '0 0 10px var(--neon-green)';
+     startTimer() {
+       if (this.gameState.isStageTimer && this.timerInterval) {
+         this.gameState.startTime = performance.now();
+         return;
+       }
 
-      // 自由計時，無時間限制
-      if (this.gameState.limitTime >= 999) {
-        return;
-      }
-
-      const duration = this.gameState.limitTime * 1000;
-      let timeSpent = 0;
-      const step = 50;
-
-      this.timerInterval = setInterval(() => {
-        if (this.gameState.isPaused) return;
-
-        timeSpent += step;
-        const pct = Math.max(0, 100 - (timeSpent / duration) * 100);
-        timeBar.style.width = `${pct}%`;
-
-        if (pct < 30) {
-          timeBar.style.backgroundColor = 'var(--neon-pink)';
-          timeBar.style.boxShadow = '0 0 10px var(--neon-pink)';
-        } else if (pct < 60) {
-          timeBar.style.backgroundColor = 'var(--neon-yellow)';
-          timeBar.style.boxShadow = '0 0 10px var(--neon-yellow)';
-        } else {
-          timeBar.style.backgroundColor = 'var(--neon-green)';
-          timeBar.style.boxShadow = '0 0 10px var(--neon-green)';
-        }
-
-        if (timeSpent >= duration) {
-          clearInterval(this.timerInterval);
-          this.handleTimeout();
-        }
-      }, step);
-    },
+       clearInterval(this.timerInterval);
+       
+       const timeBar = document.getElementById('game-time-bar');
+       if (!timeBar) return;
+       timeBar.style.width = '100%';
+       timeBar.style.backgroundColor = 'var(--neon-green)';
+       timeBar.style.boxShadow = '0 0 10px var(--neon-green)';
+ 
+       // 自由計時，無時間限制
+       if (this.gameState.limitTime >= 999) {
+         return;
+       }
+ 
+       if (this.gameState.isStageTimer) {
+         const step = 50;
+         this.timerInterval = setInterval(() => {
+           if (this.gameState.isPaused) return;
+ 
+           this.gameState.stageTimeRemaining -= (step / 1000);
+           const pct = Math.max(0, (this.gameState.stageTimeRemaining / this.gameState.stageTimeTotal) * 100);
+           timeBar.style.width = `${pct}%`;
+ 
+           if (pct < 30) {
+             timeBar.style.backgroundColor = 'var(--neon-pink)';
+             timeBar.style.boxShadow = '0 0 10px var(--neon-pink)';
+           } else if (pct < 60) {
+             timeBar.style.backgroundColor = 'var(--neon-yellow)';
+             timeBar.style.boxShadow = '0 0 10px var(--neon-yellow)';
+           } else {
+             timeBar.style.backgroundColor = 'var(--neon-green)';
+             timeBar.style.boxShadow = '0 0 10px var(--neon-green)';
+           }
+ 
+           if (this.gameState.stageTimeRemaining <= 0) {
+             clearInterval(this.timerInterval);
+             this.timerInterval = null;
+             this.handleTimeout();
+           }
+         }, step);
+       } else {
+         const duration = this.gameState.limitTime * 1000;
+         let timeSpent = 0;
+         const step = 50;
+ 
+         this.timerInterval = setInterval(() => {
+           if (this.gameState.isPaused) return;
+ 
+           timeSpent += step;
+           const pct = Math.max(0, 100 - (timeSpent / duration) * 100);
+           timeBar.style.width = `${pct}%`;
+ 
+           if (pct < 30) {
+             timeBar.style.backgroundColor = 'var(--neon-pink)';
+             timeBar.style.boxShadow = '0 0 10px var(--neon-pink)';
+           } else if (pct < 60) {
+             timeBar.style.backgroundColor = 'var(--neon-yellow)';
+             timeBar.style.boxShadow = '0 0 10px var(--neon-yellow)';
+           } else {
+             timeBar.style.backgroundColor = 'var(--neon-green)';
+             timeBar.style.boxShadow = '0 0 10px var(--neon-green)';
+           }
+ 
+           if (timeSpent >= duration) {
+             clearInterval(this.timerInterval);
+             this.timerInterval = null;
+             this.handleTimeout();
+           }
+         }, step);
+       }
+     },
 
     handleTimeout() {
       playSound('wrong');
