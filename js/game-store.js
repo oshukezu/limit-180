@@ -9,7 +9,7 @@
       const coinsDisplay = document.getElementById('store-coins-balance');
       if (!storeList) return;
 
-      const profile = window.Storage.getProfile();
+      const profile = window.MathSprintStorage.getProfile();
       const currentCoins = profile.total_stars || 0; // 使用 total_stars (累積獎金) 作為購買用金幣
       const equippedTheme = profile.equipped_theme || 'akaimon';
       const purchasedThemes = profile.purchased_themes || ['akaimon'];
@@ -95,11 +95,11 @@
 
     // 裝備主題
     equip(themeId) {
-      const profile = window.Storage.getProfile();
+      const profile = window.MathSprintStorage.getProfile();
       if (!profile.purchased_themes.includes(themeId)) return;
 
       profile.equipped_theme = themeId;
-      window.Storage.saveProfile(profile);
+      window.MathSprintStorage.saveProfile(profile);
 
       // 即時更換樣式與動畫
       window.ThemeManager.applyTheme(themeId);
@@ -110,7 +110,7 @@
 
     // 購買主題
     purchase(themeId, price) {
-      const profile = window.Storage.getProfile();
+      const profile = window.MathSprintStorage.getProfile();
       const currentCoins = profile.total_stars || 0;
 
       if (currentCoins < price) {
@@ -127,7 +127,7 @@
       // 自動裝備新購買的主題
       profile.equipped_theme = themeId;
       
-      window.Storage.saveProfile(profile);
+      window.MathSprintStorage.saveProfile(profile);
 
       // 即時更換樣式與動畫
       window.ThemeManager.applyTheme(themeId);

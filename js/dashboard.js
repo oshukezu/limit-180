@@ -78,6 +78,24 @@
 
       this.destroyCharts();
 
+      // Helper to convert hex to rgba
+      function hexToRgba(hex, opacity) {
+        hex = hex.replace('#', '').trim();
+        if (hex.length === 3) {
+          hex = hex.split('').map(c => c + c).join('');
+        }
+        const r = parseInt(hex.substring(0, 2), 16) || 0;
+        const g = parseInt(hex.substring(2, 4), 16) || 0;
+        const b = parseInt(hex.substring(4, 6), 16) || 0;
+        return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+      }
+
+      // Fetch dynamic colors from theme CSS variables
+      const bodyStyle = getComputedStyle(document.body);
+      const neonPink = (bodyStyle.getPropertyValue('--neon-pink') || '#ff007f').trim();
+      const neonBlue = (bodyStyle.getPropertyValue('--neon-blue') || '#00f0ff').trim();
+      const neonGreen = (bodyStyle.getPropertyValue('--neon-green') || '#39ff14').trim();
+
       // 1. Radar Chart Setup
       const radarDataObj = getRadarData(historyLog);
       const radarCtx = document.getElementById('radar-chart').getContext('2d');
@@ -95,10 +113,10 @@
             datasets: [{
               label: '平均單題反應時間 (秒，越低越快)',
               data: radarDataObj.data,
-              backgroundColor: 'rgba(0, 240, 255, 0.2)',
-              borderColor: '#00f0ff',
+              backgroundColor: hexToRgba(neonBlue, 0.2),
+              borderColor: neonBlue,
               borderWidth: 2,
-              pointBackgroundColor: '#ff007f',
+              pointBackgroundColor: neonPink,
               pointBorderColor: '#fff',
               pointRadius: 4
             }]
@@ -108,15 +126,15 @@
             maintainAspectRatio: false,
             scales: {
               r: {
-                angleLines: { color: '#1f2937' },
-                grid: { color: '#1f2937' },
+                angleLines: { color: 'rgba(255, 255, 255, 0.15)' },
+                grid: { color: 'rgba(255, 255, 255, 0.15)' },
                 pointLabels: {
-                  color: '#9ca3af',
+                  color: 'rgba(255, 255, 255, 0.7)',
                   font: { family: 'Share Tech Mono', size: 10 }
                 },
                 ticks: {
                   backdropColor: 'transparent',
-                  color: '#6b7280',
+                  color: 'rgba(255, 255, 255, 0.4)',
                   font: { family: 'Share Tech Mono' }
                 },
                 suggestedMin: 0,
@@ -126,7 +144,7 @@
             plugins: {
               legend: {
                 labels: {
-                  color: '#e2e8f0',
+                  color: 'rgba(255, 255, 255, 0.8)',
                   font: { family: 'Share Tech Mono' }
                 }
               }
@@ -152,10 +170,10 @@
             datasets: [{
               label: '單題平均耗時 (秒)',
               data: lineDataObj.data,
-              borderColor: '#ff007f',
-              backgroundColor: 'rgba(255, 0, 127, 0.05)',
+              borderColor: neonPink,
+              backgroundColor: hexToRgba(neonPink, 0.05),
               borderWidth: 3,
-              pointBackgroundColor: '#39ff14',
+              pointBackgroundColor: neonGreen,
               pointBorderColor: '#fff',
               pointRadius: 5,
               spanGaps: true,
@@ -167,22 +185,22 @@
             maintainAspectRatio: false,
             scales: {
               x: {
-                grid: { color: '#1f2937' },
+                grid: { color: 'rgba(255, 255, 255, 0.1)' },
                 ticks: {
-                  color: '#9ca3af',
+                  color: 'rgba(255, 255, 255, 0.6)',
                   font: { family: 'Share Tech Mono' }
                 }
               },
               y: {
-                grid: { color: '#1f2937' },
+                grid: { color: 'rgba(255, 255, 255, 0.1)' },
                 ticks: {
-                  color: '#9ca3af',
+                  color: 'rgba(255, 255, 255, 0.6)',
                   font: { family: 'Share Tech Mono' }
                 },
                 title: {
                   display: true,
                   text: '反應秒數',
-                  color: '#6b7280',
+                  color: 'rgba(255, 255, 255, 0.4)',
                   font: { family: 'Share Tech Mono' }
                 },
                 suggestedMin: 0
@@ -191,7 +209,7 @@
             plugins: {
               legend: {
                 labels: {
-                  color: '#e2e8f0',
+                  color: 'rgba(255, 255, 255, 0.8)',
                   font: { family: 'Share Tech Mono' }
                 }
               }

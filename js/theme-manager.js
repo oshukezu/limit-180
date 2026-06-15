@@ -156,8 +156,8 @@
 
     // 初始化加載存檔的主題
     init() {
-      if (window.Storage && window.Storage.getProfile) {
-        const profile = window.Storage.getProfile();
+      if (window.MathSprintStorage && window.MathSprintStorage.getProfile) {
+        const profile = window.MathSprintStorage.getProfile();
         const equipped = profile.equipped_theme || 'akaimon';
         this.applyTheme(equipped);
       } else {
