@@ -8,15 +8,21 @@
       
       // 優先讀取本機快取以實現續接
       const cachedQueue = localStorage.getItem('error_questions_queue');
+      let loadedFromCache = false;
       if (cachedQueue) {
         try {
-          this.gameState.reviewList = JSON.parse(cachedQueue);
-          console.log('[Game] 成功載入本機快取的錯題消除進度，續接上次挑戰。');
+          const parsed = JSON.parse(cachedQueue);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            this.gameState.reviewList = parsed;
+            loadedFromCache = true;
+            console.log('[Game] 成功載入本機快取的錯題消除進度，續接上次挑戰。');
+          }
         } catch (e) {
           console.warn('[Game] 解析本機錯題快取失敗，將 fallback 讀取資料庫：', e);
-          this.gameState.reviewList = [...profile.wrong_questions_db];
         }
-      } else {
+      }
+      
+      if (!loadedFromCache) {
         this.gameState.reviewList = [...profile.wrong_questions_db];
       }
 
