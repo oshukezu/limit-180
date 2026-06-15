@@ -61,7 +61,7 @@ window.CFG = window.MATH_SPRINT_CONFIG;
     },
 
     timerInterval: null,
-    scannerAnimFrame: null;
+    scannerAnimFrame: null,
 
 
     async init() {
