@@ -10,7 +10,7 @@
 
       // 使用事件代理 (Event Delegation) 監聽全域點擊事件，防止 Race Condition 與動態渲染 DOM 失效
       document.addEventListener('click', (e) => {
-        const closeBtn = e.target.closest('.close-btn');
+        const closeBtn = e.target.closest('.close-btn, #game-close-btn');
         if (!closeBtn) return;
 
         const id = closeBtn.id;
