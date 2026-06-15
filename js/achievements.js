@@ -15,6 +15,44 @@
     }
   }
 
+  function formatCoinsNoIcon(value) {
+    const val = Number(value) || 0;
+    if (val < 10000) {
+      return val.toLocaleString('zh-TW');
+    } else if (val < 1000000) {
+      const wan = val / 10000;
+      return (wan % 1 === 0 ? wan : wan.toFixed(1)) + '萬';
+    } else {
+      const million = val / 1000000;
+      return (million % 1 === 0 ? million : million.toFixed(1)) + 'M';
+    }
+  }
+
+  function getRequiredCoins(mission) {
+    if (mission <= 5) return 32000;
+    if (mission <= 10) return 48000;
+    if (mission <= 15) return 160000;
+    if (mission <= 20) return 335000;
+    if (mission === 50) {
+      return 252000000;
+    }
+    const baseCoins = [
+      { max: 25, base: 5000 },
+      { max: 30, base: 10000 },
+      { max: 35, base: 20000 },
+      { max: 40, base: 40000 },
+      { max: 44, base: 100000 },
+      { max: 47, base: 250000 },
+      { max: 49, base: 500000 }
+    ];
+    for (const range of baseCoins) {
+      if (mission <= range.max) {
+        return range.base * 210 * 0.8;
+      }
+    }
+    return 0;
+  }
+
   const RANK_ICONS = { 1: '🥇', 2: '🥈', 3: '🥉' };
 
   const Achievements = {
@@ -34,7 +72,7 @@
         this.unlock(`m${mission}_mission_clear`);
       }
  
-      // 3. 獎金達標 (該任務累積獎金達到 100,000 以上)
+      // 3. 獎金達標 (該任務累積獎金達到區間總獎金的 80% 以上)
       let missionCoins = 0;
       for (let l = 1; l <= 20; l++) {
         const key = `mission-${mission}-level-${l}`;
@@ -43,7 +81,7 @@
           missionCoins += rec.stars;
         }
       }
-      if (missionCoins >= 100000) {
+      if (missionCoins >= getRequiredCoins(mission)) {
         this.unlock(`m${mission}_stars_50`);
       }
 
@@ -143,7 +181,8 @@
           missionCoins += rec.stars;
         }
       }
-      const isStars50Unlocked = unlocked.includes(`m${mId}_stars_50`) || missionCoins >= 100000;
+      const requiredCoins = getRequiredCoins(mId);
+      const isStars50Unlocked = unlocked.includes(`m${mId}_stars_50`) || missionCoins >= requiredCoins;
 
       let all100Percent = true;
       for (let l = 1; l <= 20; l++) {
@@ -184,7 +223,7 @@
         { 
           id: `m${mId}_stars_50`, 
           name: '獎金達標', 
-          desc: `該任務累積獎金達到 100,000 以上 (當前: ${formatCoins(missionCoins)}/10萬)`, 
+          desc: `該任務累積獎金達到 ${formatCoinsNoIcon(requiredCoins)} 💰 以上 (當前: ${formatCoinsNoIcon(missionCoins)} / ${formatCoinsNoIcon(requiredCoins)})`, 
           icon: '💰', 
           color: 'pink',
           isUnlocked: isStars50Unlocked
@@ -237,11 +276,13 @@
           typeId = parts.slice(1).join('_');
         }
 
+        const mIdInt = parseInt(mNum) || 1;
+        const reqCoins = getRequiredCoins(mIdInt);
         const badgeMeta = {
           first_step: { name: '初試身手', desc: `成功通過 Mission ${mNum} Stage 01 考驗`, icon: '🐣', color: 'cyan' },
           error_buster: { name: '錯題終結者', desc: '在錯題消除模式中，累計答對 20 題', icon: '🧹', color: 'green' },
           mission_clear: { name: '達成任務', desc: `M${mNum} Stage 20 成績必須要Ｓ級`, icon: '👑', color: 'yellow' },
-          stars_50: { name: '獎金達標', desc: '該任務累積獎金達到 100,000 以上', icon: '💰', color: 'pink' },
+          stars_50: { name: '獎金達標', desc: `該任務累積獎金達到 ${formatCoinsNoIcon(reqCoins)} 💰 以上`, icon: '💰', color: 'pink' },
           mission_perfect: { name: '完美達標', desc: `Mission ${mNum} 旗下的 20 個 Stages 答對率皆為 100%`, icon: '💎', color: 'pink' }
         };
 
