@@ -43,6 +43,14 @@
         });
       }
 
+      const navStoreBtn = document.getElementById('nav-store-btn');
+      if (navStoreBtn) {
+        navStoreBtn.addEventListener('click', () => {
+          this.stopGame();
+          window.showView('view-store');
+        });
+      }
+
       // Lobby navigation
       const lobbyBtnHandler = () => {
         this.stopGame();

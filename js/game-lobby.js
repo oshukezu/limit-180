@@ -88,13 +88,18 @@
           !isMUnlocked ? 'opacity-40 border-slate-950 pointer-events-none' : 'hover:border-cyan-400'
         }`;
         
+        let reqPct = 60;
+        if (i >= 41) reqPct = 90;
+        else if (i >= 31) reqPct = 80;
+        else if (i >= 21) reqPct = 70;
+
         card.innerHTML = `
           <div class="cursor-pointer">
             <div class="flex justify-between items-start mb-2">
                <span class="text-xs font-pixel ${i <= 10 ? 'text-cyan-400' : i <= 25 ? 'text-green-400' : i <= 40 ? 'text-pink-500 glow-pink' : 'text-yellow-400 glow-yellow'}">
                 ${config.name.toUpperCase()}
               </span>
-              <div class="text-xs font-pixel text-yellow-400">${isMUnlocked ? `★ ${starsInM} / 60` : '🔒 需前一 Mission 全關卡達 60%'}</div>
+              <div class="text-xs font-pixel text-yellow-400">${isMUnlocked ? `★ ${starsInM} / 60` : `🔒 前任務達 ${reqPct}%正確`}</div>
             </div>
             <h4 class="text-base font-bold text-white mb-1">${config.desc}</h4>
             <p class="text-[11px] text-slate-400 font-tech mb-2">

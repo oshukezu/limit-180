@@ -90,13 +90,21 @@
     isMissionUnlocked(missionNum, _profile) {
       if (missionNum === 1) return true;
       const profile = _profile || this.getProfile();
+
+      function getRequiredAccuracy(m) {
+        if (m >= 41) return 0.90;
+        if (m >= 31) return 0.80;
+        if (m >= 21) return 0.70;
+        return 0.60;
+      }
  
-      // 從 Mission 1 往上依序檢查，前一個 Mission 的 20 個關卡都必須通過且正確率達 60% 以上
+      // 從 Mission 1 往上依序檢查，前一個 Mission 的 20 個關卡都必須通過且正確率達到該階段門檻
       for (let m = 2; m <= missionNum; m++) {
         const prevMission = m - 1;
+        const reqAcc = getRequiredAccuracy(m);
         for (let l = 1; l <= 20; l++) {
           const record = profile.level_records[`mission-${prevMission}-level-${l}`];
-          if (!record || !record.is_passed || (record.accuracy !== undefined && record.accuracy < 0.60)) {
+          if (!record || !record.is_passed || (record.accuracy !== undefined && record.accuracy < reqAcc)) {
             return false;
           }
         }

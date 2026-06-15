@@ -16,7 +16,7 @@
         const id = closeBtn.id;
         console.log(`[UIController] 偵測到關閉按鈕點擊，ID: ${id}`);
 
-        if (id === 'lobby-close-btn' || id === 'dashboard-close-btn' || id === 'achievements-close-btn') {
+        if (id === 'lobby-close-btn' || id === 'dashboard-close-btn' || id === 'achievements-close-btn' || id === 'store-close-btn') {
           this.closeToHome();
         } else if (id === 'review-close-btn') {
           this.closeReview();
