@@ -29,14 +29,22 @@
         this.unlock(`m${mission}_first_step`);
       }
 
-      // 2. 達成任務 (M[M] Stage 20 完美過關，即答對率 100%)
+      // 2. 達成任務 (M[M] Stage 20 成績達 S 級)
       if (level === 20 && isPass && correctCount !== undefined && totalQuestions !== undefined && (correctCount / totalQuestions) >= 1.0) {
         this.unlock(`m${mission}_mission_clear`);
       }
-
-      // 3. 繁星點點 (個人累積獎金達到 10,000,000 💰 以上)
-      if (profile.total_stars >= 10000000) {
-        this.unlock('stars_50');
+ 
+      // 3. 獎金達標 (該任務累積獎金達到 100,000 以上)
+      let missionCoins = 0;
+      for (let l = 1; l <= 20; l++) {
+        const key = `mission-${mission}-level-${l}`;
+        const rec = profile.level_records[key];
+        if (rec && rec.stars > 0) {
+          missionCoins += rec.stars;
+        }
+      }
+      if (missionCoins >= 100000) {
+        this.unlock(`m${mission}_stars_50`);
       }
 
       // 4. 完美達標 (該大關 Mission 20 個 Stages 答對率皆為 100%)
@@ -126,7 +134,16 @@
       
       const recordL20 = profile.level_records[`mission-${mId}-level-20`];
       const isMissionClearUnlocked = unlocked.includes(`m${mId}_mission_clear`) || (recordL20 && recordL20.is_passed && recordL20.accuracy >= 1.0);
-      const isStars50Unlocked = (profile.total_stars || 0) >= 10000000;
+      
+      let missionCoins = 0;
+      for (let l = 1; l <= 20; l++) {
+        const key = `mission-${mId}-level-${l}`;
+        const rec = profile.level_records[key];
+        if (rec && rec.stars > 0) {
+          missionCoins += rec.stars;
+        }
+      }
+      const isStars50Unlocked = unlocked.includes(`m${mId}_stars_50`) || missionCoins >= 100000;
 
       let all100Percent = true;
       for (let l = 1; l <= 20; l++) {
@@ -159,15 +176,15 @@
         { 
           id: `m${mId}_mission_clear`, 
           name: '達成任務', 
-          desc: `Mission ${mId} Stage 20 完美過關`, 
+          desc: `M${mId} Stage 20 成績必須要Ｓ級`, 
           icon: '👑', 
           color: 'yellow',
           isUnlocked: isMissionClearUnlocked
         },
         { 
-          id: 'stars_50', 
-          name: '大富豪特工', 
-          desc: `累積獎金達到 1,000 萬以上 (當前: ${formatCoins(profile.total_stars)}/10M)`, 
+          id: `m${mId}_stars_50`, 
+          name: '獎金達標', 
+          desc: `該任務累積獎金達到 100,000 以上 (當前: ${formatCoins(missionCoins)}/10萬)`, 
           icon: '💰', 
           color: 'pink',
           isUnlocked: isStars50Unlocked
@@ -223,8 +240,8 @@
         const badgeMeta = {
           first_step: { name: '初試身手', desc: `成功通過 Mission ${mNum} Stage 01 考驗`, icon: '🐣', color: 'cyan' },
           error_buster: { name: '錯題終結者', desc: '在錯題消除模式中，累計答對 20 題', icon: '🧹', color: 'green' },
-          mission_clear: { name: '達成任務', desc: `Mission ${mNum} Stage 20 完美過關`, icon: '👑', color: 'yellow' },
-          stars_50: { name: '大富豪特工', desc: '累積獎金達到 1,000 萬以上', icon: '💰', color: 'pink' },
+          mission_clear: { name: '達成任務', desc: `M${mNum} Stage 20 成績必須要Ｓ級`, icon: '👑', color: 'yellow' },
+          stars_50: { name: '獎金達標', desc: '該任務累積獎金達到 100,000 以上', icon: '💰', color: 'pink' },
           mission_perfect: { name: '完美達標', desc: `Mission ${mNum} 旗下的 20 個 Stages 答對率皆為 100%`, icon: '💎', color: 'pink' }
         };
 

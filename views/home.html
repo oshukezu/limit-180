@@ -1,9 +1,11 @@
 <section id="view-home" class="view-section py-8 flex flex-col items-center">
   <!-- 用戶身份綁定右上角顯示區 -->
   <div id="user-profile-bar" class="w-full max-w-4xl flex justify-center items-center mb-6 px-4 hidden">
-    <div class="flex items-center gap-3 bg-slate-950/80 border border-slate-800 p-2.5 rounded shadow-none text-[10px] font-pixel text-slate-400 mx-auto text-center">
+    <div
+      class="flex items-center gap-3 bg-slate-950/80 border border-slate-800 p-2.5 rounded shadow-none text-[10px] font-pixel text-slate-400 mx-auto text-center">
       👤 <span id="user-profile-info" class="text-white"></span>
-      <button id="edit-profile-btn" class="cyber-btn px-2 py-1 text-[8px] text-slate-400 border-slate-600 font-pixel">修改暱稱</button>
+      <button id="edit-profile-btn"
+        class="cyber-btn px-2 py-1 text-[8px] text-slate-400 border-slate-600 font-pixel">修改暱稱</button>
     </div>
   </div>
 
@@ -11,7 +13,7 @@
     <p class="text-xs font-pixel text-slate-500 mb-2">//CORE ENGINE SYSTEM//</p>
     <h2 class="text-4xl md:text-5xl font-pixel text-white tracking-widest uppercase">Limit 180</h2>
     <p class="text-slate-400 text-sm mt-3 font-tech max-w-lg mx-auto">
-      正式代號「Limit 180」！你的目標是挑戰 100 題在 3 分鐘 (180 秒) 內做完的極速心算極限。
+      你的目標是挑戰100題在3分鐘 (180 秒) 內做完的極速心算極限！
     </p>
   </div>
 
@@ -49,12 +51,15 @@
       <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
         <div class="flex items-center gap-2">
           <span class="text-base font-pixel text-white">⚡ 全台速算秒殺榜</span>
-          <span id="leaderboard-live-dot" class="inline-block w-2 h-2 rounded-full bg-slate-500 transition-all duration-300" style="background: #39ff14; box-shadow: 0 0 6px #39ff14;"></span>
+          <span id="leaderboard-live-dot"
+            class="inline-block w-2 h-2 rounded-full bg-slate-500 transition-all duration-300"
+            style="background: #39ff14; box-shadow: 0 0 6px #39ff14;"></span>
           <span class="text-[9px] font-pixel text-slate-500">即時</span>
         </div>
         <div id="leaderboard-select-container" class="flex items-center gap-2 hidden">
           <span class="text-[10px] font-pixel text-slate-400">Mission</span>
-          <select id="leaderboard-mission-select" class="bg-slate-950 border border-slate-800 text-white font-pixel text-[10px] px-2 py-1 rounded focus:outline-none focus:border-slate-500">
+          <select id="leaderboard-mission-select"
+            class="bg-slate-950 border border-slate-800 text-white font-pixel text-[10px] px-2 py-1 rounded focus:outline-none focus:border-slate-500">
             <!-- 由 JS 動態生成 -->
           </select>
         </div>
@@ -62,13 +67,17 @@
 
       <!-- 排行榜 Tab 分頁切換 -->
       <div class="flex border-b border-slate-800 mb-4 font-pixel text-[10px]">
-        <button id="tab-leaderboard-personal" class="flex-1 text-center py-2.5 text-white border-b-2 border-white font-bold focus:outline-none cursor-pointer">個人總榜</button>
-        <button id="tab-leaderboard-team" class="flex-1 text-center py-2.5 text-slate-400 hover:text-white border-b border-slate-800 focus:outline-none cursor-pointer">團隊對抗榜</button>
-        <button id="tab-leaderboard-mission" class="flex-1 text-center py-2.5 text-slate-400 hover:text-white border-b border-slate-800 focus:outline-none cursor-pointer">答題速度榜</button>
+        <button id="tab-leaderboard-personal"
+          class="flex-1 text-center py-2.5 text-white border-b-2 border-white font-bold focus:outline-none cursor-pointer">個人總榜</button>
+        <button id="tab-leaderboard-team"
+          class="flex-1 text-center py-2.5 text-slate-400 hover:text-white border-b border-slate-800 focus:outline-none cursor-pointer">團隊對抗榜</button>
+        <button id="tab-leaderboard-mission"
+          class="flex-1 text-center py-2.5 text-slate-400 hover:text-white border-b border-slate-800 focus:outline-none cursor-pointer">答題速度榜</button>
       </div>
 
       <!-- 我的排名固定 Block -->
-      <div id="leaderboard-my-rank-block" class="mb-3 p-3 bg-slate-950/50 border border-slate-800 rounded flex justify-between items-center text-[10px] font-pixel text-slate-300">
+      <div id="leaderboard-my-rank-block"
+        class="mb-3 p-3 bg-slate-950/50 border border-slate-800 rounded flex justify-between items-center text-[10px] font-pixel text-slate-300">
         <!-- 由 JS 動態渲染當前登入玩家排名 -->
       </div>
 
@@ -87,4 +96,3 @@
     </div>
   </div>
 </section>
-
