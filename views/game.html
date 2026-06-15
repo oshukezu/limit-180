@@ -1,19 +1,22 @@
 <section id="view-game" class="view-section hidden py-4 max-w-2xl mx-auto w-full flex flex-col gap-4 relative">
   <!-- 頂部退出列 -->
   <div class="flex justify-between items-center px-1">
-    <button class="cyber-btn px-3 py-1.5 text-xs text-pink-500 border-pink-500 font-pixel" id="game-close-btn">✕ 離開</button>
+    <button class="cyber-btn px-3 py-1.5 text-xs text-pink-500 border-pink-500 font-pixel" id="game-close-btn">✕
+      離開</button>
   </div>
-  
+
   <!-- Keyboards Reminder for caps lock / Input method -->
-  <div id="input-warning" class="bg-red-950/80 border border-red-500/50 p-2 text-center rounded text-xs text-red-300 font-pixel animate-pulse">
+  <div id="input-warning"
+    class="bg-red-950/80 border border-red-500/50 p-2 text-center rounded text-xs text-red-300 font-pixel animate-pulse">
     ⚠️ 請將輸入法切換為 [ 英文 ] (Caps Lock) 確保鍵盤能正常輸入！
   </div>
 
   <!-- Main Game HUD Panel -->
   <div class="hud-panel p-4 bg-slate-950 flex flex-col gap-4 relative">
-    
+
     <!-- Pause Overlay (暫停覆蓋層) -->
-    <div id="pause-overlay" class="hidden absolute inset-0 bg-black/95 flex flex-col items-center justify-center z-30 p-4 rounded text-center">
+    <div id="pause-overlay"
+      class="hidden absolute inset-0 bg-black/95 flex flex-col items-center justify-center z-30 p-4 rounded text-center">
       <h3 class="text-2xl font-pixel text-green-400 mb-4">挑戰暫停中</h3>
       <p id="pause-warning-text" class="text-xs font-tech text-slate-300 mb-6 max-w-xs leading-relaxed">
         前 3 次暫停時間會停止倒數。<br>第 4 次暫停起，時間將照常扣減！
@@ -30,7 +33,9 @@
       <div class="whitespace-nowrap">COMBO: <span id="game-combo" class="text-green-400">0</span></div>
       <div class="flex items-center gap-1 sm:gap-3 flex-shrink-0">
         <span class="hidden flex items-center gap-1">🛡️: <span id="game-shields" class="text-cyan-400">0</span></span>
-        <button id="game-pause-btn" class="cyber-btn px-2 py-1 text-[8px] text-pink-400 border-pink-500 font-pixel whitespace-nowrap">暫停 (3/3)</button>
+        <button id="game-pause-btn"
+          class="cyber-btn px-2 py-1 text-[8px] text-pink-400 border-pink-500 font-pixel whitespace-nowrap">暫停
+          (3/3)</button>
       </div>
     </div>
 
@@ -40,16 +45,19 @@
     </div>
 
     <!-- Scaffold Container (Visual Help) -->
-    <div id="scaffold-box" class="scaffold-container h-32 w-full bg-slate-900 border border-slate-800 flex items-center justify-center relative overflow-hidden rounded">
-      <span class="absolute top-2 left-2 text-[9px] font-pixel text-slate-600 tracking-wider">//視覺輔助鷹架</span>
+    <div id="scaffold-box"
+      class="scaffold-container h-32 w-full bg-slate-900 border border-slate-800 flex items-center justify-center relative overflow-hidden rounded">
+      <span class="absolute top-2 left-2 text-[9px] font-pixel text-slate-600 tracking-wider">視覺輔助鷹架</span>
       <div id="scaffold-canvas-container" class="w-full h-full flex items-center justify-center p-2">
         <!-- Canvas or SVG helper elements will draw here -->
       </div>
     </div>
 
     <!-- Math Question Screen -->
-    <div id="question-container" class="bg-slate-900 border-2 border-slate-800 p-8 flex flex-col items-center justify-center relative min-h-[160px]">
-      <span class="absolute top-2 right-3 text-[9px] font-pixel text-slate-500" id="game-mode-tag">//SPEED MATH CORE</span>
+    <div id="question-container"
+      class="bg-slate-900 border-2 border-slate-800 p-8 flex flex-col items-center justify-center relative min-h-[160px]">
+      <span class="absolute top-2 right-3 text-[9px] font-pixel text-slate-500" id="game-mode-tag">SPEED MATH
+        CORE</span>
       <div id="question-text" class="text-4xl font-pixel text-white text-center tracking-wide leading-relaxed">
         --
       </div>
@@ -77,15 +85,15 @@
       <div id="control-input-mode" class="flex flex-col gap-4">
         <!-- Numeric Input Field -->
         <div class="flex items-center gap-2 w-full">
-          <input type="text" id="calc-input" 
-                 inputmode="numeric"
-                 class="w-full bg-slate-900 border-2 border-cyan-500 p-3 text-2xl font-pixel text-cyan-400 text-center rounded focus:outline-none focus:border-cyan-400"
-                 placeholder="輸入答案..." autocomplete="off">
-          <button id="calc-submit-btn" class="cyber-btn cyber-btn-green px-4 py-3.5 font-pixel text-xs text-green-400 rounded flex-shrink-0 hidden">
+          <input type="text" id="calc-input" inputmode="numeric"
+            class="w-full bg-slate-900 border-2 border-cyan-500 p-3 text-2xl font-pixel text-cyan-400 text-center rounded focus:outline-none focus:border-cyan-400"
+            placeholder="輸入答案..." autocomplete="off">
+          <button id="calc-submit-btn"
+            class="cyber-btn cyber-btn-green px-4 py-3.5 font-pixel text-xs text-green-400 rounded flex-shrink-0 hidden">
             確認
           </button>
         </div>
-        
+
         <!-- Virtual Keypad (0-9, Backspace, Dash for negative values) -->
         <div class="keypad-grid grid grid-cols-4 gap-2">
           <button data-key="1" class="cyber-btn font-pixel text-slate-300">1</button>
@@ -110,11 +118,13 @@
 
       <!-- Area B: Click二選一 Mode (L5-L7, L9-L10 Comparison type) -->
       <div id="control-binary-mode" class="hidden grid grid-cols-2 gap-4">
-        <button id="binary-left-btn" class="cyber-btn py-6 px-4 font-pixel text-sm text-cyan-400 flex flex-col justify-center items-center gap-1 min-h-[96px]">
+        <button id="binary-left-btn"
+          class="cyber-btn py-6 px-4 font-pixel text-sm text-cyan-400 flex flex-col justify-center items-center gap-1 min-h-[96px]">
           <span id="binary-left-text" class="text-xl font-bold">A</span>
           <span class="text-[9px] text-slate-500 font-tech">[ 實體鍵盤 ← ]</span>
         </button>
-        <button id="binary-right-btn" class="cyber-btn py-6 px-4 font-pixel text-sm text-pink-400 border-pink-500 flex flex-col justify-center items-center gap-1 min-h-[96px]">
+        <button id="binary-right-btn"
+          class="cyber-btn py-6 px-4 font-pixel text-sm text-pink-400 border-pink-500 flex flex-col justify-center items-center gap-1 min-h-[96px]">
           <span id="binary-right-text" class="text-xl font-bold">B</span>
           <span class="text-[9px] text-slate-500 font-tech">[ 實體鍵盤 → ]</span>
         </button>

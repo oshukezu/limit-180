@@ -1,12 +1,12 @@
-// MathSprint 2.0 — 雲端同步模組 (Cloud Sync)
+// 雲端同步模組 (Cloud Sync)
 // 負責 localStorage ↔ Supabase 雙向同步與合併策略
 
-(function() {
+(function () {
   const CFG = window.MATH_SPRINT_CONFIG;
   if (!CFG || !CFG.CLOUD_ENABLED) {
     window.MathSprintCloudSync = {
-      syncToCloud: async () => {},
-      syncOnLogin: async () => {},
+      syncToCloud: async () => { },
+      syncOnLogin: async () => { },
       isOnline: () => navigator.onLine
     };
     return;

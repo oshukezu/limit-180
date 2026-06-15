@@ -16,7 +16,7 @@
   <div id="review-workspace" class="hidden flex flex-col md:flex-row gap-6">
     <!-- Left Side: Wrong list -->
     <div class="hud-panel p-4 bg-slate-900/80 md:w-1/3 flex flex-col max-h-[450px]">
-      <h3 class="text-xs font-pixel text-pink-500 mb-3">//待消除清單 (<span id="review-total-count">0</span>)</h3>
+      <h3 class="text-xs font-pixel text-pink-500 mb-3">待消除清單 (<span id="review-total-count">0</span>)</h3>
       <div id="review-list-items" class="flex-grow overflow-y-auto space-y-2 pr-2">
         <!-- Wrong questions rows will be inserted here -->
       </div>
@@ -29,9 +29,10 @@
           <div>錯題消除模式</div>
           <div>進度：當前題需答對 <span id="review-item-correct-count" class="text-green-400">0</span>/3 次</div>
         </div>
-        
+
         <!-- 題目顯示框 -->
-        <div class="bg-slate-900 border border-slate-800 p-8 flex justify-center items-center rounded mb-1 min-h-[100px]">
+        <div
+          class="bg-slate-900 border border-slate-800 p-8 flex justify-center items-center rounded mb-1 min-h-[100px]">
           <div id="review-question-text" class="text-3xl font-pixel text-white text-center">
             --
           </div>
@@ -39,11 +40,11 @@
 
         <!-- 解答輸入框 (緊鄰在題目框下方) -->
         <div class="flex items-center gap-2 w-full mb-3">
-          <input type="text" id="review-input" 
-                 inputmode="numeric"
-                 class="flex-1 min-w-0 bg-slate-900 border-2 border-pink-500 p-3 text-2xl font-pixel text-pink-400 text-center rounded focus:outline-none focus:border-pink-400"
-                 placeholder="解答..." autocomplete="off">
-          <button id="review-submit-btn" class="cyber-btn cyber-btn-pink px-4 py-3.5 font-pixel text-xs text-pink-400 rounded flex-shrink-0 hidden">
+          <input type="text" id="review-input" inputmode="numeric"
+            class="flex-1 min-w-0 bg-slate-900 border-2 border-pink-500 p-3 text-2xl font-pixel text-pink-400 text-center rounded focus:outline-none focus:border-pink-400"
+            placeholder="解答..." autocomplete="off">
+          <button id="review-submit-btn"
+            class="cyber-btn cyber-btn-pink px-4 py-3.5 font-pixel text-xs text-pink-400 rounded flex-shrink-0 hidden">
             確認
           </button>
         </div>
@@ -60,17 +61,17 @@
             <button data-review-key="2" class="cyber-btn font-pixel text-slate-300">2</button>
             <button data-review-key="3" class="cyber-btn font-pixel text-slate-300">3</button>
             <button data-review-key="back" class="cyber-btn cyber-btn-pink font-pixel text-pink-400">退格</button>
- 
+
             <button data-review-key="4" class="cyber-btn font-pixel text-slate-300">4</button>
             <button data-review-key="5" class="cyber-btn font-pixel text-slate-300">5</button>
             <button data-review-key="6" class="cyber-btn font-pixel text-slate-300">6</button>
             <button data-review-key="-" class="cyber-btn font-pixel text-slate-400">-</button>
- 
+
             <button data-review-key="7" class="cyber-btn font-pixel text-slate-300">7</button>
             <button data-review-key="8" class="cyber-btn font-pixel text-slate-300">8</button>
             <button data-review-key="9" class="cyber-btn font-pixel text-slate-300">9</button>
             <button data-review-key="." class="cyber-btn font-pixel text-slate-400">.</button>
- 
+
             <button data-review-key="0" class="col-span-3 cyber-btn font-pixel text-slate-300">0</button>
             <button data-review-key="clear" class="cyber-btn cyber-btn-pink font-pixel text-pink-400">清除</button>
           </div>
