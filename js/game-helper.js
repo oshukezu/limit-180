@@ -12,8 +12,8 @@
     const scanner2 = document.querySelector('.scanner-line-2');
     if (scanner1 && scanner2) {
       let neonColors = ['#ff007f', '#39ff14', '#00f0ff'];
-      if (window.ThemeManager && window.Storage) {
-        const profile = window.Storage.getProfile();
+      if (window.ThemeManager && window.MathSprintStorage) {
+        const profile = window.MathSprintStorage.getProfile();
         const themeId = profile.equipped_theme || 'akaimon';
         const theme = window.ThemeManager.THEMES[themeId];
         if (theme && theme.id !== 'akaimon') {
