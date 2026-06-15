@@ -152,7 +152,7 @@ limit-180/
   * **說明**：提供 LocalStorage 底層的讀取與寫入介面（`math_sprint_profile` 存檔），負責歷史紀錄追加與讀寫控制。
 * **[js/storage-milestones.js](js/storage-milestones.js)**
   * **職責**：成就與里程碑金幣判定。
-  * **說明**：處理集滿 Mission 中 20 個關卡徽章、連續上線 7 天且每日 5 局，以及累計答對 100 題時，自動追加金幣獎勵的核心判定邏輯。
+  * **說明**：處理集滿 Mission 中 20 個關卡徽章、累計答對 100 題，以及錯題消除 10 題時，自動追加金幣獎勵的核心判定邏輯。
 * **[js/supabase-service.js](js/supabase-service.js)**
   * **職責**：與雲端資料庫 Supabase 互動。
   * **說明**：封裝 Supabase JS Client。在寫入成績前，會利用前端混淆鹽值與 Web Crypto API 計算 `integrity_hash` (SHA-256) 並隨同成績寫入，以進行防刷與防修改校驗。

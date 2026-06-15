@@ -18,7 +18,7 @@
 | **身分與同步** | [onboarding.js](file:///Users/oshukezu/Documents/Knowledge%20Vault/Game/limit-180/js/onboarding.js) | **身分暱稱校驗**：負責玩家暱稱的防霸廉過濾（敏感詞清單）與註冊班級座號的正則校驗。 |
 | **身分與同步** | [onboarding-sync.js](file:///Users/oshukezu/Documents/Knowledge%20Vault/Game/limit-180/js/onboarding-sync.js) | **成績合流與同步**：在首玩結束時將暫存的成績與新綁定身份同步，並提供非阻塞式的單關進度雲端同步 (`syncCurrentStatsToCloud`)。 |
 | **身分與同步** | [storage.js](file:///Users/oshukezu/Documents/Knowledge%20Vault/Game/limit-180/js/storage.js) | **本地 LocalStorage 存取**：負責讀寫本機存檔 `math_sprint_profile` 結構（包含累積金幣與獎金數、各關最優成績紀錄、錯題資料庫、歷史紀錄等）的底層讀寫控制。 |
-| **身分與同步** | [storage-milestones.js](file:///Users/oshukezu/Documents/Knowledge%20Vault/Game/limit-180/js/storage-milestones.js) | **成就與里程碑獎勵判定**：處理集滿 Mission 中 20 個關卡徽章、連續上線 7 天，以及累計答對 100 題等核心 bonus_stars 金幣與額外獎金判定與發放。 |
+| **身分與同步** | [storage-milestones.js](file:///Users/oshukezu/Documents/Knowledge%20Vault/Game/limit-180/js/storage-milestones.js) | **成就與里程碑獎勵判定**：處理集滿 Mission 中 20 個關卡徽章、累計答對 100 題，以及錯題消除 10 題等核心獎勵金幣與額外獎金判定與發放。 |
 | **身分與同步** | [supabase-service.js](file:///Users/oshukezu/Documents/Knowledge%20Vault/Game/limit-180/js/supabase-service.js) | **Supabase 數據操作層**：封裝 Supabase JS Client 初始化，提供向 `users_profile` 資料表進行 Upsert 寫入與排行榜查詢，並在前端實作 SHA-256 雜湊防篡改校驗。 |
 | **數據與展現** | [leaderboard.js](file:///Users/oshukezu/Documents/Knowledge%20Vault/Game/limit-180/js/leaderboard.js) | **聯賽排行榜控制**：負責拉取雲端數據，控管排行分頁與關卡篩選切換的邏輯控制器。 |
 | **數據與展現** | [leaderboard-renders.js](file:///Users/oshukezu/Documents/Knowledge%20Vault/Game/limit-180/js/leaderboard-renders.js) | **聯賽排行榜渲染**：負責「個人總榜」、「團隊對抗榜」與「答題速度榜」的 DOM 結構動態生成與渲染。 |
