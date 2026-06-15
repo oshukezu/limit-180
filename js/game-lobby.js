@@ -62,26 +62,15 @@
           return 0;
         }
 
-        // Sum stars earned in this mission
-        let starsInM = 0;
+        // Calculate average accuracy rate for the 20 levels of this mission
+        let totalAcc = 0;
         for (let l = 1; l <= 20; l++) {
           const record = profile.level_records[`mission-${i}-level-${l}`];
-          if (record && record.stars > 0) {
-            const c = record.stars;
-            let rStars = 0;
-            if (i === 50) {
-              if (c >= 1500000 * l) rStars = 3;
-              else if (c >= 1000000 * l) rStars = 2;
-              else if (c >= 500000 * l) rStars = 1;
-            } else {
-              const base = getBaseCoin(i);
-              if (c >= base * l) rStars = 3;
-              else if (c >= Math.floor(base * l * 2 / 3)) rStars = 2;
-              else if (c >= Math.floor(base * l * 1 / 3)) rStars = 1;
-            }
-            starsInM += rStars;
+          if (record && record.accuracy !== undefined) {
+            totalAcc += record.accuracy;
           }
         }
+        const avgAccPct = Math.round((totalAcc / 20) * 100);
 
         const card = document.createElement('div');
         card.className = `hud-panel p-5 bg-slate-900/90 flex flex-col justify-between transition-all duration-300 relative w-full ${
@@ -98,8 +87,8 @@
             <div class="flex justify-between items-start mb-2">
                <span class="text-xs font-pixel ${i <= 10 ? 'text-cyan-400' : i <= 25 ? 'text-green-400' : i <= 40 ? 'text-pink-500 glow-pink' : 'text-yellow-400 glow-yellow'}">
                 ${config.name.toUpperCase()}
-              </span>
-              <div class="text-xs font-pixel text-yellow-400">${isMUnlocked ? `★ ${starsInM}/60` : `🔒 前任務達 ${reqPct}%正確`}</div>
+               </span>
+              <div class="text-xs font-pixel text-yellow-400">${isMUnlocked ? `${avgAccPct}%` : `🔒 前任務達 ${reqPct}%正確`}</div>
             </div>
             <h4 class="text-base font-bold text-white mb-1">${config.desc}</h4>
             <p class="text-[11px] text-slate-400 font-tech mb-2">
