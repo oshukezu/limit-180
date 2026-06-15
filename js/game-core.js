@@ -173,7 +173,7 @@ window.CFG = window.MATH_SPRINT_CONFIG;
 
       // Sync HUD
       document.getElementById('game-shields').textContent = profile.shields_count;
-      document.getElementById('game-level-title').textContent = `M${missionNum} - Stage ${String(levelNum).padStart(2, '0')}/20`;
+      document.getElementById('game-level-title').textContent = `M${missionNum} ${String(levelNum).padStart(2, '0')}/20`;
 
       document.getElementById('error-feedback').classList.add('hidden');
       document.getElementById('shield-alert').classList.add('hidden');
