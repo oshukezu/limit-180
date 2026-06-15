@@ -74,8 +74,13 @@
           } else {
             const myRec = personalList[myRank];
             rankBlock.innerHTML = `
-              <div>👤 我的名次：第 <span class="text-green-400 font-bold">${myRank + 1}</span> 名</div>
-              <div>成績：<span class="text-green-400 font-bold">${formatLeaderboardCoins(myRec.total_stars)}</span> (${myRec.avg_time.toFixed(2)}s)</div>
+              <div class="w-full flex flex-col gap-1">
+                <div>👤 我的名次：第 <span class="text-green-400 font-bold">${myRank + 1}</span> 名</div>
+                <div class="text-slate-400 text-[9px] font-tech mt-0.5 flex flex-wrap gap-x-3 gap-y-1">
+                  <span>成績：<span class="text-green-400 font-bold">${formatLeaderboardCoins(myRec.total_stars)}</span></span>
+                  <span>均速：<span class="text-white">${myRec.avg_time.toFixed(2)}s</span></span>
+                </div>
+              </div>
             `;
           }
         }
@@ -87,8 +92,21 @@
         return;
       }
 
+      const headerHtml = `
+        <div class="flex justify-between items-center px-3 py-1 text-[9px] font-pixel text-slate-500 border-b border-slate-800/60 mb-1">
+          <div class="flex items-center gap-2">
+            <span class="w-6 text-center">排名</span>
+            <span>特工資訊</span>
+          </div>
+          <div class="text-right flex items-center gap-3">
+            <span class="min-w-[70px] text-right">累計獎金</span>
+            <span class="min-w-[45px] text-right">平均速度</span>
+          </div>
+        </div>
+      `;
+
       const top50 = personalList.slice(0, 50);
-      container.innerHTML = top50.map((row, idx) => {
+      container.innerHTML = headerHtml + top50.map((row, idx) => {
         const rank = idx + 1;
         const icon = RANK_ICONS[rank] || `#${rank}`;
         const isTop3 = rank <= 3;
@@ -104,9 +122,9 @@
               <span class="text-white text-[11px] font-bold">${escapeHtml(row.nickname)}</span>
               ${isMe ? '<span class="text-[8px] bg-cyan-500 text-black px-1 font-bold rounded">我</span>' : ''}
             </div>
-            <div class="text-right">
-              <span class="text-green-400 font-bold">${formatLeaderboardCoins(row.total_stars)}</span>
-              <span class="text-slate-500 text-[9px] font-tech ml-1">(${row.avg_time.toFixed(2)}s)</span>
+            <div class="text-right flex items-center gap-3">
+              <span class="text-green-400 font-bold min-w-[70px] text-right">${formatLeaderboardCoins(row.total_stars)}</span>
+              <span class="text-slate-400 text-[9px] font-tech min-w-[45px] text-right">${row.avg_time.toFixed(2)}s</span>
             </div>
           </div>
         `;
@@ -165,8 +183,14 @@
           } else {
             const myTeamRec = teamList[myTeamRank];
             rankBlock.innerHTML = `
-              <div>👥 我班排名：第 <span class="text-green-400 font-bold">${myTeamRank + 1}</span> 名 (${myTeamRec.grade_class}班)</div>
-              <div>團隊獎金：<span class="text-green-400 font-bold">${formatLeaderboardCoins(myTeamRec.total_stars)}</span> | 均速：${myTeamRec.avg_time}s | 人數：${myTeamRec.player_count}人</div>
+              <div class="w-full flex flex-col gap-1">
+                <div>👥 我班排名：第 <span class="text-green-400 font-bold">${myTeamRank + 1}</span> 名 (${myTeamRec.grade_class}班)</div>
+                <div class="text-slate-400 text-[9px] font-tech mt-0.5 flex flex-wrap gap-x-3 gap-y-1">
+                  <span>團隊獎金：<span class="text-green-400 font-bold">${formatLeaderboardCoins(myTeamRec.total_stars)}</span></span>
+                  <span>均速：<span class="text-white">${myTeamRec.avg_time}s</span></span>
+                  <span>人數：<span class="text-white">${myTeamRec.player_count}人</span></span>
+                </div>
+              </div>
             `;
           }
         }
@@ -177,8 +201,22 @@
         return;
       }
 
+      const headerHtml = `
+        <div class="flex justify-between items-center px-3 py-1 text-[9px] font-pixel text-slate-500 border-b border-slate-800/60 mb-1">
+          <div class="flex items-center gap-2">
+            <span class="w-6 text-center">排名</span>
+            <span>班級</span>
+            <span class="ml-2">參賽人數</span>
+          </div>
+          <div class="text-right flex items-center gap-3">
+            <span class="min-w-[70px] text-right">團隊獎金</span>
+            <span class="min-w-[45px] text-right">團隊均速</span>
+          </div>
+        </div>
+      `;
+
       const top50Teams = teamList.slice(0, 50);
-      container.innerHTML = top50Teams.map((row, idx) => {
+      container.innerHTML = headerHtml + top50Teams.map((row, idx) => {
         const rank = idx + 1;
         const icon = RANK_ICONS[rank] || `#${rank}`;
         const isTop3 = rank <= 3;
@@ -190,13 +228,13 @@
           <div class="leaderboard-row ${isTop3 ? 'leaderboard-row-top' : ''} ${meBorderClass} flex justify-between items-center py-2 px-3 text-xs font-pixel">
             <div class="flex items-center gap-2">
               <span class="leaderboard-rank w-6 text-center ${rankClass}">${icon}</span>
-              <span class="text-white text-[11px] font-bold">${row.grade_class} 班級團隊</span>
+              <span class="text-white text-[11px] font-bold">${row.grade_class}</span>
               ${isMyTeam ? '<span class="text-[8px] bg-cyan-500 text-black px-1 font-bold rounded">我班</span>' : ''}
-              <span class="text-slate-500 text-[8px] font-tech">(${row.player_count} 人參賽)</span>
+              <span class="text-slate-500 text-[9px] font-tech ml-1">${row.player_count} 人</span>
             </div>
-            <div class="text-right">
-              <span class="text-green-400 font-bold">${formatLeaderboardCoins(row.total_stars)}</span>
-              <span class="text-slate-500 text-[9px] font-tech ml-1">(團隊均速: ${row.avg_time}s)</span>
+            <div class="text-right flex items-center gap-3">
+              <span class="text-green-400 font-bold min-w-[70px] text-right">${formatLeaderboardCoins(row.total_stars)}</span>
+              <span class="text-slate-400 text-[9px] font-tech min-w-[45px] text-right">${row.avg_time}s</span>
             </div>
           </div>
         `;
@@ -225,7 +263,13 @@
             const myRec = missionData[myMissionRank];
             const myAvg = typeof myRec.best_avg_time === 'number' ? myRec.best_avg_time.toFixed(2) : '99.90';
             rankBlock.innerHTML = `
-              <div class="w-full text-center">🎯 ${myMissionRank + 1} ${escapeHtml(currentUser.nickname)} ${currentUser.grade_class} ${myAvg}s</div>
+              <div class="w-full flex flex-col gap-1">
+                <div>🎯 我的名次：第 <span class="text-green-400 font-bold">${myMissionRank + 1}</span> 名</div>
+                <div class="text-slate-400 text-[9px] font-tech mt-0.5 flex flex-wrap gap-x-3 gap-y-1">
+                  <span>特工：<span class="text-white">${escapeHtml(currentUser.nickname)}</span> (${currentUser.grade_class}班)</span>
+                  <span>均速：<span class="text-green-400 font-bold">${myAvg}s</span></span>
+                </div>
+              </div>
             `;
           }
         }
@@ -236,8 +280,21 @@
         return;
       }
 
+      const headerHtml = `
+        <div class="flex justify-between items-center px-3 py-1 text-[9px] font-pixel text-slate-500 border-b border-slate-800/60 mb-1">
+          <div class="flex items-center gap-2">
+            <span class="w-6 text-center">排名</span>
+            <span>特工資訊</span>
+          </div>
+          <div class="text-right flex items-center gap-3">
+            <span class="min-w-[55px] text-right">平均速度</span>
+            <span class="min-w-[55px] text-right">單題最快</span>
+          </div>
+        </div>
+      `;
+
       const top50Missions = missionData.slice(0, 50);
-      container.innerHTML = top50Missions.map((row, idx) => {
+      container.innerHTML = headerHtml + top50Missions.map((row, idx) => {
         const rank = idx + 1;
         const icon = RANK_ICONS[rank] || `#${rank}`;
         const isTop3 = rank <= 3;
@@ -257,8 +314,8 @@
               ${isMe ? '<span class="text-[8px] bg-cyan-500 text-black px-1 font-bold rounded">我</span>' : ''}
             </div>
             <div class="text-right flex items-center gap-3">
-              <span class="text-green-400 font-bold">均速: ${avgTime}s</span>
-              <span class="text-cyan-400 text-[9px] font-tech">最快: ${minTime}s</span>
+              <span class="text-green-400 font-bold min-w-[55px] text-right">${avgTime}s</span>
+              <span class="text-cyan-400 text-[9px] font-tech min-w-[55px] text-right">${minTime}s</span>
             </div>
           </div>
         `;

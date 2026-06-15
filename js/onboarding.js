@@ -354,7 +354,7 @@
     
     const editBtn = document.getElementById('edit-profile-btn');
     if (profile.grade_class === '訪客') {
-      profileInfo.textContent = `[訪客特工] 通關首局後綁定成績`;
+      profileInfo.textContent = `訪客特工 通關首局後綁定成績`;
       if (editBtn) editBtn.classList.add('hidden');
       profileBar.classList.remove('hidden');
       return;
@@ -373,7 +373,7 @@
       displayClass = `${gradeStr}年${classNum}班`;
     }
 
-    profileInfo.textContent = `[${displayClass}] 座號: ${profile.seat_number} | ${profile.nickname}`;
+    profileInfo.textContent = `${displayClass} 座號${profile.seat_number} ${profile.nickname}`;
     profileBar.classList.remove('hidden');
   }
 
