@@ -8,7 +8,6 @@
     { id: 'view-lobby', path: 'views/lobby.html', parent: 'main' },
     { id: 'view-game', path: 'views/game.html', parent: 'main' },
     { id: 'view-result', path: 'views/result.html', parent: 'main' },
-    { id: 'view-dashboard', path: 'views/dashboard.html', parent: 'main' },
     { id: 'view-achievements', path: 'views/achievements.html', parent: 'main' },
     { id: 'view-review', path: 'views/review.html', parent: 'main' },
     { id: 'view-store', path: 'views/store.html', parent: 'main' },

@@ -23,10 +23,16 @@
       if (navDashboard) {
         navDashboard.addEventListener('click', () => {
           this.stopGame();
+          window.showView('view-home');
           if (window.MathSprintDashboard) {
             window.MathSprintDashboard.renderCharts();
           }
-          window.showView('view-dashboard');
+          setTimeout(() => {
+            const target = document.getElementById('home-dashboard-section');
+            if (target) {
+              target.scrollIntoView({ behavior: 'smooth' });
+            }
+          }, 100);
         });
       }
 

@@ -37,6 +37,13 @@
       window.currentView = viewId; // 同步更新全域變數
     }
     
+    // 如果進入首頁，自動渲染反應數據圖表
+    if (viewId === 'view-home') {
+      if (window.MathSprintDashboard) {
+        window.MathSprintDashboard.renderCharts();
+      }
+    }
+    
     // 如果進入遊戲或複習，隱藏 header 與 footer
     if (viewId === 'view-game' || viewId === 'view-review') {
       document.body.classList.add('body-in-game');
