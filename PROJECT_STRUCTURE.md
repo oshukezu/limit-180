@@ -13,7 +13,11 @@ limit-180/
 │       └── deploy.yml          # GitHub Pages 自動部署工作流
 ├── agents/                     # AI 代理工作日誌與功能規格書 (Markdown 格式)
 ├── css/
-│   └── styles.css              # 全域 Cyberpunk 霓虹風格與流光動畫樣式
+│   ├── styles.css              # 主控入口檔（透過 @import 載入子元件）
+│   ├── variables.css           # 全域 CSS 變數與多主題配色覆寫
+│   ├── animations.css          # 流光掃描線、CRT微光、抖動等動畫效果
+│   ├── components.css          # 按鈕、面板、時間條、排行榜等 UI 元件樣式（含櫻花風格去霓虹覆寫）
+│   └── layouts.css             # 行動裝置適配排版與自適應高度樣式
 ├── js/                         # 前端主要邏輯與核心服務
 │   ├── missions/               # 各關卡 (Mission 1-50) 的題目生成演算法
 │   │   ├── README.md           # 關卡題目生成概要與擴充指南
@@ -33,6 +37,7 @@ limit-180/
 │   ├── game-result.js          # 遊戲結算、降級提示與待發金幣獎勵彈窗
 │   ├── game-review.js          # 錯題本管理與錯題消除練習模式
 │   ├── game-scaffold.js        # 比大小關卡中 SVG 輔助圖形動態繪製
+│   ├── game-store.js           # 主題配色商店預覽、金幣購買與裝備邏輯
 │   ├── game-core.js            # 核心遊戲生命週期管理
 │   ├── game-helper.js          # SPA 頁面切換、背景霓虹流光控制與 Session 驗證等輔助功能
 │   ├── game-play.js            # 遊戲中題目答題、計時與暫停等具體遊玩邏輯
@@ -45,6 +50,7 @@ limit-180/
 │   ├── storage-milestones.js   # 關卡集滿獎勵、連續上線與答對累計等成就判定
 │   ├── storage.js              # 本地 LocalStorage 存檔與資料夾讀寫
 │   ├── supabase-service.js     # Supabase API 串接與前端防改 Integrity 雜湊
+│   ├── theme-manager.js        # 主題管理器（控制 CSS 變數覆寫與櫻花 Canvas 動畫）
 │   └── ui-controller.js        # 全域 UI 切換與防死鎖快速關閉控制器
 ├── supabase/                   # Supabase 雲端資料庫配置與遷移
 │   ├── functions/
@@ -94,8 +100,20 @@ limit-180/
 ### 2. 樣式與視覺配置 (css/)
 
 * **[css/styles.css](css/styles.css)**
-  * **職責**：客製化樣式與動畫效果。
-  * **說明**：包含 Cyberpunk 霓虹流光背景動畫 (`scan-double`)、按鈕流光效果、發光文字、自適應配置微調，以及錯誤作答時的螢幕震動動畫樣式。
+  * **職責**：樣式主入口檔。
+  * **說明**：以 `@import` 整合導入子元件樣式。
+* **[css/variables.css](css/variables.css)**
+  * **職責**：視覺變數與主題管理器配合樣式。
+  * **說明**：配置「赤門櫻花」預設變數與其他四款購買主題（特務霓虹、熔岩深淵、極地極光、黃金帝國）的配色覆寫。
+* **[css/animations.css](css/animations.css)**
+  * **職責**：動態視覺特效與轉場動畫。
+  * **說明**：包含雙軌流光掃描 (`scan-double`)、CRT 螢幕微光閃爍、錯題震動反饋及 Modal 漸變淡入。
+* **[css/components.css](css/components.css)**
+  * **職責**：UI 按鈕、面板與文字組件。
+  * **說明**：包含按鈕（含赤門櫻花無霓虹覆寫）、倒數時間條、HUD 面板、關卡徽章按鈕與排行榜列。
+* **[css/layouts.css](css/layouts.css)**
+  * **職責**：響應式適配排版。
+  * **說明**：包含觸控螢幕隱藏虛擬鍵盤，以及防滾動滿版高度適配（Media Queries）。
 
 ---
 
@@ -174,6 +192,12 @@ limit-180/
 * **[js/game-review.js](js/game-review.js)**
   * **職責**：錯題消除模式控制器。
   * **說明**：渲染錯題本中的題目，並追蹤每一道錯題「連續答對 3 次」的消除進度。
+* **[js/game-store.js](js/game-store.js)**
+  * **職責**：主題配色商店控制器。
+  * **說明**：處理主題卡片渲染、購買解鎖與金幣扣除，裝備新主題。
+* **[js/theme-manager.js](js/theme-manager.js)**
+  * **職責**：全域主題與環境動畫管理器。
+  * **說明**：控制 CSS 變數覆寫類別切換、控制雙軌流光掃描線顯示狀態，並管理「赤門櫻花」下的櫻花飄雪畫布背景。
 * **[js/leaderboard.js](js/leaderboard.js)**
   * **職責**：聯賽排行榜控制器。
   * **說明**：拉取雲端數據，控管排行分頁 (個人、團隊、單關均速) 與關卡 Mission 篩選的切換。

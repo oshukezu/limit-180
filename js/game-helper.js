@@ -11,7 +11,15 @@
     const scanner1 = document.querySelector('.scanner-line-1');
     const scanner2 = document.querySelector('.scanner-line-2');
     if (scanner1 && scanner2) {
-      const neonColors = ['#ff007f', '#39ff14', '#00f0ff'];
+      let neonColors = ['#ff007f', '#39ff14', '#00f0ff'];
+      if (window.ThemeManager && window.Storage) {
+        const profile = window.Storage.getProfile();
+        const themeId = profile.equipped_theme || 'akaimon';
+        const theme = window.ThemeManager.THEMES[themeId];
+        if (theme && theme.id !== 'akaimon') {
+          neonColors = theme.preview;
+        }
+      }
       const color = neonColors[Math.floor(Math.random() * neonColors.length)];
       scanner1.style.background = color;
       scanner1.style.boxShadow = `0 0 8px ${color}, 0 0 15px ${color}`;
@@ -41,6 +49,13 @@
     if (viewId === 'view-home') {
       if (window.MathSprintDashboard) {
         window.MathSprintDashboard.renderCharts();
+      }
+    }
+
+    // 如果進入商店，自動渲染商店介面
+    if (viewId === 'view-store') {
+      if (window.GameStore) {
+        window.GameStore.renderStore();
       }
     }
     

@@ -23,7 +23,9 @@
     level_records: {}, // Keyed by: mission-[M]-level-[L]
     wrong_questions_db: [], // Wrong answers ledger
     unlocked_achievements: [], // Achievement list
-    history_log: [] // Play history logs for Parent Dashboard
+    history_log: [], // Play history logs for Parent Dashboard
+    equipped_theme: 'akaimon', // 目前裝備的主題 (akaimon / neon / lava / aurora / gold)
+    purchased_themes: ['akaimon'] // 已購買的主題清單
   };
 
   const Storage = {

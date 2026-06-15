@@ -1,0 +1,379 @@
+/* Neon Text Glow */
+.glow-pink {
+  text-shadow: 0 0 5px var(--neon-pink), 0 0 10px var(--neon-pink);
+}
+.glow-green {
+  text-shadow: 0 0 5px var(--neon-green), 0 0 10px var(--neon-green);
+}
+.glow-blue {
+  text-shadow: 0 0 5px var(--neon-blue), 0 0 10px var(--neon-blue);
+}
+.glow-yellow {
+  text-shadow: 0 0 5px var(--neon-green), 0 0 10px var(--neon-green);
+}
+
+/* Neon Border Glow */
+.border-glow-pink {
+  box-shadow: 0 0 8px var(--neon-pink), inset 0 0 4px var(--neon-pink);
+  border: 2px solid var(--neon-pink);
+}
+.border-glow-green {
+  box-shadow: 0 0 8px var(--neon-green), inset 0 0 4px var(--neon-green);
+  border: 2px solid var(--neon-green);
+}
+.border-glow-blue {
+  box-shadow: 0 0 8px var(--neon-blue), inset 0 0 4px var(--neon-blue);
+  border: 2px solid var(--neon-blue);
+}
+.border-glow-yellow {
+  box-shadow: 0 0 8px var(--neon-green), inset 0 0 4px var(--neon-green);
+  border: 2px solid var(--neon-green);
+}
+
+/* ============================================================ */
+/* 赤門櫻花風格專屬：去除所有霓虹發光特效與陰影                    */
+/* ============================================================ */
+body:not(.theme-neon):not(.theme-lava):not(.theme-aurora):not(.theme-gold) .glow-pink,
+body:not(.theme-neon):not(.theme-lava):not(.theme-aurora):not(.theme-gold) .glow-green,
+body:not(.theme-neon):not(.theme-lava):not(.theme-aurora):not(.theme-gold) .glow-blue,
+body:not(.theme-neon):not(.theme-lava):not(.theme-aurora):not(.theme-gold) .glow-yellow {
+  text-shadow: none !important;
+}
+
+body:not(.theme-neon):not(.theme-lava):not(.theme-aurora):not(.theme-gold) .border-glow-pink,
+body:not(.theme-neon):not(.theme-lava):not(.theme-aurora):not(.theme-gold) .border-glow-green,
+body:not(.theme-neon):not(.theme-lava):not(.theme-aurora):not(.theme-gold) .border-glow-blue,
+body:not(.theme-neon):not(.theme-lava):not(.theme-aurora):not(.theme-gold) .border-glow-yellow {
+  box-shadow: none !important;
+  border-color: var(--border-color) !important;
+}
+
+/* 移除 HUD 面板的上邊條漸層發光與陰影 */
+body:not(.theme-neon):not(.theme-lava):not(.theme-aurora):not(.theme-gold) .hud-panel {
+  box-shadow: none !important;
+  border-color: var(--border-color) !important;
+}
+body:not(.theme-neon):not(.theme-lava):not(.theme-aurora):not(.theme-gold) .hud-panel::before {
+  display: none !important;
+}
+
+/* 移除按鈕懸停發光，調整按鈕背景色以符合櫻花古風 */
+body:not(.theme-neon):not(.theme-lava):not(.theme-aurora):not(.theme-gold) .cyber-btn {
+  border-color: var(--border-color) !important;
+  background: rgba(241, 196, 205, 0.1) !important;
+}
+body:not(.theme-neon):not(.theme-lava):not(.theme-aurora):not(.theme-gold) .cyber-btn:hover {
+  background: var(--neon-pink) !important;
+  color: #1E1618 !important;
+  box-shadow: none !important;
+}
+
+body:not(.theme-neon):not(.theme-lava):not(.theme-aurora):not(.theme-gold) .cyber-btn-pink {
+  border-color: var(--neon-pink) !important;
+  background: rgba(241, 196, 205, 0.1) !important;
+}
+body:not(.theme-neon):not(.theme-lava):not(.theme-aurora):not(.theme-gold) .cyber-btn-pink:hover {
+  background: var(--neon-pink) !important;
+  color: #1E1618 !important;
+  box-shadow: none !important;
+}
+
+body:not(.theme-neon):not(.theme-lava):not(.theme-aurora):not(.theme-gold) .cyber-btn-green,
+body:not(.theme-neon):not(.theme-lava):not(.theme-aurora):not(.theme-gold) .cyber-btn-yellow {
+  border-color: var(--neon-green) !important;
+  background: rgba(226, 178, 187, 0.15) !important;
+}
+body:not(.theme-neon):not(.theme-lava):not(.theme-aurora):not(.theme-gold) .cyber-btn-green:hover,
+body:not(.theme-neon):not(.theme-lava):not(.theme-aurora):not(.theme-gold) .cyber-btn-yellow:hover {
+  background: var(--neon-green) !important;
+  color: #1E1618 !important;
+  box-shadow: none !important;
+}
+
+/* 時間條與倒數計時容器 */
+body:not(.theme-neon):not(.theme-lava):not(.theme-aurora):not(.theme-gold) .time-bar-container {
+  border-color: var(--border-color) !important;
+  box-shadow: none !important;
+  background: #281F21 !important;
+}
+body:not(.theme-neon):not(.theme-lava):not(.theme-aurora):not(.theme-gold) .time-bar {
+  background: var(--neon-pink) !important;
+  box-shadow: none !important;
+}
+
+/* Font Classes */
+.font-pixel {
+  font-family: var(--pixel-font);
+  line-height: 1.6;
+}
+.font-tech {
+  font-family: var(--tech-font);
+}
+
+/* Grid & Pixel Borders for Cyberpunk Buttons */
+.cyber-btn {
+  position: relative;
+  border: 2px solid var(--neon-blue);
+  background: rgba(0, 240, 255, 0.1);
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+.cyber-btn:hover {
+  background: var(--neon-blue);
+  color: #000;
+  box-shadow: 0 0 15px var(--neon-blue);
+}
+.cyber-btn:active {
+  transform: scale(0.98);
+}
+.cyber-btn-pink {
+  border: 2px solid var(--neon-pink);
+  background: rgba(255, 0, 127, 0.1);
+}
+.cyber-btn-pink:hover {
+  background: var(--neon-pink);
+  color: #000;
+  box-shadow: 0 0 15px var(--neon-pink);
+}
+.cyber-btn-green {
+  border: 2px solid var(--neon-green);
+  background: rgba(57, 255, 20, 0.1);
+}
+.cyber-btn-green:hover {
+  background: var(--neon-green);
+  color: #000;
+  box-shadow: 0 0 15px var(--neon-green);
+}
+.cyber-btn-yellow {
+  border: 2px solid var(--neon-green);
+  background: rgba(57, 255, 20, 0.1);
+}
+.cyber-btn-yellow:hover {
+  background: var(--neon-green);
+  color: #000;
+  box-shadow: 0 0 15px var(--neon-green);
+}
+
+/* Dynamic Time Bar style */
+.time-bar-container {
+  height: 20px;
+  background: #1e1e38;
+  border: 2px solid #00f0ff;
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.time-bar {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, var(--neon-green), #39ff1480);
+  box-shadow: 0 0 10px var(--neon-green);
+  transition: width 0.1s linear, background-color 0.3s ease;
+}
+
+/* Cyber HUD panel styling */
+.hud-panel {
+  background: var(--panel-bg);
+  border: 2px solid #1f2937;
+  border-radius: 4px;
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+.hud-panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink));
+}
+
+/* Scaffolding visual aids */
+.scaffold-container {
+  transition: opacity 0.5s ease;
+}
+
+/* Keypad Grid spacing */
+.keypad-grid button {
+  font-family: var(--pixel-font);
+  font-size: 14px;
+  height: 56px;
+  border-radius: 4px;
+}
+
+/* Sub-level select buttons (Missions) */
+.lvl-btn {
+  font-family: var(--pixel-font);
+  font-size: 8px;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 240, 255, 0.05);
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  color: #9ca3af;
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
+  border-radius: 2px;
+}
+.lvl-btn:hover:not(.locked) {
+  background: var(--neon-blue);
+  color: #000;
+  box-shadow: 0 0 10px var(--neon-blue);
+  border-color: var(--neon-blue);
+}
+.lvl-btn.locked {
+  opacity: 0.25;
+  cursor: not-allowed;
+  border-color: #374151;
+  background: rgba(0, 0, 0, 0.2);
+}
+.lvl-btn.three-stars {
+  border-color: var(--neon-green);
+  box-shadow: 0 0 6px var(--neon-green), inset 0 0 2px var(--neon-green);
+  color: var(--neon-green);
+}
+.lvl-btn.one-star, .lvl-btn.two-stars {
+  border-color: var(--neon-yellow);
+  color: var(--neon-yellow);
+}
+
+/* ============================================================ */
+/* 排行榜樣式 (Leaderboard Cyberpunk Styles)                      */
+/* ============================================================ */
+.leaderboard-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border: 1px solid rgba(0, 240, 255, 0.08);
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 2px;
+  transition: all 0.15s ease;
+  font-family: var(--tech-font);
+  font-size: 12px;
+}
+
+.leaderboard-row:hover {
+  background: rgba(0, 240, 255, 0.05);
+  border-color: rgba(0, 240, 255, 0.2);
+}
+
+.leaderboard-row-top {
+  border-color: rgba(255, 251, 0, 0.2);
+  background: rgba(255, 251, 0, 0.03);
+}
+
+.leaderboard-rank {
+  font-family: var(--pixel-font);
+  font-size: 9px;
+  min-width: 28px;
+  text-align: center;
+}
+
+.leaderboard-nick {
+  flex: 1;
+  color: #cbd5e1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.leaderboard-time {
+  font-family: var(--pixel-font);
+  font-size: 9px;
+  color: var(--neon-blue);
+  white-space: nowrap;
+}
+
+#leaderboard-live-dot {
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+/* Auth Modal Button */
+#auth-account-btn {
+  border-color: #bf00ff;
+  background: rgba(191, 0, 255, 0.08);
+}
+#auth-account-btn:hover {
+  background: #bf00ff;
+  color: #000;
+  box-shadow: 0 0 15px #bf00ff;
+}
+
+/* ============================================================ */
+/* 電光翠綠 (Neon Green) 核心巨大化按鈕                         */
+/* ============================================================ */
+.neon-green-btn {
+  background-color: #000000 !important;
+  border: 2px solid var(--neon-green) !important;
+  color: var(--neon-green) !important;
+  transition: all 0.2s ease-in-out !important;
+  cursor: pointer;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+.neon-green-btn:hover {
+  background-color: #000000 !important;
+  box-shadow: 0 0 20px var(--neon-green), inset 0 0 8px var(--neon-green) !important;
+  text-shadow: 0 0 8px var(--neon-green) !important;
+}
+
+.neon-green-btn:active {
+  transform: scale(0.98) !important;
+  box-shadow: 0 0 30px var(--neon-green), inset 0 0 12px var(--neon-green) !important;
+  text-shadow: 0 0 12px var(--neon-green) !important;
+}
+
+/* ============================================================ */
+/* 低調導航按鈕 (Header Navigation Buttons - Noise Reduction)  */
+/* ============================================================ */
+.nav-btn {
+  border: 1px solid var(--border-color, #1e293b) !important;
+  background: rgba(0, 0, 0, 0.6) !important;
+  color: #94a3b8 !important;
+  transition: all 0.2s ease-in-out !important;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.nav-btn:hover {
+  border-color: #94a3b8 !important;
+  color: #ffffff !important;
+}
+
+.nav-btn:active {
+  transform: scale(0.95) !important;
+}
+
+/* ============================================================ */
+/* 右上角高對比翠綠色霓虹關閉按鈕 (Close Button Styles)         */
+/* ============================================================ */
+.close-btn {
+  position: absolute !important;
+  top: 1rem !important;
+  right: 1rem !important;
+  font-size: 1.875rem !important; /* text-3xl */
+  font-weight: 700 !important; /* font-bold */
+  color: var(--neon-green) !important;
+  cursor: pointer !important;
+  background: none !important;
+  border: none !important;
+  transition: color 0.2s ease-in-out, text-shadow 0.2s ease-in-out, transform 0.2s ease-in-out !important;
+  z-index: 50 !important;
+  line-height: 1 !important;
+}
+
+.close-btn:hover {
+  color: #ffffff !important;
+  text-shadow: 0 0 8px var(--neon-green), 0 0 15px var(--neon-green) !important;
+}
+
+.close-btn:active {
+  transform: scale(0.9) !important;
+}

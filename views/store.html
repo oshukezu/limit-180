@@ -1,27 +1,16 @@
 <section id="view-store" class="view-section hidden py-6 relative">
   <button class="close-btn" id="store-close-btn">&times;</button>
-  <div class="flex flex-col justify-between items-start mb-6">
-    <h2 class="text-2xl font-pixel text-white glow-cyan">特工補給商店</h2>
+  
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+    <h2 class="text-2xl font-pixel text-white">特工補給商店</h2>
+    <div class="bg-slate-900 border border-slate-800 px-4 py-2 font-pixel text-xs text-yellow-400 flex items-center gap-2 rounded">
+      <span>當前餘額:</span>
+      <span id="store-coins-balance" class="text-white text-sm">0</span>
+      <span>💰</span>
+    </div>
   </div>
 
-  <div
-    class="hud-panel p-12 bg-slate-900/80 border border-slate-800 rounded flex flex-col items-center justify-center text-center min-h-[300px] relative overflow-hidden"
-    style="box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);">
-    <!-- Decorative Tech Accents -->
-    <div class="absolute top-2 left-2 text-[9px] font-pixel text-slate-700">SYS_LOC: STORE_CORE</div>
-    <div class="absolute bottom-2 right-2 text-[9px] font-pixel text-slate-700">V1.0 LIMIT 180</div>
-
-    <div
-      class="w-16 h-16 rounded-full border border-dashed border-cyan-500 flex items-center justify-center animate-spin text-2xl mb-6 text-cyan-400">
-      ⚙️
-    </div>
-
-    <h3 class="text-xl font-pixel text-cyan-400 glow-cyan mb-2">系統升級整備中</h3>
-    <p class="text-base font-pixel text-slate-200 mt-2 tracking-widest">
-      規劃中，敬請期待
-    </p>
-    <div class="mt-6 text-[10px] font-pixel text-slate-500 max-w-xs leading-relaxed">
-      特工補給商店正在進行伺服器連線同步與安全協定部署，後續將開放金幣兌換實體或數位超值獎勵。
-    </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="theme-store-list">
+    <!-- 主題配色商品卡片將由 JavaScript 動態生成 -->
   </div>
 </section>
