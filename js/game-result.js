@@ -152,7 +152,7 @@
             totalPendingCoins += (rec.coins || 0) + (rec.guest_bonus_stars || 0);
           }
         } else {
-          totalPendingCoins = earnedCoins + (this.gameState.maxCombo === 20 ? 5000 : 0);
+          totalPendingCoins = earnedCoins;
         }
         setTimeout(() => {
           if (window.MathSprintOnboarding && window.MathSprintOnboarding.showProfileModal) {

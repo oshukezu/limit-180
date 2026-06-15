@@ -90,45 +90,16 @@
     isMissionUnlocked(missionNum, _profile) {
       if (missionNum === 1) return true;
       const profile = _profile || this.getProfile();
-
-      function getBaseCoin(m) {
-        if (m >= 1 && m <= 5) return 200;
-        if (m >= 6 && m <= 10) return 300;
-        if (m >= 11 && m <= 15) return 1000;
-        if (m >= 16 && m <= 20) return 2000;
-        if (m >= 21 && m <= 25) return 5000;
-        if (m >= 26 && m <= 30) return 10000;
-        if (m >= 31 && m <= 35) return 20000;
-        if (m >= 36 && m <= 40) return 40000;
-        if (m >= 41 && m <= 44) return 100000;
-        if (m >= 45 && m <= 47) return 250000;
-        if (m >= 48 && m <= 49) return 500000;
-        return 0;
-      }
  
-      // 從 Mission 1 往上依序檢查，任何一關前置條件不滿足就中斷
+      // 從 Mission 1 往上依序檢查，前一個 Mission 的 20 個關卡都必須通過且正確率達 60% 以上
       for (let m = 2; m <= missionNum; m++) {
         const prevMission = m - 1;
-        let starsInPrevMission = 0;
         for (let l = 1; l <= 20; l++) {
           const record = profile.level_records[`mission-${prevMission}-level-${l}`];
-          if (record && record.stars > 0) {
-            const c = record.stars;
-            let rStars = 0;
-            if (prevMission === 50) {
-              if (c >= 1500000 * l) rStars = 3;
-              else if (c >= 1000000 * l) rStars = 2;
-              else if (c >= 500000 * l) rStars = 1;
-            } else {
-              const base = getBaseCoin(prevMission);
-              if (c >= base * l) rStars = 3;
-              else if (c >= Math.floor(base * l * 2 / 3)) rStars = 2;
-              else if (c >= Math.floor(base * l * 1 / 3)) rStars = 1;
-            }
-            starsInPrevMission += rStars;
+          if (!record || !record.is_passed || (record.accuracy !== undefined && record.accuracy < 0.60)) {
+            return false;
           }
         }
-        if (starsInPrevMission < 3) return false;
       }
       return true;
     },

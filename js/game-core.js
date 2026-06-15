@@ -226,10 +226,6 @@ window.CFG = window.MATH_SPRINT_CONFIG;
 
       if (!hasProfile) {
         let guest_bonus_stars = 0;
-        if (this.gameState.maxCombo === 20) {
-          guest_bonus_stars = 5000;
-          console.log('[Lazy Registration] 訪客獲得 20-Combo 完美連斬加成 5000 金幣');
-        }
 
         const minTime = validTimes.length > 0 ? Math.min(...validTimes) : 99.9;
         
@@ -295,24 +291,6 @@ window.CFG = window.MATH_SPRINT_CONFIG;
           console.log('[Lazy Registration] 訪客此局成績未優於歷史暫存，保留原有紀錄。', existing);
         }
       } else {
-        if (this.gameState.maxCombo === 20) {
-          const profile = window.MathSprintStorage.getProfile();
-          const levelKey = `mission-${this.gameState.currentMission}-level-${this.gameState.currentLevel}`;
-          if (!profile.claimed_milestones) profile.claimed_milestones = {};
-          if (!profile.claimed_milestones.combo_20) profile.claimed_milestones.combo_20 = [];
-          
-          if (!profile.claimed_milestones.combo_20.includes(levelKey)) {
-            profile.claimed_milestones.combo_20.push(levelKey);
-            profile.bonus_stars = (profile.bonus_stars || 0) + 5000;
-            profile.today_earnings = (profile.today_earnings || 0) + 5000;
-            window.MathSprintStorage.recalculateTotalStars(profile);
-            window.MathSprintStorage.saveProfile(profile);
-
-            window.dispatchEvent(new CustomEvent('mathSprintBonusStarAwarded', {
-              detail: { type: 'combo_20', text: '🏆 完美連斬！您在此關卡連續答對 20 題，獲得 5,000 💰 額外獎金！' }
-            }));
-          }
-        }
 
         if (isPass) {
           const minTime = validTimes.length > 0 ? Math.min(...validTimes) : 99.9;
