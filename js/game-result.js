@@ -5,9 +5,9 @@
       const MISSION_CONFIGS = window.MathSprintConfigs.MISSION_CONFIGS;
       
       // 渲染結算文字與數值
-      document.getElementById('result-level').textContent = `Mission ${this.gameState.currentMission} Stage ${String(this.gameState.currentLevel).padStart(2, '0')} / 20 - ${MISSION_CONFIGS[this.gameState.currentMission].desc}`;
-      document.getElementById('result-score').textContent = `${this.gameState.correctCount} / ${this.gameState.totalQuestions} (正確率：${Math.round(accuracy * 100)}%)`;
-      document.getElementById('result-avg-time').textContent = `${avgTime.toFixed(2)} 秒 / 題`;
+      document.getElementById('result-level').textContent = `M${this.gameState.currentMission} Stage ${String(this.gameState.currentLevel).padStart(2, '0')}/20 - ${MISSION_CONFIGS[this.gameState.currentMission].desc}`;
+      document.getElementById('result-score').textContent = `${this.gameState.correctCount}/${this.gameState.totalQuestions} (正確率：${Math.round(accuracy * 100)}%)`;
+      document.getElementById('result-avg-time').textContent = `${avgTime.toFixed(2)} 秒/題`;
       document.getElementById('result-max-combo').textContent = this.gameState.maxCombo;
       document.getElementById('result-target-speed').textContent = `${this.gameState.targetSpeed.toFixed(2)} 秒`;
 

@@ -99,7 +99,7 @@
                <span class="text-xs font-pixel ${i <= 10 ? 'text-cyan-400' : i <= 25 ? 'text-green-400' : i <= 40 ? 'text-pink-500 glow-pink' : 'text-yellow-400 glow-yellow'}">
                 ${config.name.toUpperCase()}
               </span>
-              <div class="text-xs font-pixel text-yellow-400">${isMUnlocked ? `★ ${starsInM} / 60` : `🔒 前任務達 ${reqPct}%正確`}</div>
+              <div class="text-xs font-pixel text-yellow-400">${isMUnlocked ? `★ ${starsInM}/60` : `🔒 前任務達 ${reqPct}%正確`}</div>
             </div>
             <h4 class="text-base font-bold text-white mb-1">${config.desc}</h4>
             <p class="text-[11px] text-slate-400 font-tech mb-2">

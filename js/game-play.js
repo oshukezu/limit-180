@@ -93,6 +93,9 @@
     handleTimeout() {
       playSound('wrong');
       this.gameState.combo = 0;
+      localStorage.setItem('math_sprint_current_combo', 0);
+      localStorage.setItem('math_sprint_combo_200_claimed', 'false');
+      localStorage.setItem('math_sprint_combo_200_pending', 'false');
       this.handleFailure("超時！算力加載失敗。");
     },
 
@@ -161,6 +164,15 @@
       this.gameState.combo++;
       this.gameState.maxCombo = Math.max(this.gameState.maxCombo, this.gameState.combo);
 
+      localStorage.setItem('math_sprint_current_combo', this.gameState.combo);
+      if (this.gameState.combo >= 200) {
+        if (localStorage.getItem('math_sprint_combo_200_claimed') !== 'true') {
+          localStorage.setItem('math_sprint_combo_200_claimed', 'true');
+          this.gameState.combo200RewardPending = true;
+          localStorage.setItem('math_sprint_combo_200_pending', 'true');
+        }
+      }
+
       this.nextQuestion();
     },
 
@@ -169,6 +181,9 @@
       clearInterval(this.timerInterval);
 
       this.gameState.combo = 0;
+      localStorage.setItem('math_sprint_current_combo', 0);
+      localStorage.setItem('math_sprint_combo_200_claimed', 'false');
+      localStorage.setItem('math_sprint_combo_200_pending', 'false');
 
       const mainBody = document.querySelector('body');
       if (mainBody) {

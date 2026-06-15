@@ -1,5 +1,8 @@
 <section id="view-game" class="view-section hidden py-4 max-w-2xl mx-auto w-full flex flex-col gap-4 relative">
-  <button class="close-btn !left-4 !right-auto" id="game-close-btn">&times;</button>
+  <!-- 頂部退出列 -->
+  <div class="flex justify-between items-center px-1">
+    <button class="cyber-btn px-3 py-1.5 text-xs text-pink-500 border-pink-500 font-pixel" id="game-close-btn">✕ 離開</button>
+  </div>
   
   <!-- Keyboards Reminder for caps lock / Input method -->
   <div id="input-warning" class="bg-red-950/80 border border-red-500/50 p-2 text-center rounded text-xs text-red-300 font-pixel animate-pulse">
@@ -21,13 +24,13 @@
     </div>
 
     <!-- Status Bar -->
-    <div class="flex justify-between items-center text-xs font-pixel text-slate-400">
-      <div><span id="game-level-title" class="text-cyan-400">LEVEL 1</span></div>
-      <div>題數：<span id="game-progress" class="text-white">0/20</span></div>
-      <div>COMBO: <span id="game-combo" class="text-green-400">0</span></div>
-      <div class="flex items-center gap-3">
+    <div class="flex justify-between items-center text-[10px] sm:text-xs font-pixel text-slate-400 gap-1 sm:gap-2">
+      <div class="whitespace-nowrap"><span id="game-level-title" class="text-cyan-400 font-bold">LEVEL 1</span></div>
+      <div class="whitespace-nowrap">題數：<span id="game-progress" class="text-white">0/20</span></div>
+      <div class="whitespace-nowrap">COMBO: <span id="game-combo" class="text-green-400">0</span></div>
+      <div class="flex items-center gap-1 sm:gap-3 flex-shrink-0">
         <span class="hidden flex items-center gap-1">🛡️: <span id="game-shields" class="text-cyan-400">0</span></span>
-        <button id="game-pause-btn" class="cyber-btn px-2 py-1 text-[8px] text-pink-400 border-pink-500 font-pixel">暫停 (3/3)</button>
+        <button id="game-pause-btn" class="cyber-btn px-2 py-1 text-[8px] text-pink-400 border-pink-500 font-pixel whitespace-nowrap">暫停 (3/3)</button>
       </div>
     </div>
 
@@ -38,7 +41,7 @@
 
     <!-- Scaffold Container (Visual Help) -->
     <div id="scaffold-box" class="scaffold-container h-32 w-full bg-slate-900 border border-slate-800 flex items-center justify-center relative overflow-hidden rounded">
-      <span class="absolute top-2 left-2 text-[9px] font-pixel text-slate-600 tracking-wider">// 視覺輔助鷹架</span>
+      <span class="absolute top-2 left-2 text-[9px] font-pixel text-slate-600 tracking-wider">//視覺輔助鷹架</span>
       <div id="scaffold-canvas-container" class="w-full h-full flex items-center justify-center p-2">
         <!-- Canvas or SVG helper elements will draw here -->
       </div>
@@ -46,7 +49,7 @@
 
     <!-- Math Question Screen -->
     <div id="question-container" class="bg-slate-900 border-2 border-slate-800 p-8 flex flex-col items-center justify-center relative min-h-[160px]">
-      <span class="absolute top-2 right-3 text-[9px] font-pixel text-slate-500" id="game-mode-tag">// SPEED MATH CORE</span>
+      <span class="absolute top-2 right-3 text-[9px] font-pixel text-slate-500" id="game-mode-tag">//SPEED MATH CORE</span>
       <div id="question-text" class="text-4xl font-pixel text-white text-center tracking-wide leading-relaxed">
         --
       </div>
@@ -59,7 +62,7 @@
 
     <!-- Correct/Incorrect Overlay Info Block (shows during error pause) -->
     <div id="error-feedback" class="hidden bg-red-950/90 border border-red-500 p-4 rounded text-center">
-      <div class="font-pixel text-sm text-red-500 mb-2">錯誤 / 超時！</div>
+      <div class="font-pixel text-sm text-red-500 mb-2">錯誤/超時！</div>
       <div class="text-xs text-slate-300 font-tech">
         正確答案：<span id="error-correct-answer" class="text-green-400 font-bold"></span>
       </div>

@@ -63,7 +63,7 @@
         row.innerHTML = `
           <div>
             <div class="font-bold text-white">${item.questionText}</div>
-            <div class="text-[10px] text-slate-500">消除進度: ${item.solvedCount || 0} / 3</div>
+            <div class="text-[10px] text-slate-500">消除進度: ${item.solvedCount || 0}/3</div>
           </div>
           <span class="text-[9px] text-pink-500 font-pixel">M${item.mission} L${item.level}</span>
         `;

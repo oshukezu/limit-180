@@ -137,7 +137,8 @@ window.CFG = window.MATH_SPRINT_CONFIG;
       this.gameState.questionIndex = 0;
       this.gameState.totalQuestions = config.totalQuestions;
       this.gameState.correctCount = 0;
-      this.gameState.combo = 0;
+      this.gameState.combo = parseInt(localStorage.getItem('math_sprint_current_combo')) || 0;
+      this.gameState.combo200RewardPending = localStorage.getItem('math_sprint_combo_200_pending') === 'true';
       this.gameState.maxCombo = 0;
       
       let initLimit;
@@ -165,7 +166,7 @@ window.CFG = window.MATH_SPRINT_CONFIG;
 
       // Sync HUD
       document.getElementById('game-shields').textContent = profile.shields_count;
-      document.getElementById('game-level-title').textContent = `Mission ${missionNum} - Stage ${String(levelNum).padStart(2, '0')} / 20`;
+      document.getElementById('game-level-title').textContent = `M${missionNum} - Stage ${String(levelNum).padStart(2, '0')}/20`;
 
       document.getElementById('error-feedback').classList.add('hidden');
       document.getElementById('shield-alert').classList.add('hidden');
@@ -189,6 +190,9 @@ window.CFG = window.MATH_SPRINT_CONFIG;
       this.stopGame();
       
       this.gameState.combo = 0;
+      localStorage.setItem('math_sprint_current_combo', 0);
+      localStorage.setItem('math_sprint_combo_200_claimed', 'false');
+      localStorage.setItem('math_sprint_combo_200_pending', 'false');
       this.gameState.maxCombo = 0;
       this.gameState.correctCount = 0;
       this.gameState.questionTimes = [];
@@ -224,8 +228,28 @@ window.CFG = window.MATH_SPRINT_CONFIG;
 
       const hasProfile = !!localStorage.getItem('limit180_user_profile');
 
+      // 檢查 200 Combo 跨關獎勵發放
+      let comboBonusAwarded = 0;
+      if (isPass && this.gameState.combo200RewardPending) {
+        comboBonusAwarded = 10000;
+        this.gameState.combo200RewardPending = false;
+        localStorage.setItem('math_sprint_combo_200_pending', 'false');
+        
+        window.dispatchEvent(new CustomEvent('mathSprintBonusStarAwarded', {
+          detail: { type: 'combo_200', text: '🏆 終極連斬！您累計連續答對 200 題，獲得 10,000 💰 額外獎金！' }
+        }));
+
+        if (hasProfile) {
+          const profile = window.MathSprintStorage.getProfile();
+          profile.bonus_stars = (profile.bonus_stars || 0) + 10000;
+          profile.today_earnings = (profile.today_earnings || 0) + 10000;
+          window.MathSprintStorage.recalculateTotalStars(profile);
+          window.MathSprintStorage.saveProfile(profile);
+        }
+      }
+
       if (!hasProfile) {
-        let guest_bonus_stars = 0;
+        let guest_bonus_stars = comboBonusAwarded;
 
         const minTime = validTimes.length > 0 ? Math.min(...validTimes) : 99.9;
         
