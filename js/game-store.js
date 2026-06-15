@@ -59,32 +59,26 @@
         }
 
         const card = document.createElement('div');
-        // 使用與遊戲內相同的面板樣式，並提供懸停發光效果
-        card.className = `hud-panel p-5 bg-slate-900/90 border border-slate-800 rounded flex flex-col justify-between relative overflow-hidden transition-all duration-300 hover:border-[var(--neon-pink)]`;
-        card.style.boxShadow = isEquipped ? '0 0 10px var(--neon-pink)' : 'none';
+        // 扁平水平條狀卡片，減少垂直佔用，方便手機滑動與未來擴充
+        card.className = `hud-panel px-4 py-3 bg-slate-900/90 border border-slate-800 rounded flex items-center gap-3 relative overflow-hidden transition-all duration-300 hover:border-[var(--neon-pink)]`;
+        card.style.boxShadow = isEquipped ? '0 0 8px var(--neon-pink)' : 'none';
 
         card.innerHTML = `
-          <div>
-            <div class="flex justify-between items-start">
-              <h3 class="text-base font-pixel text-white">${theme.name}</h3>
-              ${isEquipped ? '<span class="text-[8px] font-pixel text-pink-400 border border-pink-500/50 px-1 py-0.5 rounded animate-pulse">ACTIVE</span>' : ''}
-            </div>
-            
-            <!-- 顏色預覽條 -->
-            <div class="flex items-center gap-3 my-4">
-              <span class="text-xs text-slate-400 font-pixel">配色預覽:</span>
-              <div class="flex -space-x-2">
-                <div class="w-6 h-6 rounded-full border-2 border-slate-950" style="background-color: ${theme.preview[0]}; z-index: 3;" title="主要霓虹亮點"></div>
-                <div class="w-6 h-6 rounded-full border-2 border-slate-950" style="background-color: ${theme.preview[1]}; z-index: 2;" title="背景基色"></div>
-                <div class="w-6 h-6 rounded-full border-2 border-slate-950" style="background-color: ${theme.preview[2]}; z-index: 1;" title="邊框與細節"></div>
-              </div>
-            </div>
+          <div class="flex -space-x-1.5 shrink-0">
+            <div class="w-5 h-5 rounded-full border-2 border-slate-950" style="background-color: ${theme.preview[0]}; z-index: 3;"></div>
+            <div class="w-5 h-5 rounded-full border-2 border-slate-950" style="background-color: ${theme.preview[1]}; z-index: 2;"></div>
+            <div class="w-5 h-5 rounded-full border-2 border-slate-950" style="background-color: ${theme.preview[2]}; z-index: 1;"></div>
           </div>
-          
-          <div class="mt-4 flex items-center justify-between border-t border-slate-800/50 pt-3">
-            <span class="text-xs text-slate-400 font-pixel font-bold">
-              ${theme.price > 0 ? `💰 ${theme.price.toLocaleString()}` : '解鎖贈送'}
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-pixel text-white truncate">${theme.name}</span>
+              ${isEquipped ? '<span class="text-[7px] font-pixel text-pink-400 border border-pink-500/50 px-1 py-0.5 rounded animate-pulse shrink-0">ACTIVE</span>' : ''}
+            </div>
+            <span class="text-[10px] text-slate-500 font-pixel">
+              ${theme.price > 0 ? `💰 ${theme.price.toLocaleString()}` : '🎁 解鎖贈送'}
             </span>
+          </div>
+          <div class="shrink-0">
             ${buttonHtml}
           </div>
         `;
