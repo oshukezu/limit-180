@@ -149,51 +149,5 @@
   <script src="js/game-helper.js"></script>
   <script src="js/game-play.js"></script>
 
-  <!-- 規則說明浮動彈窗 -->
-  <div id="rules-modal" class="fixed inset-0 bg-black/85 flex items-center justify-center hidden z-50 p-4"
-    onclick="if(event.target===this)this.classList.add('hidden')">
-    <div class="hud-panel p-6 bg-slate-950 max-w-md w-full relative"
-      style="border-color: #39ff14; box-shadow: 0 0 20px #39ff1440;">
-      <!-- 右上角關閉按鈕 -->
-      <button onclick="document.getElementById('rules-modal').classList.add('hidden')"
-        class="absolute top-3 right-4 text-slate-500 hover:text-slate-300 font-pixel text-xs cursor-pointer">✕</button>
-
-      <div class="text-center mb-6 border-b border-green-500/30 pb-4">
-        <span class="text-xs font-pixel text-pink-500 glow-pink block mb-1">//SYSTEM CORE MANUAL//</span>
-        <h3 class="text-base font-pixel text-green-400 glow-green">LIMIT 180 行動簡報</h3>
-      </div>
-
-      <div class="text-left font-pixel text-sm space-y-5 text-slate-200 leading-relaxed py-2">
-        <p class="flex items-start gap-2">
-          <span>⚔️</span>
-          <span>在限時內極速完成 20 題心算挑戰，正確率達 60% 即可通關！</span>
-        </p>
-        <p class="flex items-start gap-2">
-          <span>💰</span>
-          <span>正確率越高 (S/A/B/C/D)，獲得的金幣獎金越高！每日首勝再享雙倍金幣加成！</span>
-        </p>
-        <p class="flex items-start gap-2">
-          <span>🔒</span>
-          <span>正確率達標才能解鎖下一個任務！或是用高額金幣來換！</span>
-        </p>
-        <p class="flex items-start gap-2">
-          <span>🔥</span>
-          <span>輸入相同的「班級代號」與座號，與同學累加積分衝刺全台團隊榜！</span>
-        </p>
-        <p class="flex items-start gap-2">
-          <span>✍️</span>
-          <span>答錯的題目會記錄在「錯題消除訓練」，連續答對 3 次即可完全清除！</span>
-        </p>
-      </div>
-
-      <div class="border-t border-green-500/30 pt-4 flex justify-center">
-        <button onclick="document.getElementById('rules-modal').classList.add('hidden')"
-          class="cyber-btn px-6 py-2.5 font-pixel text-xs text-cyan-400">
-          關閉，執行任務
-        </button>
-      </div>
-    </div>
-  </div>
 </body>
-
 </html>

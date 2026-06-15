@@ -19,6 +19,20 @@
         });
       }
       
+      const navRulesBtn = document.getElementById('nav-rules-btn');
+      if (navRulesBtn) {
+        navRulesBtn.addEventListener('click', () => {
+          this.stopGame();
+          window.showView('view-home');
+          setTimeout(() => {
+            const target = document.getElementById('home-rules-section');
+            if (target) {
+              target.scrollIntoView({ behavior: 'smooth' });
+            }
+          }, 100);
+        });
+      }
+      
       const navDashboard = document.getElementById('nav-dashboard-btn');
       if (navDashboard) {
         navDashboard.addEventListener('click', () => {
