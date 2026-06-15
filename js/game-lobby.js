@@ -62,15 +62,17 @@
           return 0;
         }
 
-        // Calculate average accuracy rate for the 20 levels of this mission
+        // Calculate average accuracy rate for the cleared levels of this mission
         let totalAcc = 0;
+        let clearedCount = 0;
         for (let l = 1; l <= 20; l++) {
           const record = profile.level_records[`mission-${i}-level-${l}`];
-          if (record && record.accuracy !== undefined) {
+          if (record && record.is_passed && record.accuracy !== undefined) {
             totalAcc += record.accuracy;
+            clearedCount++;
           }
         }
-        const avgAccPct = Math.round((totalAcc / 20) * 100);
+        const avgAccPct = clearedCount > 0 ? Math.round((totalAcc / clearedCount) * 100) : 0;
 
         const card = document.createElement('div');
         card.className = `hud-panel p-5 bg-slate-900/90 flex flex-col justify-between transition-all duration-300 relative w-full ${
