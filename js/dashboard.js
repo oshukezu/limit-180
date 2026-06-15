@@ -1,7 +1,7 @@
 // MathSprint Parental Dashboard Visualizations Module (Missions Edition)
 // Renders Cyberpunk-styled radar and line charts utilizing Chart.js.
 
-(function() {
+(function () {
   let radarChartInstance = null;
   let lineChartInstance = null;
 
@@ -20,7 +20,7 @@
     historyLog.forEach(session => {
       // Compatibility fallback: if session.mission is not present, use session.level as mission
       const missionId = session.mission !== undefined ? session.mission : session.level;
-      
+
       for (const catName in categories) {
         if (categories[catName].missions.includes(missionId)) {
           categories[catName].totalTime += session.avgTime;
@@ -87,7 +87,7 @@
         radarNoData.classList.remove('hidden');
       } else {
         radarNoData.classList.add('hidden');
-        
+
         radarChartInstance = new Chart(radarCtx, {
           type: 'radar',
           data: {
