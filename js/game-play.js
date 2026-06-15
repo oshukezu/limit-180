@@ -7,13 +7,19 @@
       }
 
       this.gameState.questionIndex++;
-      this.gameState.limitTime = this.getRoundTimeLimit(this.gameState.questionIndex);
+      let q;
+      if (this.gameState.isPlacementTest) {
+        q = window.MathSprintGenerator.generatePlacementQuestion(this.gameState.questionIndex);
+        this.gameState.limitTime = q.limitTime;
+      } else {
+        this.gameState.limitTime = this.getRoundTimeLimit(this.gameState.questionIndex);
+        q = window.MathSprintGenerator.generateQuestion(this.gameState.currentMission, this.gameState.recentQueue);
+      }
       
       document.getElementById('game-progress').textContent = `${this.gameState.questionIndex}/${this.gameState.totalQuestions}`;
       document.getElementById('game-combo').textContent = this.gameState.combo;
       document.getElementById('shield-alert').classList.add('hidden');
 
-      const q = window.MathSprintGenerator.generateQuestion(this.gameState.currentMission, this.gameState.recentQueue);
       this.gameState.currentQuestion = q;
 
       document.getElementById('question-text').innerHTML = q.questionText;
@@ -225,17 +231,26 @@
         setTimeout(() => mainBody.classList.remove('shake'), 300);
       }
 
-      window.MathSprintStorage.logWrongQuestion(
-        this.gameState.currentQuestion.questionText.replace(/&times;/g, '×').replace(/&divide;/g, '÷'),
-        this.gameState.currentQuestion.correctAnswer,
-        wrongAnswerText,
-        this.gameState.currentMission,
-        this.gameState.currentLevel
-      );
+      if (this.gameState.isPlacementTest) {
+        this.gameState.errorsCount = (this.gameState.errorsCount || 0) + 1;
+        // 如果錯誤已達 3 題，表示最多只能對 7 題，定級測驗失敗，直接結束
+        if (this.gameState.errorsCount >= 3) {
+          this.endGame(false);
+          return;
+        }
+      } else {
+        window.MathSprintStorage.logWrongQuestion(
+          this.gameState.currentQuestion.questionText.replace(/&times;/g, '×').replace(/&divide;/g, '÷'),
+          this.gameState.currentQuestion.correctAnswer,
+          wrongAnswerText,
+          this.gameState.currentMission,
+          this.gameState.currentLevel
+        );
 
-      if (this.gameState.currentMission === 10) {
-        this.endGame(false);
-        return;
+        if (this.gameState.currentMission === 10) {
+          this.endGame(false);
+          return;
+        }
       }
 
       this.gameState.isPaused = true;
@@ -249,11 +264,13 @@
         document.getElementById('error-explanation').innerHTML = this.gameState.currentQuestion.explanation;
         feedback.classList.remove('hidden');
 
+        // 定級測驗的錯誤回饋縮短到 1.2 秒以保持極速流暢感
+        const delay = this.gameState.isPlacementTest ? 1200 : 1800;
         setTimeout(() => {
           feedback.classList.add('hidden');
           this.gameState.isPaused = false;
           this.nextQuestion();
-        }, 1800);
+        }, delay);
       }
     },
 

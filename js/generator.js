@@ -123,6 +123,141 @@
       }
       
       return question;
+    },
+
+    // 產生大腦段位定級測驗專用題目 (10題動態矩陣)
+    generatePlacementQuestion(qIndex) {
+      let qText = "";
+      let ans = "";
+      let exp = "";
+      let limit = 2.0;
+      let key = `placement:q${qIndex}`;
+
+      switch (qIndex) {
+        case 1: // Q1: 雙位數基礎整十加法，限時 2.0 秒
+          {
+            const a = randChoice([20, 30, 40, 50, 60, 70, 80]);
+            const b = randChoice([10, 20, 30, 40, 50, 60, 70, 80, 90]);
+            const x = a, y = b;
+            const [fx, fy] = adjustReverseOrder(x, y);
+            qText = `${fx} + ${fy} = ?`;
+            ans = (fx + fy).toString();
+            exp = `${fx} + ${fy} = ${ans}。`;
+            limit = 2.0;
+          }
+          break;
+        case 2: // Q2: 雙位數基礎整十減法，限時 2.0 秒
+          {
+            const a = randChoice([40, 50, 60, 70, 80, 90]);
+            const b = randChoice([10, 20, 30, 40]);
+            const x = a, y = b;
+            qText = `${x} - ${y} = ?`;
+            ans = (x - y).toString();
+            exp = `${x} - ${y} = ${ans}。`;
+            limit = 2.0;
+          }
+          break;
+        case 3: // Q3: 雙位數不退位減法，限時 2.0 秒
+          {
+            const tens = randInt(2, 9);
+            const unit = randInt(3, 9);
+            const a = tens * 10 + unit;
+            const b = randInt(1, unit);
+            qText = `${a} - ${b} = ?`;
+            ans = (a - b).toString();
+            exp = `${a} - ${b} = ${ans}。`;
+            limit = 2.0;
+          }
+          break;
+        case 4: // Q4: 雙位數湊整進位加法，限時 4.0 秒
+          {
+            const tens1 = randInt(1, 7);
+            const unit1 = randInt(1, 9);
+            const a = tens1 * 10 + unit1;
+            const b = 10 - unit1 + randInt(1, 2) * 10; // 湊成整十數
+            const [fx, fy] = adjustReverseOrder(a, b);
+            qText = `${fx} + ${fy} = ?`;
+            ans = (fx + fy).toString();
+            exp = `${fx} + ${fy} = ${ans}。`;
+            limit = 4.0;
+          }
+          break;
+        case 5: // Q5: 雙位數跨百進位加法，限時 4.0 秒
+          {
+            const a = randInt(55, 89);
+            const b = randInt(15, 45); // 加起來超過 100
+            const [fx, fy] = adjustReverseOrder(a, b);
+            qText = `${fx} + ${fy} = ?`;
+            ans = (fx + fy).toString();
+            exp = `${fx} + ${fy} = ${ans}。`;
+            limit = 4.0;
+          }
+          break;
+        case 6: // Q6: 雙位數連續借位退位減法，限時 4.0 秒
+          {
+            const tens1 = randInt(4, 9);
+            const unit1 = randInt(0, 5);
+            const a = tens1 * 10 + unit1;
+            const b = randInt(1, tens1 - 2) * 10 + randInt(unit1 + 1, 9); // 退位減法
+            qText = `${a} - ${b} = ?`;
+            ans = (a - b).toString();
+            exp = `${a} - ${b} = ${ans}。`;
+            limit = 4.0;
+          }
+          break;
+        case 7: // Q7: 基礎九九乘法，限時 2.0 秒
+          {
+            const a = randInt(3, 9);
+            const b = randInt(3, 9);
+            const [fx, fy] = adjustReverseOrder(a, b);
+            qText = `${fx} &times; ${fy} = ?`;
+            ans = (fx * fy).toString();
+            exp = `${fx} &times; ${fy} = ${ans}。`;
+            limit = 2.0;
+          }
+          break;
+        case 8: // Q8: 基礎單數除法，限時 2.0 秒
+          {
+            const divisor = randInt(3, 9);
+            const quotient = randInt(3, 9);
+            const dividend = divisor * quotient;
+            qText = `${dividend} &divide; ${divisor} = ?`;
+            ans = quotient.toString();
+            exp = `${dividend} &divide; ${divisor} = ${quotient}。`;
+            limit = 2.0;
+          }
+          break;
+        case 9: // Q9: 三位數大數值跨百退位減法，限時 5.0 秒
+          {
+            const a = randChoice([600, 700, 800, 900]);
+            const b = randInt(11, 49) * 10; // 如 380, 240 等
+            qText = `${a} - ${b} = ?`;
+            ans = (a - b).toString();
+            exp = `${a} - ${b} = ${ans}。`;
+            limit = 5.0;
+          }
+          break;
+        case 10: // Q10: 多位數整十除法，限時 4.0 秒
+          {
+            const divisor = randChoice([3, 4, 6, 7, 8, 9]);
+            const quotient = randChoice([30, 40, 50, 60, 70, 80, 90]);
+            const dividend = divisor * quotient;
+            qText = `${dividend} &divide; ${divisor} = ?`;
+            ans = quotient.toString();
+            exp = `${dividend} &divide; ${divisor} = ${quotient}。`;
+            limit = 4.0;
+          }
+          break;
+      }
+
+      return {
+        type: 'calc',
+        questionText: qText,
+        correctAnswer: ans,
+        explanation: exp,
+        limitTime: limit,
+        key: key
+      };
     }
   };
 

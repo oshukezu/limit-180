@@ -25,7 +25,10 @@
     unlocked_achievements: [], // Achievement list
     history_log: [], // Play history logs for Parent Dashboard
     equipped_theme: 'akaimon', // 目前裝備的主題 (akaimon / neon / lava / aurora / gold)
-    purchased_themes: ['akaimon'] // 已購買的主題清單
+    purchased_themes: ['akaimon'], // 已購買的主題清單
+    placement_status: 'NOT_TESTED', // 狀態：NOT_TESTED, JUNIOR (基礎), ELITE (菁英)
+    placement_score: 0,            // 測試答對題數 (0-10)
+    max_unlocked_phase: 1          // 解鎖最大階段 (1:第一階段, 2:第二階段, 3:第三階段菁英起點)
   };
 
   const Storage = {
@@ -93,6 +96,11 @@
       if (missionNum === 1) return true;
       const profile = _profile || this.getProfile();
 
+      // 彈性跳級：如果解鎖階段達到 3 (極速菁英)，直接解鎖 Mission 21 及以下關卡
+      if ((profile.max_unlocked_phase || 1) >= 3 && missionNum <= 21) {
+        return true;
+      }
+
       function getRequiredAccuracy(m) {
         if (m >= 41) return 0.90;
         if (m >= 31) return 0.80;
@@ -102,6 +110,10 @@
  
       // 從 Mission 1 往上依序檢查，前一個 Mission 的 20 個關卡都必須通過且正確率達到該階段門檻
       for (let m = 2; m <= missionNum; m++) {
+        // 如果是菁英玩家，且我們正在檢查小於等於 21 的關卡，直接跳過基礎關卡的檢查
+        if ((profile.max_unlocked_phase || 1) >= 3 && m <= 21) {
+          continue;
+        }
         const prevMission = m - 1;
         const reqAcc = getRequiredAccuracy(m);
         for (let l = 1; l <= 20; l++) {

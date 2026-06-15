@@ -1,0 +1,73 @@
+<div id="placement-modal"
+  class="hidden fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-50 p-4">
+  
+  <!-- 階段一：分流選擇面板 (🌱基礎鍛鍊 vs 🚀極速菁英) -->
+  <div id="placement-choice-panel" class="hud-panel p-6 bg-slate-950 border-2 border-cyan-500 max-w-md w-full relative">
+    <div class="text-center mb-6">
+      <span class="text-xs font-pixel text-pink-500 glow-pink block mb-1">BRAIN OVERCLOCKING TEST</span>
+      <h3 class="text-base font-pixel text-cyan-400 glow-blue">大腦段位判定</h3>
+      <p class="text-[11px] font-tech text-slate-400 mt-3 leading-relaxed">
+        新特工！系統偵測到您尚未進行段位定級。請選擇您的起跑線，迅速解鎖與您算力相配的極限關卡。
+      </p>
+    </div>
+
+    <div class="flex flex-col gap-4 mt-6">
+      <!-- 基礎鍛鍊 (跳過測試，直接 M1) -->
+      <button type="button" id="placement-btn-junior"
+        class="cyber-btn py-4 font-pixel text-xs text-green-400 flex flex-col items-center justify-center gap-1">
+        <span class="text-sm font-bold">🌱 基礎鍛鍊班</span>
+        <span class="text-[8px] text-slate-500 font-tech">跳過測驗，從 Mission 1 開始按部就班修練</span>
+      </button>
+
+      <!-- 極速菁英 (觸發10題測驗) -->
+      <button type="button" id="placement-btn-elite"
+        class="cyber-btn cyber-btn-pink py-4 font-pixel text-xs text-pink-500 flex flex-col items-center justify-center gap-1">
+        <span class="text-sm font-bold">🚀 極速菁英班 (五/六年級挑戰)</span>
+        <span class="text-[8px] text-slate-500 font-tech">挑戰 10 題階梯式定級測試，直升 Mission 21</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 階段二：菁英確認警告面板 -->
+  <div id="placement-confirm-panel" class="hud-panel p-6 bg-slate-950 border-2 border-pink-500 max-w-md w-full relative hidden">
+    <div class="text-center mb-6">
+      <span class="text-xs font-pixel text-red-500 glow-pink block mb-1">OVERCLOCKING WARNING</span>
+      <h3 class="text-base font-pixel text-red-400 glow-pink">大腦超頻判定警告</h3>
+      <p class="text-xs font-pixel text-slate-300 mt-4 leading-relaxed bg-red-950/30 border border-red-500/20 p-3 rounded text-left">
+        本測驗包含 10 題極速心算，每題獨立倒數。若錯誤達 3 題，系統將判定超頻失敗並引導至基礎班。<br><br>你準備好展現真正實力了嗎？
+      </p>
+    </div>
+
+    <div class="flex gap-4 mt-6">
+      <button type="button" id="placement-confirm-start-btn"
+        class="flex-1 cyber-btn cyber-btn-pink py-3.5 font-pixel text-xs text-pink-500">
+        啟動大腦超頻測試
+      </button>
+      <button type="button" id="placement-confirm-back-btn"
+        class="flex-1 cyber-btn py-3.5 font-pixel text-xs text-slate-400 border border-slate-800 hover:bg-slate-900 rounded">
+        返回基礎鍛鍊班
+      </button>
+    </div>
+  </div>
+
+  <!-- 階段三：測試結果判定面板 -->
+  <div id="placement-result-panel" class="hud-panel p-6 bg-slate-950 border-2 max-w-md w-full relative hidden">
+    <div class="text-center mb-6">
+      <span class="text-xs font-pixel block mb-1" id="placement-result-tag">TEST RESULTS</span>
+      <h3 class="text-base font-pixel" id="placement-result-title">判定結果</h3>
+    </div>
+
+    <!-- 尊嚴保護 Growth Mindset 文案 -->
+    <div id="placement-result-desc" class="text-xs font-pixel text-slate-300 leading-relaxed bg-slate-900 border p-4 rounded text-left mb-6">
+      <!-- 動態載入文字 -->
+    </div>
+
+    <div class="flex justify-center">
+      <button type="button" id="placement-result-close-btn"
+        class="cyber-btn px-8 py-3 font-pixel text-xs">
+        進入關卡大廳
+      </button>
+    </div>
+  </div>
+
+</div>

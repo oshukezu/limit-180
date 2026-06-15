@@ -47,6 +47,7 @@ limit-180/
 │   ├── loader.js               # SPA 頁面視圖 (Views) 動態載入器
 │   ├── onboarding-sync.js      # 玩家首玩合流與雲端進度同步模組
 │   ├── onboarding.js           # 玩家註冊、暱稱過濾與身份綁定
+│   ├── placement-modal.js      # 新用戶大腦段位定級測驗引導邏輯與通過結算
 │   ├── storage-milestones.js   # 關卡集滿獎勵、連續上線與答對累計等成就判定
 │   ├── storage.js              # 本地 LocalStorage 存檔與資料夾讀寫
 │   ├── supabase-service.js     # Supabase API 串接與前端防改 Integrity 雜湊
@@ -66,6 +67,7 @@ limit-180/
 │   ├── game.html               # 答題遊戲主畫面
 │   ├── home.html               # 歡迎首頁
 │   ├── lobby.html              # 關卡大廳
+│   ├── placement-modal.html    # 大腦段位定級測驗引導與分流選擇 Modal
 │   ├── profile-modal.html      # 特工個人資料設定
 │   ├── result.html             # 結算評分畫面
 │   └── review.html             # 錯題複習畫面
@@ -128,6 +130,7 @@ limit-180/
 * **[views/review.html](views/review.html)**：錯題消除練習介面，無時間限制，提示玩家需連續答對 3 次方可消除錯題。
 * **[views/dashboard.html](views/dashboard.html)**：個人學習戰報儀表板，展示四維能力雷達圖與 7 日反應速度趨勢線。
 * **[views/achievements.html](views/achievements.html)**：徽章成就牆，展示並渲染解鎖與未解鎖的 10+ 種特工徽章。
+* **[views/placement-modal.html](views/placement-modal.html)**：大腦段位定級測驗引導與分流選擇 Modal。
 * **[views/profile-modal.html](views/profile-modal.html)**：特工個人資料設定彈窗，用於修改暱稱與班級座號。
 * **[views/auth-modal.html](views/auth-modal.html)**：舊版登入彈窗片段。
 * **[views/demote-modal.html](views/demote-modal.html)**：降級警告提示彈窗，用於警告玩家遊玩降級或分數異常。
@@ -160,110 +163,56 @@ limit-180/
   * **職責**：事件代理與輸入過濾。
   * **說明**：管理實體鍵盤（如數字鍵、Backspace、Enter、暫停空白鍵）與虛擬鍵盤的點擊事件，實作「非數字輸入過濾」與「無須 Enter 的免確認即時送出」邏輯。
 * **[js/game-audio.js](js/game-audio.js)**
-  * **職責**：8-bit 遊戲音效合成。
-  * **說明**：利用 HTML5 Web Audio API 的振盪器 (Oscillator) 即時合成「答對」、「答錯」、「點擊」、「成就解鎖」等電子音效，不需額外下載音訊檔。
+  * **職責**：動態音效產生器。
+  * **說明**：不使用外部音檔，而是直接利用瀏覽器內建的 Web Audio API 於答對或答錯時，以正弦波及雜訊即時運算產生 8-bit 科幻音效，杜絕資源載入卡頓。
+* **[js/game-store.js](js/game-store.js)**
+  * **職責**：處理補給商店之裝備與扣款。
+  * **說明**：動態陳列並渲染主題商品卡片、比對金幣餘額進行購買解鎖、或是直接裝備已擁有主題，點擊時能即時抽換 `:root` 變數而無需重刷頁面。
+* **[js/game-review.js](js/game-review.js)**
+  * **職責**：錯題複習核心邏輯。
+  * **說明**：載入並操作本地 `wrong_questions_db` 本，針對每道錯題引導玩家連續答對三次以達到「完全消除」，消滅心算學習盲區。
+* **[js/game-lobby.js](js/game-lobby.js)**
+  * **職責**：大廳卡片與子關卡點陣圖渲染。
+  * **說明**：依據關卡設定值動態產出 Mission 1-50 卡片，檢查本地 `level_records` 鎖定狀態；並在點擊卡片時橫向展開 20 個精細的關卡點陣徽章按鈕，依答題正確率顯示 S/A/B/C/D 等級評分。
+* **[js/placement-modal.js](js/placement-modal.js)**
+  * **職責**：新用戶大腦段位定級測驗引導邏輯與通過結算。
+  * **說明**：檢查玩家是否已做過定級測驗。若為新用戶，引導其選擇「🌱基礎鍛鍊」或「🚀極速菁英」；測驗成功時解鎖 Mission 21 並發放 120,000 💰 金幣補貼；失敗時提供 Growth Mindset 引導分流。
 
-#### 本地與雲端資料模組
+#### 排行榜與數據分析
+
+* **[js/leaderboard.js](js/leaderboard.js)**
+  * **職責**：排行榜雲端拉取與篩選管理。
+  * **說明**：非同步連接 Supabase 拉取 users_profile 表所有紀錄，並進行「個人總榜」、「團隊對抗榜（班級）」及「答題速度榜（按 Mission）」的篩選過濾與升降序排序。
+* **[js/leaderboard-renders.js](js/leaderboard-renders.js)**
+  * **職責**：排行榜數據 HTML 動態渲染。
+  * **說明**：以 Cyberpunk 的科幻霓虹色盤渲染前 50 名之表格，包含特別針對前三名金銀銅徽章繪製，以及定位並固定顯示當前特工排名行（My Rank Row）之卡片。
+* **[js/dashboard.js](js/dashboard.js)**
+  * **職責**：學習反應數據儀表板繪製。
+  * **說明**：調用 Chart.js 庫在網頁繪製「五維算力弱點雷達圖」（記錄在加減乘除與比大小任務之反應時間），以及「近 7 日心算思考均速趨勢折線圖」，協助家長精準掌握學童學習弱點。
+* **[js/achievements.js](js/achievements.js)**
+  * **職責**：徽章成就牆判定與渲染。
+  * **說明**：讀取 LocalStorage 進度並判定是否解鎖如「新晉特工」、「算力破百」、「無傷通關」等 10 個核心成就徽章。
+
+#### 本地與雲端資料同步
 
 * **[js/storage.js](js/storage.js)**
-  * **職責**：本地存檔管理。
-  * **說明**：提供 LocalStorage 底層的讀取與寫入介面（`math_sprint_profile` 存檔），負責歷史紀錄追加與讀寫控制。
-* **[js/storage-milestones.js](js/storage-milestones.js)**
-  * **職責**：成就與里程碑金幣判定。
-  * **說明**：處理集滿 Mission 中 20 個關卡徽章、累計答對 100 題，以及錯題消除 10 題時，自動追加金幣獎勵的核心判定邏輯。
+  * **職責**：本地資料存檔與進度寫入器。
+  * **說明**：維護 `DEFAULT_PROFILE` 的完整存檔 JSON 結構，提供 `isMissionUnlocked` 關卡鎖定檢驗、重新計算總金幣數（recalculateTotalStars）、寫入 Stage 得分紀錄（saveLevelRecord）及今日獎金清零機制。
 * **[js/supabase-service.js](js/supabase-service.js)**
-  * **職責**：與雲端資料庫 Supabase 互動。
-  * **說明**：封裝 Supabase JS Client。在寫入成績前，會利用前端混淆鹽值與 Web Crypto API 計算 `integrity_hash` (SHA-256) 並隨同成績寫入，以進行防刷與防修改校驗。
-* **[js/cloud-sync.js](js/cloud-sync.js)**
-  * **職責**：舊版同步預留檔。
-  * **說明**：配合去 Auth 化，此模組改為 dummy 物件以確保相容性。
-* **[js/auth.js](js/auth.js)**
-  * **職責**：舊版驗證預留檔。
-  * **說明**：配合去 Auth 化，改以 dummy 物件相容，防止 supabase.auth 請求阻塞。
-
-#### 介面與功能模組
-
-* **[js/game-lobby.js](js/game-lobby.js)**
-  * **職責**：大廳介面控制器。
-  * **說明**：渲染 50 個 Mission 卡片（以階級分頁篩選）與各關卡進度。處理玩家選擇關卡、顯示獲得金幣以及差額補給防刷限制。
-* **[js/game-result.js](js/game-result.js)**
-  * **職責**：結果結算控制器。
-  * **說明**：計算並渲染該局得分、Combo 連擊與金幣，處理降級警告，並暫存成就解鎖的金幣獎金待大廳時再行彈出。
-* **[js/game-review.js](js/game-review.js)**
-  * **職責**：錯題消除模式控制器。
-  * **說明**：渲染錯題本中的題目，並追蹤每一道錯題「連續答對 3 次」的消除進度。
-* **[js/game-store.js](js/game-store.js)**
-  * **職責**：主題配色商店控制器。
-  * **說明**：處理主題卡片渲染、購買解鎖與金幣扣除，裝備新主題。
-* **[js/theme-manager.js](js/theme-manager.js)**
-  * **職責**：全域主題與環境動畫管理器。
-  * **說明**：控制 CSS 變數覆寫類別切換、控制雙軌流光掃描線顯示狀態，並管理「赤門櫻花」下的櫻花飄雪畫布背景。
-* **[js/leaderboard.js](js/leaderboard.js)**
-  * **職責**：聯賽排行榜控制器。
-  * **說明**：拉取雲端數據，控管排行分頁 (個人、團隊、單關均速) 與關卡 Mission 篩選的切換。
-* **[js/leaderboard-renders.js](js/leaderboard-renders.js)**
-  * **職責**：聯賽排行榜渲染器。
-  * **說明**：提供 `renderPersonal`、`renderTeam`、`renderMission` 三種核心方法，動態生成排行榜的 HTML Table 與高亮個人名次。
-* **[js/dashboard.js](js/dashboard.js)**
-  * **職責**：雷達圖與趨勢圖表繪製。
-  * **說明**：整合 Chart.js 渲染玩家的弱點雷達圖 (包含正確率、均速、反應、耐力等維度) 以及 7 日速度趨勢折線圖。
-* **[js/achievements.js](js/achievements.js)**
-  * **職責**：成就牆 UI 繪製。
-  * **說明**：讀取本地成就解鎖狀態，動態生成成就徽章卡片。
+  * **職責**：Supabase API 的低階封裝服務。
+  * **說明**：包含 `saveRecord`（覆寫上傳單關星數與秒數）、`getLeaderboard`（獲取資料）及 `saveGlobalProfile`（上傳全域商店與金幣餘額）。在此模組中實作了 Web Crypto API 計算防改雜湊簽章，保障比賽之公平性。
 * **[js/onboarding.js](js/onboarding.js)**
-  * **職責**：玩家暱稱校驗。
-  * **說明**：負責玩家暱稱的防霸凌過濾（敏感詞清單）與註冊班級座號的正則校驗。
+  * **職責**：玩家註冊、暱稱過濾與身份綁定。
+  * **說明**：檢查玩家是否為首次綁定；驗證班級格式是否符合聯賽規格（2位英文+3位數字）；過濾不雅暱稱，並與 Supabase 互比，防範同班同座號惡意冒用。
 * **[js/onboarding-sync.js](js/onboarding-sync.js)**
-  * **職責**：玩家進度同步與合流。
-  * **說明**：在玩家首次首玩結束時將暫存的成績與新綁定身份同步，並提供非阻塞式的單關進度雲端同步 (`syncCurrentStatsToCloud`)。
-* **[js/ui-controller.js](js/ui-controller.js)**
-  * **職責**：全域 UI 導航與快速清理。
-  * **說明**：監聽右上角關閉按鈕，在 100 毫秒內立即隱藏當前 DOM，並執行計時器停止與錯題本暫存寫入，杜絕 Supabase 網路請求延遲所產生的卡死。
+  * **職責**：特工身份與成績補錄合流。
+  * **說明**：當訪客匿名遊玩賺取金幣後，在註冊那一刻將本地的歷史關卡成績及 200 Combo 累積的獎金一併上傳，確保離線資料與雲端無縫合流。
+* **[js/storage-milestones.js](js/storage-milestones.js)**
+  * **職責**：高內聚成就里程碑的額外金幣判定。
+  * **說明**：在結算那一刻比對此 Stage 的答題數據，判定是否加發 2,000~10,000 💰 金幣，並呼叫 recalculateTotalStars 更新餘額。
 * **[js/loader.js](js/loader.js)**
-  * **職責**：視圖載入器。
-  * **說明**：使用 `fetch` 動態載入 `views/` 下的 HTML 模板片段，並帶有在 `file://` 協定下的跨網域 (CORS) 限制警告。
-* **[js/config.js](js/config.js)**
-  * **職責**：環境變數與金鑰配置。
-  * **說明**：儲存專案連線至 Supabase 的 API URL 與 Anon Key。
-
----
-
-### 5. 關卡專屬題目生成器 (js/missions/)
-
-此目錄的檔案將 50 個關卡的題目生成規則完全解耦與模組化，以供 `generator.js` 運作：
-
-* **[js/missions/README.md](js/missions/README.md)**：關卡說明與詳細擴充指南（本目錄說明書）。
-* **[js/missions/phase1.js](js/missions/phase1.js)**：第一階段 Mission 1 ~ 10 關卡題目隨機生成演算法。
-* **[js/missions/phase2.js](js/missions/phase2.js)**：第二階段 Mission 11 ~ 25 關卡題目隨機生成演算法。
-* **[js/missions/phase3.js](js/missions/phase3.js)**：第三階段 Mission 26 ~ 40 關卡題目隨機生成演算法。
-* **[js/missions/phase4.js](js/missions/phase4.js)**：第四階段 Mission 41 ~ 50 關卡題目隨機生成演算法。
-
----
-
-### 6. Supabase 資料庫與 Edge Functions (supabase/)
-
-* **[supabase/migrations/001_init.sql](supabase/migrations/001_init.sql)**
-  * **職責**：Supabase 資料庫遷移與結構初始化。
-  * **說明**：與根目錄 `supabase_init.sql` 相同，用於 Supabase Local Development 或雲端遷移，建立資料表、索引、RLS 策略。
-* **[supabase/functions/verify-completion/index.ts](supabase/functions/verify-completion/index.ts)**
-  * **職責**：Supabase Edge Function 後端驗證。
-  * **說明**：使用 TypeScript (Deno runtime) 撰寫，當玩家提交成績時，在後端使用相同的混淆鹽值與資料重新計算雜湊，比對 `integrity_hash`。若不一致則拒絕寫入或標記異常，防止前端直接透過 HTTP 請求偽造金幣。
-
----
-
-### 7. CI/CD 部署與自動化 (.github/)
-
-* **[.github/workflows/deploy.yml](.github/workflows/deploy.yml)**
-  * **職責**：GitHub Pages 自動化部署。
-  * **說明**：設定當變更推送至 `main` 或 `master` 分支時，自動使用 GitHub Actions 建置並將根目錄底下的所有靜態檔案部署至專案的 GitHub Pages 上。
-
----
-
-### 8. AI 代理工作日誌與歷史文件 (agents/)
-
-* **[agents/](agents/)**
-  * **職責**：AI Agent 開發歷程與熱修復記錄。
-  * **說明**：存放每次功能迭代或修復 Bug 時，AI 代理所留下的記錄檔（例如：自動提交邏輯、防作弊星數補給邏輯、排行榜 Bug 修復、Badge 成就牆重構規格書等）。此目錄檔案**不參與**遊戲的實際運行，僅作為專案演進與協同開發的參考文獻。
-
----
-*本目錄結構文件由 Antigravity 整理生成，便於團隊管理與擴充。*
+  * **職責**：SPA 單頁面元件非同步載入器。
+  * **說明**：異步 fetch `views/` 目錄下的 HTML 視圖片段，將其注入 `index.html`，並向外廣播 `limit180ComponentsLoaded` 自訂事件，解決 index 檔案過於臃腫的問題。
+* **[js/ui-controller.js](js/ui-controller.js)**
+  * **職責**：全域快速關閉控制器。
+  * **說明**：使用全域事件代理監聽 `.close-btn` 與離開按鈕，確保退出時不會牽涉任何雲端非同步請求，防止 UI 死鎖與卡頓。

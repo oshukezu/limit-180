@@ -49,7 +49,7 @@
           }, 100);
         });
       }
-
+      
       const navAchievements = document.getElementById('nav-achievements-btn');
       if (navAchievements) {
         navAchievements.addEventListener('click', () => {
@@ -74,6 +74,13 @@
       // Lobby navigation
       const lobbyBtnHandler = () => {
         this.stopGame();
+        
+        // 段位定級檢查邏輯
+        if (window.MathSprintPlacementModal && typeof window.MathSprintPlacementModal.checkAndShow === 'function') {
+          const shown = window.MathSprintPlacementModal.checkAndShow();
+          if (shown) return; // 如果跳出了測驗 Modal，則攔截大廳的切換，等待玩家做選擇
+        }
+        
         this.renderLobby();
         window.showView('view-lobby');
       };

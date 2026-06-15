@@ -53,11 +53,15 @@ window.CFG = window.MATH_SPRINT_CONFIG;
       isReviewMode: false,
       reviewList: [],
       reviewIndex: 0,
-      reviewCorrectStrike: 0
+      reviewCorrectStrike: 0,
+
+      // Placement Test variables
+      isPlacementTest: false,
+      errorsCount: 0
     },
 
     timerInterval: null,
-    scannerAnimFrame: null,
+    scannerAnimFrame: null;
 
 
     async init() {
@@ -132,6 +136,8 @@ window.CFG = window.MATH_SPRINT_CONFIG;
       const config = MISSION_CONFIGS[missionNum];
       const profile = window.MathSprintStorage.getProfile();
 
+      this.gameState.isPlacementTest = false;
+      this.gameState.errorsCount = 0;
       this.gameState.currentMission = missionNum;
       this.gameState.currentLevel = levelNum;
       this.gameState.questionIndex = 0;
@@ -186,6 +192,51 @@ window.CFG = window.MATH_SPRINT_CONFIG;
       this.nextQuestion();
     },
 
+    // 啟動大腦段位定級測試
+    startPlacementTest() {
+      this.stopGame();
+
+      if (window.MathSprintGenerator && window.MathSprintGenerator.resetLastAnswer) {
+        window.MathSprintGenerator.resetLastAnswer();
+      }
+
+      this.gameState.isPlacementTest = true;
+      this.gameState.errorsCount = 0;
+      this.gameState.questionIndex = 0;
+      this.gameState.totalQuestions = 10; // 10 題階梯式定級測試
+      this.gameState.correctCount = 0;
+      this.gameState.combo = 0;
+      this.gameState.maxCombo = 0;
+      
+      this.gameState.initLimitTime = 2.0; // 預設 2 秒，會在出題時動態覆寫
+      this.gameState.limitTime = 2.0;
+      this.gameState.targetSpeed = 2.0;
+      this.gameState.correctRateTarget = 0.80; // 通過門檻為正確 8 題 (80%)
+      
+      this.gameState.isStageTimer = false; // 定級測試每題獨立倒數
+
+      this.gameState.questionTimes = [];
+      this.gameState.recentQueue = [];
+      this.gameState.isGameOver = false;
+      this.gameState.isPaused = false;
+      this.gameState.isReviewMode = false;
+      this.gameState.pauseCount = 0;
+
+      // Sync HUD
+      document.getElementById('game-shields').textContent = 0;
+      document.getElementById('game-level-title').textContent = `段位定級測驗`;
+
+      document.getElementById('error-feedback').classList.add('hidden');
+      document.getElementById('shield-alert').classList.add('hidden');
+
+      const overlay = document.getElementById('pause-overlay');
+      if (overlay) overlay.classList.add('hidden');
+      this.updatePauseBtnUI();
+
+      showView('view-game');
+      this.nextQuestion();
+    },
+
     stopGame() {
       clearInterval(this.timerInterval);
       this.timerInterval = null;
@@ -209,10 +260,44 @@ window.CFG = window.MATH_SPRINT_CONFIG;
       console.log('[Game] 挑戰已安全中斷，記憶體已歸零，已拒絕寫入雲端與本地存檔。');
     },
 
-
     endGame(isCompleted) {
       this.stopGame();
       this.gameState.isGameOver = true;
+
+      // 1. 若為段位定級測驗
+      if (this.gameState.isPlacementTest) {
+        const score = this.gameState.correctCount;
+        const passed = score >= 8;
+        
+        // 隱藏遊戲面板
+        document.body.classList.remove('body-in-game');
+        
+        // 根據通過與否，調用 placement 專屬結算 Modal 顯示
+        if (window.MathSprintPlacementModal && typeof window.MathSprintPlacementModal.showResult === 'function') {
+          window.MathSprintPlacementModal.showResult(passed, score);
+        } else {
+          // 備用 Alert 機制以防萬一
+          if (passed) {
+            alert(`🎉 通過測試！大腦成功超頻！已為您解鎖至 Mission 21 並發放 120,000 💰 開局補貼！`);
+            const profile = window.MathSprintStorage.getProfile();
+            profile.placement_status = 'ELITE';
+            profile.placement_score = score;
+            profile.max_unlocked_phase = 3;
+            profile.total_stars = (profile.total_stars || 0) + 120000;
+            window.MathSprintStorage.saveProfile(profile);
+            showView('view-lobby');
+          } else {
+            alert(`測試完成！大腦神經元已成功活化。引導您前往基礎鍛鍊區！`);
+            const profile = window.MathSprintStorage.getProfile();
+            profile.placement_status = 'JUNIOR';
+            profile.placement_score = score;
+            profile.max_unlocked_phase = 1;
+            window.MathSprintStorage.saveProfile(profile);
+            showView('view-lobby');
+          }
+        }
+        return;
+      }
 
       const accuracy = this.gameState.correctCount / this.gameState.totalQuestions;
       const isPass = isCompleted && accuracy >= 0.60;

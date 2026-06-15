@@ -13,7 +13,8 @@
     { id: 'view-store', path: 'views/store.html', parent: 'main' },
     { id: 'demote-modal', path: 'views/demote-modal.html', parent: 'body' },
     { id: 'auth-modal', path: 'views/auth-modal.html', parent: 'body' },
-    { id: 'profile-modal', path: 'views/profile-modal.html', parent: 'body' }
+    { id: 'profile-modal', path: 'views/profile-modal.html', parent: 'body' },
+    { id: 'placement-modal', path: 'views/placement-modal.html', parent: 'body' }
   ];
 
   async function loadComponent(view) {
