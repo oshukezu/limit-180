@@ -213,7 +213,24 @@
         }
       }
 
-      this.nextQuestion();
+      // 短暫顯示正確回饋，讓使用者能看到答對的視覺提示
+      const correctFeedback = document.getElementById('correct-feedback');
+      const delay = this.gameState.isPlacementTest ? 300 : 350;
+      if (correctFeedback) {
+        clearInterval(this.timerInterval);
+        this.gameState.isPaused = true;
+        // 清空輸入框
+        const input = document.getElementById('calc-input');
+        if (input) input.value = '';
+        correctFeedback.classList.remove('hidden');
+        setTimeout(() => {
+          correctFeedback.classList.add('hidden');
+          this.gameState.isPaused = false;
+          this.nextQuestion();
+        }, delay);
+      } else {
+        this.nextQuestion();
+      }
     },
 
     handleFailure(wrongAnswerText) {
