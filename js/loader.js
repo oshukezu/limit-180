@@ -17,8 +17,11 @@
     { id: 'placement-modal', path: 'views/placement-modal.html', parent: 'body' }
   ];
 
+  // 加上時間戳以避免瀏覽器或 CDN 快取舊版 HTML 元件
+  const CACHE_BUSTER = `?v=${Date.now()}`;
+
   async function loadComponent(view) {
-    const response = await fetch(view.path);
+    const response = await fetch(view.path + CACHE_BUSTER);
     if (!response.ok) {
       throw new Error(`無法載入視圖元件: ${view.path}`);
     }
