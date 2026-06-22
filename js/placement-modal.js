@@ -195,6 +195,20 @@
         // 為保證資料安全性，我們利用 saveGlobalProfile 自動傳輸 coins_balance。
         if (window.MathSprintStorage) {
           const localProfile = window.MathSprintStorage.getProfile();
+          const placementEventKey = `${u.grade_class}:${u.seat_number}:placement_elite_reward`;
+          if (status === 'ELITE' && window.MathSprintSupabaseService.applyCoinTransaction) {
+            await window.MathSprintSupabaseService.applyCoinTransaction(
+              u.grade_class,
+              u.seat_number,
+              u.nickname,
+              120000,
+              'placement_elite_reward',
+              { score, maxPhase, coinsReward },
+              placementEventKey
+            ).catch((txErr) => {
+              console.warn("[PlacementSync] 發放菁英補貼 ledger 失敗：", txErr.message || txErr);
+            });
+          }
           if (window.MathSprintSupabaseService.saveGlobalProfile) {
             await window.MathSprintSupabaseService.saveGlobalProfile(
               u.grade_class,

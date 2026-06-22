@@ -95,7 +95,7 @@
             <h4 class="text-base font-bold text-white mb-1">${config.desc}</h4>
             
             <!-- Hidden levels select grid -->
-            <div class="mission-levels-grid grid grid-cols-5 gap-2 mt-4 pt-3 border-t border-slate-800 hidden" id="levels-grid-${i}">
+            <div class="mission-levels-grid grid grid-cols-3 sm:grid-cols-5 gap-2 mt-4 pt-3 border-t border-slate-800 hidden" id="levels-grid-${i}">
             </div>
           </div>
         `;

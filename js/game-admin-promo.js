@@ -172,7 +172,10 @@
         await window.MathSprintSupabaseService.setPromoCodeActive(code, !currentActive);
         setMsg(`代碼 ${code} 已${currentActive ? '停用' : '啟用'}`);
       } else if (action === 'delete') {
-        if (!confirm(`確定刪除代碼 ${code}？`)) return;
+        const agreed = window.UIFeedback
+          ? await window.UIFeedback.confirm(`確定刪除代碼 ${code}？`, '刪除兌換代碼')
+          : confirm(`確定刪除代碼 ${code}？`);
+        if (!agreed) return;
         await window.MathSprintSupabaseService.deletePromoCode(code);
         setMsg(`代碼 ${code} 已刪除`);
       }

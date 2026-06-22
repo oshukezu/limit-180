@@ -2,6 +2,81 @@
 // Contains SPA view switcher, background scanner visual effects, session validation, reward notification, and cloud sync helper.
 
 (function() {
+  // Unified UI feedback layer: toast + confirm modal
+  const UIFeedback = {
+    ensureMounted() {
+      if (document.getElementById('limit180-toast-root')) return;
+      const toastRoot = document.createElement('div');
+      toastRoot.id = 'limit180-toast-root';
+      toastRoot.style.cssText = 'position:fixed;right:16px;bottom:16px;z-index:100000;display:flex;flex-direction:column;gap:8px;max-width:360px;';
+      document.body.appendChild(toastRoot);
+
+      const modal = document.createElement('div');
+      modal.id = 'limit180-confirm-modal';
+      modal.className = 'hidden';
+      modal.style.cssText = 'position:fixed;inset:0;z-index:100001;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;padding:16px;';
+      modal.innerHTML = `
+        <div style="width:min(460px,100%);background:#0f172a;border:1px solid #334155;border-radius:12px;padding:16px;box-shadow:0 10px 30px rgba(0,0,0,.5);">
+          <div id="limit180-confirm-title" style="font-size:16px;color:#f8fafc;font-weight:700;margin-bottom:8px;">請確認</div>
+          <div id="limit180-confirm-message" style="font-size:13px;color:#cbd5e1;line-height:1.6;white-space:pre-wrap;"></div>
+          <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px;">
+            <button id="limit180-confirm-cancel" class="cyber-btn px-4 py-2 text-xs text-slate-200">取消</button>
+            <button id="limit180-confirm-ok" class="cyber-btn cyber-btn-green px-4 py-2 text-xs text-green-300">確定</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    },
+
+    toast(message, type = 'info') {
+      this.ensureMounted();
+      const root = document.getElementById('limit180-toast-root');
+      if (!root) return;
+      const color = type === 'error' ? '#ef4444' : (type === 'success' ? '#22c55e' : '#38bdf8');
+      const item = document.createElement('div');
+      item.style.cssText = `background:#020617;border:1px solid ${color};color:#e2e8f0;padding:10px 12px;border-radius:10px;font-size:12px;line-height:1.5;box-shadow:0 8px 16px rgba(0,0,0,.35);`;
+      item.textContent = message;
+      root.appendChild(item);
+      setTimeout(() => {
+        item.style.opacity = '0';
+        item.style.transform = 'translateY(6px)';
+        item.style.transition = 'all .2s ease';
+      }, 2600);
+      setTimeout(() => item.remove(), 2900);
+    },
+
+    confirm(message, title = '請確認') {
+      this.ensureMounted();
+      const modal = document.getElementById('limit180-confirm-modal');
+      const titleEl = document.getElementById('limit180-confirm-title');
+      const msgEl = document.getElementById('limit180-confirm-message');
+      const okBtn = document.getElementById('limit180-confirm-ok');
+      const cancelBtn = document.getElementById('limit180-confirm-cancel');
+      if (!modal || !titleEl || !msgEl || !okBtn || !cancelBtn) return Promise.resolve(false);
+
+      titleEl.textContent = title;
+      msgEl.textContent = message;
+      modal.style.display = 'flex';
+
+      return new Promise((resolve) => {
+        const onOk = () => done(true);
+        const onCancel = () => done(false);
+        const onOverlay = (e) => { if (e.target === modal) done(false); };
+        const done = (v) => {
+          modal.style.display = 'none';
+          okBtn.removeEventListener('click', onOk);
+          cancelBtn.removeEventListener('click', onCancel);
+          modal.removeEventListener('click', onOverlay);
+          resolve(v);
+        };
+        okBtn.addEventListener('click', onOk);
+        cancelBtn.addEventListener('click', onCancel);
+        modal.addEventListener('click', onOverlay);
+      });
+    }
+  };
+  window.UIFeedback = UIFeedback;
+
   // SPA views switcher
   let currentView = 'view-home';
   window.currentView = currentView; // 掛載至全域以利子元件存取
@@ -110,7 +185,11 @@
     },
 
     showBonusStarAlert(detail) {
-      alert(detail.text);
+      if (window.UIFeedback) {
+        window.UIFeedback.toast(detail.text, 'success');
+      } else {
+        alert(detail.text);
+      }
       
       if (typeof confetti !== 'undefined') {
         if (detail.type === 'mission_complete' || detail.type === 'daily_first_win') {

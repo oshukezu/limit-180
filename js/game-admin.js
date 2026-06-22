@@ -142,14 +142,26 @@
         const student = this.allGlobalData.find(s => s.grade_class === gradeClass && s.seat_number === seatNumber);
         if (!student) return;
 
-        student.coins_balance = (student.coins_balance || 0) + amount;
+        let targetBalance = (student.coins_balance || 0) + amount;
+        if (window.MathSprintSupabaseService?.applyCoinTransaction) {
+          const tx = await window.MathSprintSupabaseService.applyCoinTransaction(
+            gradeClass,
+            seatNumber,
+            nickname,
+            amount,
+            'admin_award_single',
+            { operator: 'admin', amount }
+          );
+          if (tx?.newBalance >= 0) targetBalance = tx.newBalance;
+        }
+        student.coins_balance = targetBalance;
         
         if (window.MathSprintSupabaseService.saveGlobalProfile) {
           await window.MathSprintSupabaseService.saveGlobalProfile(
             gradeClass,
             seatNumber,
             nickname,
-            student.coins_balance,
+            targetBalance,
             student.purchased_items || [],
             student.equipped_avatar || 'avatar-default',
             student.equipped_border || 'border-none',
@@ -318,12 +330,24 @@
       const students = this.allGlobalData.filter(s => s.grade_class === className);
       try {
         for (const student of students) {
-          student.coins_balance = (student.coins_balance || 0) + amount;
+          let targetBalance = (student.coins_balance || 0) + amount;
+          if (window.MathSprintSupabaseService?.applyCoinTransaction) {
+            const tx = await window.MathSprintSupabaseService.applyCoinTransaction(
+              student.grade_class,
+              student.seat_number,
+              student.nickname,
+              amount,
+              'admin_award_batch',
+              { operator: 'admin', className, amount }
+            );
+            if (tx?.newBalance >= 0) targetBalance = tx.newBalance;
+          }
+          student.coins_balance = targetBalance;
           await window.MathSprintSupabaseService.saveGlobalProfile(
             student.grade_class,
             student.seat_number,
             student.nickname,
-            student.coins_balance,
+            targetBalance,
             student.purchased_items || [],
             student.equipped_avatar || 'avatar-default',
             student.equipped_border || 'border-none',

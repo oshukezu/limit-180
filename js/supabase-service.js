@@ -141,36 +141,80 @@
     const badgesArray = Array.isArray(equippedBadges) ? equippedBadges : [];
     const assetsArray = Array.isArray(unlockedAssets) ? unlockedAssets : [];
 
+    // 防倒退合併：避免舊資料覆蓋較新的金幣/解鎖項目
+    const { data: existingRow, error: existingErr } = await db
+      .from('users_global')
+      .select('coins_balance,purchased_items,equipped_badges,unlocked_assets')
+      .eq('grade_class', gradeClass)
+      .eq('seat_number', seatNumber)
+      .maybeSingle();
+    if (existingErr) {
+      console.warn("[SupabaseService] 讀取既有全域資料失敗，改採直接寫入：", existingErr.message);
+    }
+
+    const existingCoins = Number(existingRow?.coins_balance || 0);
+    const safeCoinsBalance = Math.max(Number(coinsBalance || 0), existingCoins);
+    const mergedItems = Array.from(new Set([...(existingRow?.purchased_items || []), ...itemsArray]));
+    const mergedBadges = Array.from(new Set([...(existingRow?.equipped_badges || []), ...badgesArray]));
+    const mergedAssets = Array.from(new Set([...(existingRow?.unlocked_assets || []), ...assetsArray]));
+
     const integrityHash = await generateGlobalHash(
       gradeClass, 
       seatNumber, 
       nickname, 
-      coinsBalance, 
-      itemsArray,
+      safeCoinsBalance, 
+      mergedItems,
       equippedAvatar,
       equippedBorder,
-      badgesArray,
-      assetsArray
+      mergedBadges,
+      mergedAssets
     );
 
-    const { data, error } = await db
-      .from('users_global')
-      .upsert({
-        grade_class: gradeClass,
-        seat_number: seatNumber,
-        nickname: nickname,
-        coins_balance: coinsBalance,
-        purchased_items: itemsArray,
-        equipped_avatar: equippedAvatar,
-        equipped_border: equippedBorder,
-        equipped_badges: badgesArray,
-        unlocked_assets: assetsArray,
-        integrity_hash: integrityHash,
-        updated_at: new Date().toISOString()
-      }, {
-        onConflict: 'grade_class,seat_number'
-      })
-      .select();
+    // 優先使用原子 RPC 合併，避免競態條件
+    let data = null;
+    let error = null;
+    try {
+      const rpcRes = await db.rpc('merge_user_global_state', {
+        p_grade_class: gradeClass,
+        p_seat_number: seatNumber,
+        p_nickname: nickname,
+        p_coins_balance: safeCoinsBalance,
+        p_purchased_items: mergedItems,
+        p_equipped_avatar: equippedAvatar,
+        p_equipped_border: equippedBorder,
+        p_equipped_badges: mergedBadges,
+        p_unlocked_assets: mergedAssets,
+        p_integrity_hash: integrityHash
+      });
+      data = rpcRes.data;
+      error = rpcRes.error;
+    } catch (rpcErr) {
+      console.warn("[SupabaseService] merge_user_global_state RPC 不可用，回退 upsert：", rpcErr.message);
+    }
+
+    // 回退模式：舊版資料庫沒有 RPC 時仍可運作
+    if (!data && !error) {
+      const upsertRes = await db
+        .from('users_global')
+        .upsert({
+          grade_class: gradeClass,
+          seat_number: seatNumber,
+          nickname: nickname,
+          coins_balance: safeCoinsBalance,
+          purchased_items: mergedItems,
+          equipped_avatar: equippedAvatar,
+          equipped_border: equippedBorder,
+          equipped_badges: mergedBadges,
+          unlocked_assets: mergedAssets,
+          integrity_hash: integrityHash,
+          updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'grade_class,seat_number'
+        })
+        .select();
+      data = upsertRes.data;
+      error = upsertRes.error;
+    }
 
     if (error) {
       console.error("[SupabaseService] saveGlobalProfile 發生錯誤：", error.message);
@@ -179,6 +223,37 @@
 
     console.log("[SupabaseService] saveGlobalProfile 成功：", data);
     return data;
+  }
+
+  // 12. 原子加幣/扣幣（ledger + balance 同步）
+  async function applyCoinTransaction(gradeClass, seatNumber, nickname, deltaCoins, reason = 'manual_adjust', metadata = {}, eventKey = null) {
+    const db = getSupabaseClient();
+    if (!db) throw new Error("Supabase 未初始化");
+    const delta = Number(deltaCoins || 0);
+    if (!Number.isFinite(delta) || delta === 0) {
+      throw new Error("交易金額無效");
+    }
+
+    const { data, error } = await db.rpc('apply_coin_transaction', {
+      p_grade_class: gradeClass,
+      p_seat_number: seatNumber,
+      p_nickname: nickname,
+      p_delta_coins: Math.trunc(delta),
+      p_reason: reason,
+      p_metadata: metadata || {},
+      p_event_key: eventKey
+    });
+
+    if (error) {
+      console.error("[SupabaseService] applyCoinTransaction 錯誤：", error.message);
+      throw error;
+    }
+
+    const row = Array.isArray(data) ? data[0] : data;
+    return {
+      newBalance: Number(row?.new_balance || 0),
+      ledgerId: row?.ledger_id || null
+    };
   }
 
   function normalizePromoCode(code) {
@@ -361,6 +436,7 @@
     listPromoCodes,
     setPromoCodeActive,
     deletePromoCode,
-    redeemPromoCode
+    redeemPromoCode,
+    applyCoinTransaction
   };
 })();

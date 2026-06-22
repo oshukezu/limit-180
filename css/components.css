@@ -207,8 +207,9 @@ body:not(.theme-neon):not(.theme-lava):not(.theme-aurora):not(.theme-gold) .time
 /* Sub-level select buttons (Missions) */
 .lvl-btn {
   font-family: var(--pixel-font);
-  font-size: 8px;
+  font-size: 10px;
   aspect-ratio: 1 / 1;
+  min-height: 48px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -219,6 +220,13 @@ body:not(.theme-neon):not(.theme-lava):not(.theme-aurora):not(.theme-gold) .time
   transition: all 0.15s ease-in-out;
   cursor: pointer;
   border-radius: 2px;
+}
+
+@media (max-width: 640px) {
+  .lvl-btn {
+    font-size: 11px;
+    min-height: 52px;
+  }
 }
 .lvl-btn:hover:not(.locked) {
   background: var(--neon-blue);
@@ -376,4 +384,38 @@ body:not(.theme-neon):not(.theme-lava):not(.theme-aurora):not(.theme-gold) .time
 
 .close-btn:active {
   transform: scale(0.9) !important;
+}
+
+/* ============================================================ */
+/* 易讀模式（高齡友善）：提高對比、降低動效、放大常用文字              */
+/* ============================================================ */
+body.accessible-mode .scanner-line,
+body.accessible-mode #sakura-canvas {
+  display: none !important;
+}
+
+body.accessible-mode .glow-pink,
+body.accessible-mode .glow-green,
+body.accessible-mode .glow-blue,
+body.accessible-mode .glow-yellow {
+  text-shadow: none !important;
+}
+
+body.accessible-mode .cyber-btn,
+body.accessible-mode .nav-btn,
+body.accessible-mode .hud-panel {
+  box-shadow: none !important;
+  border-color: #64748b !important;
+}
+
+body.accessible-mode .text-\[8px\],
+body.accessible-mode .text-\[9px\],
+body.accessible-mode .text-\[10px\],
+body.accessible-mode .text-xs {
+  font-size: 13px !important;
+}
+
+body.accessible-mode .font-pixel,
+body.accessible-mode .font-tech {
+  letter-spacing: 0.01em;
 }

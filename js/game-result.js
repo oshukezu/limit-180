@@ -246,10 +246,18 @@
       copyBtn.addEventListener('click', () => {
         const text = window.MathSprintGame._lastShareText || "我正在玩 Limit 180 心算極速挑戰！";
         navigator.clipboard.writeText(text).then(() => {
-          alert("✓ 戰績文字複製成功！\n可直接前往 LINE、FB 或貼在 IG 限時動態分享給同學！");
+          if (window.UIFeedback) {
+            window.UIFeedback.toast('戰績文字已複製，可直接分享到 LINE/FB/IG', 'success');
+          } else {
+            alert("✓ 戰績文字複製成功！\n可直接前往 LINE、FB 或貼在 IG 限時動態分享給同學！");
+          }
         }).catch(err => {
           console.error("複製失敗：", err);
-          alert("複製失敗，請手動複製網址分享！");
+          if (window.UIFeedback) {
+            window.UIFeedback.toast('複製失敗，請手動複製', 'error');
+          } else {
+            alert("複製失敗，請手動複製網址分享！");
+          }
         });
       });
     }

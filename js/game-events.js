@@ -1,12 +1,20 @@
 // Limit 180 — 輸入事件代理與導航模組 (Events Module)
 (function() {
   const Events = {
+    exitCurrentContext() {
+      if (window.currentView === 'view-game' || window.currentView === 'view-review') {
+        if (this.interruptGame) this.interruptGame();
+      } else if (this.stopGame) {
+        this.stopGame();
+      }
+    },
+
     bindEvents() {
       // 導航點擊事件
       const logoTitle = document.getElementById('nav-logo-title');
       if (logoTitle) {
         logoTitle.addEventListener('click', () => {
-          this.stopGame();
+          this.exitCurrentContext();
           window.showView('view-home');
         });
       }
@@ -14,7 +22,7 @@
       const navHomeBtn = document.getElementById('nav-home-btn');
       if (navHomeBtn) {
         navHomeBtn.addEventListener('click', () => {
-          this.stopGame();
+          this.exitCurrentContext();
           window.showView('view-home');
         });
       }
@@ -22,9 +30,11 @@
       const navRulesBtn = document.getElementById('nav-rules-btn');
       if (navRulesBtn) {
         navRulesBtn.addEventListener('click', () => {
-          this.stopGame();
+          this.exitCurrentContext();
           window.showView('view-home');
           setTimeout(() => {
+            const wrapper = document.getElementById('home-rules-wrapper');
+            if (wrapper) wrapper.open = true;
             const target = document.getElementById('home-rules-section');
             if (target) {
               target.scrollIntoView({ behavior: 'smooth' });
@@ -36,12 +46,14 @@
       const navDashboard = document.getElementById('nav-dashboard-btn');
       if (navDashboard) {
         navDashboard.addEventListener('click', () => {
-          this.stopGame();
+          this.exitCurrentContext();
           window.showView('view-home');
           if (window.MathSprintDashboard) {
             window.MathSprintDashboard.renderCharts();
           }
           setTimeout(() => {
+            const wrapper = document.getElementById('home-dashboard-wrapper');
+            if (wrapper) wrapper.open = true;
             const target = document.getElementById('home-dashboard-section');
             if (target) {
               target.scrollIntoView({ behavior: 'smooth' });
@@ -53,7 +65,7 @@
       const navAchievements = document.getElementById('nav-achievements-btn');
       if (navAchievements) {
         navAchievements.addEventListener('click', () => {
-          this.stopGame();
+          this.exitCurrentContext();
           if (window.MathSprintAchievements) {
             const select = document.getElementById('achievements-mission-select');
             if (select) select.value = this.gameState.currentMission;
@@ -66,14 +78,14 @@
       const navStoreBtn = document.getElementById('nav-store-btn');
       if (navStoreBtn) {
         navStoreBtn.addEventListener('click', () => {
-          this.stopGame();
+          this.exitCurrentContext();
           window.showView('view-store');
         });
       }
 
       // Lobby navigation
       const lobbyBtnHandler = () => {
-        this.stopGame();
+        this.exitCurrentContext();
         
         // 段位定級檢查邏輯
         if (window.MathSprintPlacementModal && typeof window.MathSprintPlacementModal.checkAndShow === 'function') {
@@ -97,13 +109,15 @@
       // Result actions
       const resLobbyBtn = document.getElementById('result-lobby-btn');
       if (resLobbyBtn) {
-        resLobbyBtn.addEventListener('click', () => {
+        resLobbyBtn.addEventListener('click', async () => {
           const hasProfile = !!localStorage.getItem('limit180_user_profile');
           if (hasProfile) {
             this.renderLobby();
             window.showView('view-lobby');
           } else {
-            const skip = confirm("【建立特工身份】\n\n建議您先註冊身份，以便儲存您辛苦挑戰的成績並同步到排行榜！\n\n按「確定」前往註冊，按「取消」即可「暫時略過」並以訪客身份前往大廳。");
+            const skip = window.UIFeedback
+              ? await window.UIFeedback.confirm("建議先建立特工身份，以便儲存成績並同步排行榜。\n按「確定」前往註冊，按「取消」暫時略過。", "建立特工身份")
+              : confirm("【建立特工身份】\n\n建議您先註冊身份，以便儲存您辛苦挑戰的成績並同步到排行榜！\n\n按「確定」前往註冊，按「取消」即可「暫時略過」並以訪客身份前往大廳。");
             if (skip) {
               if (window.MathSprintOnboarding && window.MathSprintOnboarding.showProfileModal) {
                 let totalPendingCoins = 0;
@@ -137,7 +151,7 @@
       // 往下一關按鈕事件
       const resNextBtn = document.getElementById('result-next-btn');
       if (resNextBtn) {
-        resNextBtn.addEventListener('click', () => {
+        resNextBtn.addEventListener('click', async () => {
           let nextMission = this.gameState.currentMission;
           let nextLevel = this.gameState.currentLevel + 1;
           if (nextLevel > 20) {
@@ -146,7 +160,11 @@
           }
 
           if (nextMission > 10) {
-            alert("🎉 恭喜您通關了所有的 Limit 180 關卡！");
+            if (window.UIFeedback) {
+              window.UIFeedback.toast("恭喜您通關了所有的 Limit 180 關卡！", 'success');
+            } else {
+              alert("🎉 恭喜您通關了所有的 Limit 180 關卡！");
+            }
             this.renderLobby();
             window.showView('view-lobby');
             return;
@@ -156,7 +174,9 @@
           if (hasProfile) {
             this.startGame(nextMission, nextLevel);
           } else {
-            const skip = confirm("【建立特工身份】\n\n建議您先註冊身份，以便儲存您辛苦挑戰的成績並同步到排行榜！\n\n按「確定」前往註冊，按「取消」即可「暫時略過」並以訪客身份挑戰下一關。");
+            const skip = window.UIFeedback
+              ? await window.UIFeedback.confirm("建議先建立特工身份，以便儲存成績並同步排行榜。\n按「確定」前往註冊，按「取消」暫時略過。", "建立特工身份")
+              : confirm("【建立特工身份】\n\n建議您先註冊身份，以便儲存您辛苦挑戰的成績並同步到排行榜！\n\n按「確定」前往註冊，按「取消」即可「暫時略過」並以訪客身份挑戰下一關。");
             if (skip) {
               if (window.MathSprintOnboarding && window.MathSprintOnboarding.showProfileModal) {
                 let totalPendingCoins = 0;

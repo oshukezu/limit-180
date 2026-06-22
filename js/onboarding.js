@@ -35,6 +35,9 @@
     const skipBtn = getEl('profile-skip-btn');
     if (skipBtn) skipBtn.addEventListener('click', () => modal?.classList.add('hidden'));
 
+    const cloudLoginBtn = getEl('profile-cloud-login-btn');
+    if (cloudLoginBtn) cloudLoginBtn.addEventListener('click', handleCloudLogin);
+
     checkUserOnboarding();
   });
 
@@ -314,6 +317,75 @@
     }
   }
 
+  // 使用班級 + 座號 + 姓名跨裝置登入，不需第三方帳號
+  async function handleCloudLogin() {
+    if (isSubmitting) return;
+    if (!errorMsg) return;
+
+    const inputClass = document.getElementById('profile-class').value.trim();
+    const inputSeat = document.getElementById('profile-seat').value.trim();
+    const inputNickname = document.getElementById('profile-nickname').value.trim();
+
+    const validator = window.MathSprintOnboardingValidator;
+    if (validator) {
+      const clsRes = validator.validateClass(inputClass);
+      if (!clsRes.valid) return showError(clsRes.error);
+      const seatRes = validator.validateSeat(inputSeat);
+      if (!seatRes.valid) return showError(seatRes.error);
+      const nickRes = validator.validateNickname(inputNickname);
+      if (!nickRes.valid) return showError(nickRes.error);
+    }
+
+    const loginBtn = document.getElementById('profile-cloud-login-btn');
+    const submitBtn = document.getElementById('profile-submit-btn');
+    const oldLoginText = loginBtn ? loginBtn.textContent : '跨裝置登入';
+    const oldSubmitText = submitBtn ? submitBtn.textContent : '進入 180 禁區';
+
+    isSubmitting = true;
+    if (loginBtn) {
+      loginBtn.textContent = '登入中...';
+      loginBtn.disabled = true;
+    }
+    if (submitBtn) submitBtn.disabled = true;
+    if (errorMsg) errorMsg.classList.add('hidden');
+
+    try {
+      if (!window.MathSprintOnboarding?.loginFromCloud) {
+        throw new Error('雲端登入功能尚未載入');
+      }
+
+      const result = await window.MathSprintOnboarding.loginFromCloud(inputClass, inputSeat, inputNickname);
+      if (!localStorage.getItem('limit180_last_sync_at')) {
+        localStorage.setItem('limit180_last_sync_at', new Date().toISOString());
+      }
+      updateUserProfileBar({
+        grade_class: inputClass.toUpperCase(),
+        seat_number: inputSeat,
+        nickname: inputNickname
+      });
+      if (window.MathSprintGame?.renderHome) window.MathSprintGame.renderHome();
+      if (window.MathSprintGame?.renderLobby) window.MathSprintGame.renderLobby();
+      if (window.MathSprintLeaderboard?.renderLeaderboard) window.MathSprintLeaderboard.renderLeaderboard().catch(() => {});
+
+      if (window.UIFeedback) {
+        window.UIFeedback.toast(`登入成功，已同步 ${result.missions} 個任務與 ${result.coins.toLocaleString('zh-TW')} 💰`, 'success');
+      }
+      modal?.classList.add('hidden');
+    } catch (err) {
+      showError(`跨裝置登入失敗：${err.message || '請稍後再試'}`);
+    } finally {
+      isSubmitting = false;
+      if (loginBtn) {
+        loginBtn.textContent = oldLoginText;
+        loginBtn.disabled = false;
+      }
+      if (submitBtn) {
+        submitBtn.textContent = oldSubmitText;
+        submitBtn.disabled = false;
+      }
+    }
+  }
+
   // 顯示錯誤訊息
   function showError(msg) {
     if (!errorMsg) return;
@@ -323,10 +395,14 @@
 
   // 5. 更新首頁右上角的身份顯示
   function updateUserProfileBar(profile) {
-    if (!profileBar || !profileInfo) return;
+    if (!profileBar) return;
+    const infoEl = profileInfo || document.getElementById('home-agent-class-info');
+    const nameEl = document.getElementById('home-agent-nickname');
+    if (!infoEl) return;
     const editBtn = document.getElementById('edit-profile-btn');
     if (profile.grade_class === '訪客') {
-      profileInfo.textContent = `訪客特工 通關首局後綁定成績`;
+      if (nameEl) nameEl.textContent = profile.nickname || '訪客特工';
+      infoEl.textContent = `訪客特工・通關首局後綁定成績`;
       if (editBtn) editBtn.classList.add('hidden');
       profileBar.classList.remove('hidden');
       return;
@@ -338,8 +414,12 @@
     const displayClass = (grade >= '1' && grade <= '9' && !isNaN(num))
       ? `${cns[parseInt(grade)] || grade}年${num}班`
       : `${profile.grade_class}班`;
-    profileInfo.textContent = `${displayClass} 座號${profile.seat_number} ${profile.nickname}`;
+    if (nameEl) nameEl.textContent = profile.nickname || '特工';
+    infoEl.textContent = `${displayClass} 座號${profile.seat_number}`;
     profileBar.classList.remove('hidden');
+
+    // 通知首頁名牌元件即時刷新徽章/外框等狀態
+    window.dispatchEvent(new CustomEvent('mathSprintProfileUpdated'));
   }
 
   // 6. 全域同步特定關卡成績至雲端 (單表 users_profile，以 mission_id 為約束鍵)

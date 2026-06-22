@@ -85,7 +85,7 @@
       <nav id="main-nav" class="flex flex-col gap-4 font-pixel text-sm">
         <button id="nav-home-btn" class="nav-btn py-3 w-full text-center">首頁</button>
         <button id="nav-lobby-btn" class="nav-btn py-3 w-full text-center">遊戲大廳</button>
-        <button id="nav-rules-btn" class="nav-btn py-3 w-full text-center" onclick="document.getElementById('rules-modal').classList.remove('hidden'); document.getElementById('side-drawer').classList.add('translate-x-full');">遊戲規則</button>
+        <button id="nav-rules-btn" class="nav-btn py-3 w-full text-center">遊戲規則</button>
         <button id="nav-dashboard-btn" class="nav-btn py-3 w-full text-center">反應數據</button>
         <button id="nav-achievements-btn" class="nav-btn py-3 w-full text-center">成就牆</button>
         <button id="nav-store-btn" class="nav-btn py-3 w-full text-center">商店</button>
@@ -96,6 +96,11 @@
           👤 <span id="auth-nickname-display">---</span>
         </button>
       </nav>
+      <div class="mt-5 pt-4 border-t border-slate-900">
+        <button id="accessibility-toggle-btn" class="nav-btn py-3 w-full text-center">
+          易讀模式：關
+        </button>
+      </div>
     </div>
     <div class="p-6 border-t border-slate-900 text-center text-[10px] font-pixel text-slate-700">
       SYSTEM STATUS: ONLINE

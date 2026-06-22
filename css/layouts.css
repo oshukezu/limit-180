@@ -22,6 +22,17 @@
   #review-input {
     font-size: 1.5rem; /* 防止 iOS 自動縮放 */
   }
+
+  /* 手機顯示確認送出按鈕，避免僅依賴自動提交 */
+  #calc-submit-btn,
+  #review-submit-btn {
+    display: flex !important;
+    min-height: 48px;
+    align-items: center;
+    justify-content: center;
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
 }
 
 /* ============================================================ */
@@ -63,7 +74,8 @@ body.body-in-game main {
   }
   
   #question-text {
-    font-size: 1.8rem !important;
+    font-size: 2.1rem !important;
+    font-weight: 800 !important;
     line-height: 1.2 !important;
   }
 
@@ -116,7 +128,8 @@ body.body-in-game main {
     margin-bottom: 4px !important;
   }
   #view-review #review-question-text {
-    font-size: 1.5rem !important;
+    font-size: 1.8rem !important;
+    font-weight: 800 !important;
   }
   #review-controls-container {
     margin-top: 4px !important;
@@ -133,7 +146,8 @@ body.body-in-game main {
     padding: 6px 12px !important;
   }
   #question-text {
-    font-size: 1.4rem !important;
+    font-size: 1.7rem !important;
+    font-weight: 800 !important;
   }
 }
 
@@ -149,4 +163,20 @@ body.body-in-game main {
   margin-bottom: 4px !important;
   padding: 12px !important;
   min-height: 80px !important;
+}
+
+/* 行動端分頁按鈕改為橫向可滑，降低誤觸 */
+@media (max-width: 640px) {
+  #view-store > .flex.border-b {
+    overflow-x: auto;
+    gap: 6px;
+    border-bottom: none !important;
+    padding-bottom: 4px;
+  }
+  #view-store > .flex.border-b button {
+    min-width: 120px;
+    flex: 0 0 auto !important;
+    border: 1px solid #334155 !important;
+    border-radius: 8px;
+  }
 }

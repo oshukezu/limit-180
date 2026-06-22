@@ -62,7 +62,21 @@
 
         const profile = window.MathSprintStorage.getProfile();
         const earned = Number(result.coinsReward || 0);
-        profile.total_stars = (profile.total_stars || 0) + earned;
+        let newBalance = (profile.total_stars || 0) + earned;
+
+        if (window.MathSprintSupabaseService?.applyCoinTransaction) {
+          const tx = await window.MathSprintSupabaseService.applyCoinTransaction(
+            identity.grade_class,
+            identity.seat_number,
+            identity.nickname,
+            earned,
+            'promo_redeem',
+            { code: normalized }
+          );
+          if (tx?.newBalance >= 0) newBalance = tx.newBalance;
+        }
+
+        profile.total_stars = newBalance;
         profile.today_earnings = (profile.today_earnings || 0) + earned;
         window.MathSprintStorage.saveProfile(profile);
 
@@ -97,7 +111,11 @@
           window.MathSprintAudio.play('success');
         }
 
-        alert(`🎁 兌換成功：獲得 ${earned.toLocaleString('zh-TW')} 💰 金幣！`);
+        if (window.UIFeedback) {
+          window.UIFeedback.toast(`兌換成功，獲得 ${earned.toLocaleString('zh-TW')} 💰 金幣`, 'success');
+        } else {
+          alert(`🎁 兌換成功：獲得 ${earned.toLocaleString('zh-TW')} 💰 金幣！`);
+        }
         document.getElementById('redeem-code-input').value = '';
       } catch (err) {
         msgEl.textContent = `❌ ${err?.message || '兌換失敗'}`;

@@ -7,6 +7,7 @@
     init() {
       if (this.hasInitialized) return;
       this.hasInitialized = true;
+      this.initAccessibilityMode();
 
       // 使用事件代理 (Event Delegation) 監聽全域點擊事件，防止 Race Condition 與動態渲染 DOM 失效
       document.addEventListener('click', (e) => {
@@ -45,26 +46,10 @@
         if (drawerClose) drawerClose.addEventListener('click', closeDrawer);
         overlay.addEventListener('click', closeDrawer);
 
-        // 點擊導航項時自動關閉抽屜
-        const navButtons = drawer.querySelectorAll('#main-nav button');
-        navButtons.forEach(btn => {
-          btn.addEventListener('click', () => {
-            closeDrawer();
-            
-            // 路由控制邏輯
-            const id = btn.id;
-            if (id === 'nav-home-btn') {
-              this.closeToHome();
-            } else if (id === 'nav-lobby-btn') {
-              window.showView('view-lobby');
-            } else if (id === 'nav-dashboard-btn') {
-              window.showView('view-dashboard');
-            } else if (id === 'nav-achievements-btn') {
-              window.showView('view-achievements');
-            } else if (id === 'nav-store-btn') {
-              window.showView('view-store');
-            }
-          });
+        // 點擊導航項時僅關閉抽屜；路由一律交由 game-events.js 處理，避免雙重綁定衝突
+        drawer.addEventListener('click', (e) => {
+          const navBtn = e.target.closest('#main-nav button');
+          if (navBtn) closeDrawer();
         });
       }
 
@@ -85,30 +70,28 @@
       console.log('[UIController] 成功以事件代理 (Event Delegation) 初始化全域「X」關閉與 Drawer 監聽。');
     },
 
-    closeToHome() {
-      // 1. 立即切換 UI，0.1 秒內順暢跳轉
-      document.querySelectorAll('.view-section').forEach(section => {
-        section.classList.add('hidden');
-      });
-      const home = document.getElementById('view-home');
-      if (home) {
-        home.classList.remove('hidden');
+    initAccessibilityMode() {
+      const toggleBtn = document.getElementById('accessibility-toggle-btn');
+      const saved = localStorage.getItem('limit180_accessible_mode') === '1';
+      document.body.classList.toggle('accessible-mode', saved);
+      if (toggleBtn) {
+        toggleBtn.textContent = `易讀模式：${saved ? '開' : '關'}`;
+        toggleBtn.addEventListener('click', () => {
+          const enabled = !document.body.classList.contains('accessible-mode');
+          document.body.classList.toggle('accessible-mode', enabled);
+          localStorage.setItem('limit180_accessible_mode', enabled ? '1' : '0');
+          toggleBtn.textContent = `易讀模式：${enabled ? '開' : '關'}`;
+        });
       }
-      const adminView = document.getElementById('view-admin');
-      if (adminView) adminView.classList.add('hidden');
-      
-      document.body.classList.remove('body-in-game');
-      const scannerLine = document.querySelector('.scanner-line');
-      if (scannerLine) scannerLine.style.display = '';
+    },
 
-      // 2. 安全停損：若在遊戲中，關閉計時器並清理記憶體暫存，絕不向 Supabase 發送請求
+    closeToHome() {
+      // 1. 安全停損：離開遊戲頁時統一中斷流程，避免殘留計時器與狀態
       if (window.MathSprintGame) {
-        if (window.MathSprintGame.timerInterval) {
-          clearInterval(window.MathSprintGame.timerInterval);
-          window.MathSprintGame.timerInterval = null;
-        }
-        if (window.MathSprintGame.interruptGame) {
+        if ((window.currentView === 'view-game' || window.currentView === 'view-review') && window.MathSprintGame.interruptGame) {
           window.MathSprintGame.interruptGame();
+        } else if (window.MathSprintGame.stopGame) {
+          window.MathSprintGame.stopGame();
         }
 
         // 顯示被暫存的星星獎勵提示
@@ -121,6 +104,11 @@
           }, 500);
         }
       }
+
+      // 2. 回首頁統一使用 showView，確保 currentView、body class 與 scanner 狀態一致
+      if (window.showView) {
+        window.showView('view-home');
+      }
     },
 
     closeReview() {
@@ -131,8 +119,11 @@
       this.closeToHome();
     },
 
-    closeGame() {
-      if (confirm(`確定要放棄本次挑戰，返回首頁嗎？`)) {
+    async closeGame() {
+      const shouldLeave = window.UIFeedback
+        ? await window.UIFeedback.confirm('確定要放棄本次挑戰並返回首頁嗎？', '離開挑戰')
+        : confirm(`確定要放棄本次挑戰，返回首頁嗎？`);
+      if (shouldLeave) {
         this.closeToHome();
       }
     }

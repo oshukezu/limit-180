@@ -217,7 +217,7 @@
     },
 
     // 購買商品
-    purchase(itemId, price, type) {
+    async purchase(itemId, price, type) {
       let name = '新商品';
       if (type === 'theme') {
         name = window.ThemeManager.THEMES[itemId]?.name || '新主題';
@@ -232,7 +232,10 @@
       // 過濾 Icon
       name = name.replace(/[🛡️🐱🕶️👑🥷✨🦊🐉🐯🐰🐨🐼🦁🦄👽🤖👻🔥💧🌱⚡🌸🔮🔋☄️◽🖤🌈💎👙🥑🌫️📡🍡🏜️📟⭐🧗🏦🎰❤️🧠🎖️🎵💀]/g, '').trim();
 
-      if (!confirm(`確定要花費 💰${price.toLocaleString()} 金幣購買「${name}」嗎？`)) {
+      const agreed = window.UIFeedback
+        ? await window.UIFeedback.confirm(`確定要花費 ${price.toLocaleString('zh-TW')} 💰 購買「${name}」嗎？`, '確認購買')
+        : confirm(`確定要花費 💰${price.toLocaleString()} 金幣購買「${name}」嗎？`);
+      if (!agreed) {
         return;
       }
 
@@ -240,7 +243,11 @@
       const currentCoins = profile.total_stars || 0;
 
       if (currentCoins < price) {
-        alert('特工，您的金幣餘額不足！');
+        if (window.UIFeedback) {
+          window.UIFeedback.toast('特工，您的金幣餘額不足！', 'error');
+        } else {
+          alert('特工，您的金幣餘額不足！');
+        }
         return;
       }
 
@@ -281,7 +288,11 @@
         window.MathSprintAudio.play('success');
       }
 
-      alert(`🔓 成功解鎖並裝備「${name}」！`);
+      if (window.UIFeedback) {
+        window.UIFeedback.toast(`已成功解鎖並裝備「${name}」`, 'success');
+      } else {
+        alert(`🔓 成功解鎖並裝備「${name}」！`);
+      }
     },
 
     // 更新 Tab 按鈕的 CSS 狀態

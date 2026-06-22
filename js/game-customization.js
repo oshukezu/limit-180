@@ -8,6 +8,94 @@
   const BORDERS = window.MATH_SPRINT_BORDERS || {};
   const BADGES = window.MATH_SPRINT_BADGES || {};
 
+  function renderHomeIdentityCard() {
+    const profile = window.MathSprintStorage.getProfile();
+    const avImg = document.getElementById('home-avatar-img');
+    const avBorder = document.getElementById('home-avatar-border');
+    const agentName = document.getElementById('home-agent-nickname');
+    const classInfo = document.getElementById('home-agent-class-info');
+    const lastSyncEl = document.getElementById('home-last-sync-time');
+    const badgesContainer = document.getElementById('home-agent-badges');
+    const maxStageBadge = document.getElementById('home-max-stage-badge');
+
+    const avObj = AVATARS[profile.equipped_avatar] || AVATARS['avatar-default'] || { icon: '🛡️' };
+    const borObj = BORDERS[profile.equipped_border] || BORDERS['border-none'] || { color: 'transparent', id: 'border-none' };
+
+    if (avImg) avImg.textContent = avObj.icon;
+    if (avBorder) {
+      avBorder.style.borderColor = borObj.color;
+      avBorder.style.boxShadow = borObj.id !== 'border-none' ? `0 0 10px ${borObj.color}` : 'none';
+    }
+
+    let identity = null;
+    try {
+      identity = JSON.parse(localStorage.getItem('limit180_user_profile') || 'null');
+    } catch (_) {
+      identity = null;
+    }
+    const nickname = identity?.nickname || '訪客特工';
+    if (agentName) agentName.textContent = nickname;
+
+    if (classInfo) {
+      if (identity?.grade_class && identity?.seat_number && identity.grade_class !== '訪客') {
+        classInfo.textContent = `${identity.grade_class} 班 座號 ${identity.seat_number} 號`;
+      } else {
+        classInfo.textContent = '訪客狀態・通關後建議綁定身份';
+      }
+    }
+
+    if (lastSyncEl) {
+      const raw = localStorage.getItem('limit180_last_sync_at');
+      if (raw) {
+        const d = new Date(raw);
+        lastSyncEl.textContent = Number.isNaN(d.getTime())
+          ? '最後同步：--'
+          : `最後同步：${d.toLocaleString('zh-TW')}`;
+      } else {
+        lastSyncEl.textContent = '最後同步：--';
+      }
+    }
+
+    if (badgesContainer) {
+      badgesContainer.innerHTML = '';
+      const equippedBadges = profile.equipped_badges || [];
+      if (equippedBadges.length === 0) {
+        badgesContainer.innerHTML = `<span class="text-[9px] text-slate-500">// 尚未配戴徽章 //</span>`;
+      } else {
+        equippedBadges.forEach((bId) => {
+          const b = window.MATH_SPRINT_BADGES[bId];
+          if (!b) return;
+          const span = document.createElement('span');
+          span.className = 'text-sm cursor-help';
+          span.textContent = b.icon;
+          span.title = `${b.name}: ${b.desc}`;
+          badgesContainer.appendChild(span);
+        });
+      }
+    }
+
+    if (maxStageBadge) {
+      let maxMission = 1;
+      let maxLevel = 1;
+      let hasAnyRecord = false;
+      if (profile.level_records) {
+        Object.keys(profile.level_records).forEach((key) => {
+          const match = key.match(/mission-(\d+)-level-(\d+)/);
+          if (match && profile.level_records[key]?.is_passed) {
+            hasAnyRecord = true;
+            const m = parseInt(match[1], 10);
+            const l = parseInt(match[2], 10);
+            if (m > maxMission || (m === maxMission && l > maxLevel)) {
+              maxMission = m;
+              maxLevel = l;
+            }
+          }
+        });
+      }
+      maxStageBadge.textContent = hasAnyRecord ? `M${maxMission} L${maxLevel}` : 'M1 L1';
+    }
+  }
+
   const Customization = {
     currentTab: 'theme', // theme, avatar, border, badge
     tempProfile: {},      // 用於暫存選擇但尚未儲存的外觀
@@ -273,7 +361,11 @@
       
       window.MathSprintStorage.saveProfile(profile);
       document.getElementById('customization-modal').classList.add('hidden');
-      alert('✓ 特工外觀套用成功，雲端資料同步中！');
+      if (window.UIFeedback) {
+        window.UIFeedback.toast('特工外觀已套用，資料同步中', 'success');
+      } else {
+        alert('✓ 特工外觀套用成功，雲端資料同步中！');
+      }
     }
   };
 
@@ -303,84 +395,11 @@
 
     // 實時裝備框線與檔案名牌渲染至首頁大卡片
     window.addEventListener('mathSprintProfileUpdated', () => {
-      const profile = window.MathSprintStorage.getProfile();
-      
-      const avImg = document.getElementById('home-avatar-img');
-      const avBorder = document.getElementById('home-avatar-border');
-      const agentName = document.getElementById('home-agent-nickname');
-      const classInfo = document.getElementById('home-agent-class-info');
-      const badgesContainer = document.getElementById('home-agent-badges');
-      const maxStageBadge = document.getElementById('home-max-stage-badge');
-
-      const avObj = AVATARS[profile.equipped_avatar] || AVATARS['avatar-default'] || { icon: '🛡️' };
-      const borObj = BORDERS[profile.equipped_border] || BORDERS['border-none'] || { color: 'transparent', id: 'border-none' };
-      
-      // 1. 更新頭像
-      if (avImg) avImg.textContent = avObj.icon;
-
-      // 2. 更新頭像框
-      if (avBorder) {
-        avBorder.style.borderColor = borObj.color;
-        if (borObj.id !== 'border-none') {
-          avBorder.style.boxShadow = `0 0 10px ${borObj.color}`;
-        } else {
-          avBorder.style.boxShadow = 'none';
-        }
-      }
-
-      // 3. 更新暱稱
-      const uProfile = JSON.parse(localStorage.getItem('limit180_user_profile') || '{}');
-      if (agentName) agentName.textContent = uProfile.nickname || profile.nickname || '訪客特工';
-
-      // 4. 更新班級座號
-      if (classInfo) {
-        const grade = profile.grade_class.charAt(0);
-        const num = parseInt(profile.grade_class.substring(1));
-        const cns = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九"];
-        const displayClass = (grade >= '1' && grade <= '9' && !isNaN(num))
-          ? `${cns[parseInt(grade)] || grade}年${num}班`
-          : `${profile.grade_class}班`;
-        classInfo.textContent = `${displayClass} 座號 ${profile.seat_number} 號`;
-      }
-
-      // 5. 更新徽章
-      if (badgesContainer) {
-        badgesContainer.innerHTML = '';
-        const equippedBadges = profile.equipped_badges || [];
-        if (equippedBadges.length === 0) {
-          badgesContainer.innerHTML = `<span class="text-[9px] text-slate-500">// 尚未配戴徽章 //</span>`;
-        } else {
-          equippedBadges.forEach(bId => {
-            const b = window.MATH_SPRINT_BADGES[bId];
-            if (b) {
-              const span = document.createElement('span');
-              span.className = 'text-sm cursor-help';
-              span.textContent = b.icon;
-              span.title = `${b.name}: ${b.desc}`;
-              badgesContainer.appendChild(span);
-            }
-          });
-        }
-      }
-
-      // 6. 計算並更新最高通關關卡 (Stage 勳章)
-      if (maxStageBadge) {
-        let maxMission = 1, maxLevel = 1, hasAnyRecord = false;
-        if (profile.level_records) {
-          Object.keys(profile.level_records).forEach(key => {
-            const match = key.match(/mission-(\d+)-level-(\d+)/);
-            if (match && profile.level_records[key]?.is_passed) {
-              hasAnyRecord = true;
-              const m = parseInt(match[1]), l = parseInt(match[2]);
-              if (m > maxMission || (m === maxMission && l > maxLevel)) {
-                maxMission = m; maxLevel = l;
-              }
-            }
-          });
-        }
-        maxStageBadge.textContent = hasAnyRecord ? `M${maxMission} L${maxLevel}` : (profile.placement_status === 'ELITE' ? 'M21 L1' : 'M1 L1');
-      }
+      renderHomeIdentityCard();
     });
+
+    // 首次載入即渲染，避免首頁長時間顯示「特工載入中...」
+    renderHomeIdentityCard();
   });
 
 })();
