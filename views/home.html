@@ -1,45 +1,50 @@
 <section id="view-home" class="view-section py-8 flex flex-col items-center max-w-lg mx-auto w-full px-4">
-  <!-- (3) 獎金看板：移至最上方，字體放大且對比清晰 -->
-  <div class="w-full flex justify-between items-center bg-slate-950/80 border-2 border-[var(--border-color)] p-4 rounded-2xl mb-8 font-pixel text-center" style="border-color: var(--border-color);">
-    <div class="flex-1 border-r border-[var(--border-color)]" style="border-color: var(--border-color);">
-      <span class="block text-slate-400 text-xs mb-1">🪙 累積總獎金</span>
-      <span id="profile-total-stars" class="text-3xl text-[#39ff14] font-black">0</span>
+  <!-- 特工個人檔案資訊 (頭貼、框線與徽章常規化顯示在首頁最頂部) -->
+  <div id="user-profile-bar" class="w-full flex justify-center items-center mb-4">
+    <div class="w-full flex items-center justify-between gap-3 bg-slate-950/80 border border-slate-900 px-4 py-3 rounded-2xl text-xs font-pixel text-slate-500">
+      <div id="user-profile-info" class="flex-1 text-slate-300">
+        <!-- 由 JS 動態注入頭像、外框與徽章 -->
+        👤 載入特工檔案...
+      </div>
+      <div class="flex gap-2">
+        <button id="edit-profile-btn" class="text-[10px] text-cyan-400 underline shrink-0">修改名字</button>
+        <button id="open-custom-btn" class="text-[10px] text-pink-400 underline shrink-0" onclick="window.AgentCustomization?.openModal()">特工裝備</button>
+      </div>
     </div>
-    <div class="flex-1">
-      <span class="block text-slate-400 text-xs mb-1">🔥 今日新賺取</span>
-      <span id="profile-today-earnings" class="text-3xl text-yellow-400 font-black">0</span>
+  </div>
+
+  <!-- (3) 獎金看板：移至最上方，字體放大且對比清晰 -->
+  <div class="w-full flex justify-between items-center bg-slate-950/80 border-2 border-[var(--border-color)] p-4 rounded-2xl mb-6 font-pixel text-center" style="border-color: var(--border-color);">
+    <div class="flex-1 border-r border-[var(--border-color)] min-w-0 px-2" style="border-color: var(--border-color);">
+      <span class="block text-slate-400 text-[10px] mb-1">🪙 累積總獎金</span>
+      <span id="profile-total-stars" class="text-xl sm:text-2xl text-[#39ff14] font-black block truncate">0</span>
+    </div>
+    <div class="flex-1 min-w-0 px-2">
+      <span class="block text-slate-400 text-[10px] mb-1">🔥 今日新賺取</span>
+      <span id="profile-today-earnings" class="text-xl sm:text-2xl text-yellow-400 font-black block truncate">0</span>
     </div>
   </div>
 
   <!-- (1) 標題區塊：標題字體縮小，減少視覺干擾 -->
-  <div class="text-center mb-8">
+  <div class="text-center mb-6">
     <p class="text-[10px] font-pixel text-slate-500 tracking-widest mb-1">MIND RETENTION LAB.</p>
     <h2 class="text-3xl font-pixel text-white tracking-widest uppercase">Limit 180</h2>
   </div>
 
   <!-- 核心入口按鈕垂直置中堆疊：字體極大、直覺好點 -->
-  <div class="flex flex-col space-y-6 w-full font-pixel">
-    <!-- 速算挑戰模式按鈕組 (移除下方說明與重複的今日累積獎金) -->
+  <div class="flex flex-col space-y-6 w-full font-pixel mb-8">
+    <!-- 速算挑戰模式按鈕 -->
     <div class="w-full">
       <button id="start-levels-btn" class="neon-green-btn w-full py-8 text-3xl font-black rounded-3xl tracking-widest">
         速算挑戰模式
       </button>
     </div>
 
-    <!-- 錯題消除訓練按鈕組 (移除下方待消除題數與說明文字) -->
+    <!-- 錯題消除訓練按鈕 -->
     <div class="w-full">
       <button id="start-review-btn" class="neon-green-btn w-full py-8 text-3xl font-black rounded-3xl tracking-widest" style="background: #db2777; color: white; box-shadow: 0 0 15px rgba(219,39,119,0.4); border-color: #db2777;">
         錯題消除訓練
       </button>
-    </div>
-  </div>
-
-  <!-- 用戶暱稱與修改暱稱：以次要輔助狀態移至底部 -->
-  <div id="user-profile-bar" class="w-full flex justify-center items-center mt-12 hidden">
-    <div class="flex items-center gap-3 bg-slate-950/80 border border-slate-900 px-4 py-2 rounded-xl text-xs font-pixel text-slate-500">
-      👤 <span id="user-profile-info" class="text-slate-300"></span>
-      <button id="edit-profile-btn" class="text-[10px] text-cyan-400 underline ml-2">修改名字</button>
-      <button id="open-custom-btn" class="text-[10px] text-pink-400 underline ml-2" onclick="window.AgentCustomization?.openModal()">特工裝備</button>
     </div>
   </div>
 

@@ -16,7 +16,7 @@
         const id = closeBtn.id;
         console.log(`[UIController] 偵測到關閉按鈕點擊，ID: ${id}`);
 
-        if (id === 'lobby-close-btn' || id === 'dashboard-close-btn' || id === 'achievements-close-btn' || id === 'store-close-btn') {
+        if (id === 'lobby-close-btn' || id === 'dashboard-close-btn' || id === 'achievements-close-btn' || id === 'store-close-btn' || id === 'admin-close-btn') {
           this.closeToHome();
         } else if (id === 'review-close-btn') {
           this.closeReview();
@@ -25,7 +25,64 @@
         }
       });
 
-      console.log('[UIController] 成功以事件代理 (Event Delegation) 初始化全域「X」關閉監聽。');
+      // 綁定 Hamburger Drawer 選單邏輯
+      const drawerToggle = document.getElementById('drawer-toggle-btn');
+      const drawerClose = document.getElementById('drawer-close-btn');
+      const drawer = document.getElementById('side-drawer');
+      const overlay = document.getElementById('drawer-overlay');
+
+      if (drawerToggle && drawer && overlay) {
+        drawerToggle.addEventListener('click', () => {
+          drawer.classList.remove('translate-x-full');
+          overlay.classList.remove('hidden');
+        });
+
+        const closeDrawer = () => {
+          drawer.classList.add('translate-x-full');
+          overlay.classList.add('hidden');
+        };
+
+        if (drawerClose) drawerClose.addEventListener('click', closeDrawer);
+        overlay.addEventListener('click', closeDrawer);
+
+        // 點擊導航項時自動關閉抽屜
+        const navButtons = drawer.querySelectorAll('#main-nav button');
+        navButtons.forEach(btn => {
+          btn.addEventListener('click', () => {
+            closeDrawer();
+            
+            // 路由控制邏輯
+            const id = btn.id;
+            if (id === 'nav-home-btn') {
+              this.closeToHome();
+            } else if (id === 'nav-lobby-btn') {
+              window.showView('view-lobby');
+            } else if (id === 'nav-dashboard-btn') {
+              window.showView('view-dashboard');
+            } else if (id === 'nav-achievements-btn') {
+              window.showView('view-achievements');
+            } else if (id === 'nav-store-btn') {
+              window.showView('view-store');
+            }
+          });
+        });
+      }
+
+      // 偵測獨立管理員網址 `?admin=true` 或 `?admin`
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.has('admin')) {
+        console.log('[UIController] 偵測到管理員入口參數，正在載入教師管理後台...');
+        window.addEventListener('limit180ComponentsLoaded', () => {
+          setTimeout(() => {
+            window.showView('view-admin');
+            if (window.GameAdmin && typeof window.GameAdmin.initAdmin === 'function') {
+              window.GameAdmin.initAdmin();
+            }
+          }, 200);
+        });
+      }
+
+      console.log('[UIController] 成功以事件代理 (Event Delegation) 初始化全域「X」關閉與 Drawer 監聽。');
     },
 
     closeToHome() {

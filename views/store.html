@@ -23,7 +23,15 @@
     <div id="redeem-msg" class="text-[9px] text-slate-500 font-tech hidden"></div>
   </div>
 
-  <div class="flex flex-col gap-2" id="theme-store-list">
-    <!-- 主題配色商品卡片將由 JavaScript 動態生成 -->
+  <!-- 商品類別分頁 -->
+  <div class="flex border-b border-slate-800 mb-6 font-pixel text-xs">
+    <button id="store-tab-theme" class="flex-1 text-center py-3 text-cyan-400 border-b-2 border-cyan-500 font-bold focus:outline-none cursor-pointer">主題配色</button>
+    <button id="store-tab-avatar" class="flex-1 text-center py-3 text-slate-400 hover:text-white border-b border-slate-800 focus:outline-none cursor-pointer">特工頭像</button>
+    <button id="store-tab-border" class="flex-1 text-center py-3 text-slate-400 hover:text-white border-b border-slate-800 focus:outline-none cursor-pointer">頭貼外框</button>
+    <button id="store-tab-badge" class="flex-1 text-center py-3 text-slate-400 hover:text-white border-b border-slate-800 focus:outline-none cursor-pointer">成就徽章</button>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="theme-store-list">
+    <!-- 商品卡片將由 JavaScript 動態生成 -->
   </div>
 </section>
