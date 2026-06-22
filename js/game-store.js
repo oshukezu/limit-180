@@ -104,6 +104,11 @@
 
     // 購買主題
     purchase(themeId, price) {
+      const themeName = window.ThemeManager.THEMES[themeId]?.name || '新主題';
+      if (!confirm(`確定要花費 💰${price.toLocaleString()} 金幣解鎖主題「${themeName}」嗎？`)) {
+        return;
+      }
+
       const profile = window.MathSprintStorage.getProfile();
       const currentCoins = profile.total_stars || 0;
 

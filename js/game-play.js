@@ -157,7 +157,19 @@
 
       const correctLen = correctAnswer.length;
       if (inputVal.length === correctLen && correctLen > 0) {
-        this.submitCalcAnswer();
+        // 清理前一次的未執行 Timeout
+        if (this._autoSubmitTimeout) {
+          clearTimeout(this._autoSubmitTimeout);
+        }
+        
+        // 延遲 180 毫秒提交，確保打下的最後一個字能渲染在畫面上
+        this._autoSubmitTimeout = setTimeout(() => {
+          // 提交前再次驗證當前輸入值仍是最新長度 (避免中途使用者刪除字元)
+          const currentVal = input.value.trim();
+          if (currentVal.length === correctLen) {
+            this.submitCalcAnswer();
+          }
+        }, 180);
       }
     },
 

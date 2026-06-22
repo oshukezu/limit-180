@@ -273,6 +273,12 @@
     },
 
     unlockAsset(assetId, price) {
+      // 獲取該外觀的顯示名稱
+      const name = (AVATARS[assetId]?.name || BORDERS[assetId]?.name || '新外觀').replace(/[🛡️🐱🕶️👑🥷✨⚡🌸]/g, '').trim();
+      if (!confirm(`確定要花費 💰${price.toLocaleString()} 金幣解鎖外觀「${name}」嗎？`)) {
+        return;
+      }
+
       const profile = window.MathSprintStorage.getProfile();
       if ((profile.total_stars || 0) < price) {
         alert('特工，您的金幣餘額不足以解鎖此項外觀！');
