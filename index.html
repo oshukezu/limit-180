@@ -68,6 +68,9 @@
           class="nav-btn py-3 text-[10px] sm:text-xs md:text-sm font-pixel text-center">成就牆</button>
         <button id="nav-store-btn"
           class="nav-btn py-3 text-[10px] sm:text-xs md:text-sm font-pixel text-center">商店</button>
+        <button id="nav-admin-btn"
+          class="nav-btn py-3 text-[10px] sm:text-xs md:text-sm font-pixel text-center text-pink-500 border-pink-700"
+          onclick="window.showView('view-admin'); window.GameAdmin?.initAdmin();">管理員</button>
         <!-- 2.0：帳號按鈕 -->
         <button id="auth-account-btn" class="nav-btn px-3 py-1.5 text-xs font-pixel hidden"
           onclick="document.getElementById('auth-modal').classList.remove('hidden')">
@@ -76,12 +79,12 @@
       </nav>
     </div>
   </header>
-
+  
   <!-- Main SPA Content Wrapper (元件將動態載入至此) -->
   <main class="flex-grow max-w-6xl w-full mx-auto p-4 flex flex-col justify-center">
     <!-- 各視圖元件 (home.html, lobby.html 等) 將由 loader.js 動態注入 -->
   </main>
-
+  
   <!-- Footer Stats -->
   <footer class="border-t-2 border-slate-800 bg-slate-950 px-4 py-3 text-center text-slate-600 text-[10px] font-pixel">
     <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-2">
@@ -90,12 +93,12 @@
           class="hover:text-cyan-500 transition-colors">oshukezu@gmail.com</a></div>
     </div>
   </footer>
-
+  
   <!-- Confetti script -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <!-- ChartJS script -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+  
   <!-- Core Javascript Modules (Global namespace object model) -->
   <script src="js/onboarding.js"></script>
   <script src="js/onboarding-sync.js"></script>
@@ -142,10 +145,10 @@
   </script>
   <script src="js/leaderboard-renders.js"></script>
   <script src="js/leaderboard.js"></script>
-
+  
   <script src="js/loader.js"></script>
   <script src="js/ui-controller.js"></script>
-
+  
   <!-- 拆分後的核心遊戲元件模組 -->
   <script src="js/game-config.js"></script>
   <script src="js/game-audio.js"></script>
@@ -159,6 +162,7 @@
   <script src="js/game-helper.js"></script>
   <script src="js/game-play.js"></script>
   <script src="js/placement-modal.js"></script>
+  <script src="js/game-admin.js"></script>
 
 </body>
 

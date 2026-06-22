@@ -73,7 +73,11 @@
             inputSeat,
             inputNickname,
             coinsBalance,
-            purchasedItems
+            purchasedItems,
+            localProfile.equipped_avatar || 'avatar-default',
+            localProfile.equipped_border || 'border-none',
+            localProfile.equipped_badges || [],
+            localProfile.unlocked_assets || ['avatar-default', 'border-none']
           );
         } catch (globalErr) {
           console.warn("[OnboardingSync] 同步全域狀態至 users_global 失敗：", globalErr.message || globalErr);
@@ -142,7 +146,11 @@
                   u.seat_number,
                   u.nickname,
                   coinsBalance,
-                  purchasedItems
+                  purchasedItems,
+                  localProfile.equipped_avatar || 'avatar-default',
+                  localProfile.equipped_border || 'border-none',
+                  localProfile.equipped_badges || [],
+                  localProfile.unlocked_assets || ['avatar-default', 'border-none']
                 ).catch((err) => {
                   console.warn("[Onboarding] 雲端全域狀態自動同步失敗：", err.message || err);
                 });

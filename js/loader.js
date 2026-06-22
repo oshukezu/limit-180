@@ -11,6 +11,8 @@
     { id: 'view-achievements', path: 'views/achievements.html', parent: 'main' },
     { id: 'view-review', path: 'views/review.html', parent: 'main' },
     { id: 'view-store', path: 'views/store.html', parent: 'main' },
+    { id: 'view-admin', path: 'views/admin.html', parent: 'main' },
+    { id: 'customization-modal', path: 'views/customization-modal.html', parent: 'body' },
     { id: 'demote-modal', path: 'views/demote-modal.html', parent: 'body' },
     { id: 'auth-modal', path: 'views/auth-modal.html', parent: 'body' },
     { id: 'profile-modal', path: 'views/profile-modal.html', parent: 'body' },

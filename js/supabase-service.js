@@ -114,11 +114,14 @@
     return validatedData;
   }
 
-  // 5. 內部全域 SHA-256 雜湊產生器 (防改全域雜湊)
-  async function generateGlobalHash(gradeClass, seatNumber, nickname, coinsBalance, purchasedItems) {
+  // 5. 內部全域 SHA-256 雜湊產生器 (防改全域雜湊，加入了外觀客製化欄位防改防護)
+  async function generateGlobalHash(gradeClass, seatNumber, nickname, coinsBalance, purchasedItems, equippedAvatar, equippedBorder, equippedBadges, unlockedAssets) {
     const salt = "Limit180_School_League_Salt_2026_V2";
     const itemsStr = Array.isArray(purchasedItems) ? purchasedItems.join(',') : '';
-    const message = `${gradeClass}:${seatNumber}:${nickname}:${coinsBalance}:${itemsStr}:${salt}`;
+    const badgesStr = Array.isArray(equippedBadges) ? equippedBadges.join(',') : '';
+    const assetsStr = Array.isArray(unlockedAssets) ? unlockedAssets.join(',') : '';
+    
+    const message = `${gradeClass}:${seatNumber}:${nickname}:${coinsBalance}:${itemsStr}:${equippedAvatar}:${equippedBorder}:${badgesStr}:${assetsStr}:${salt}`;
     
     const encoder = new TextEncoder();
     const data = encoder.encode(message);
@@ -127,17 +130,28 @@
     return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
   }
 
-  // 6. 儲存或更新用戶全域資產狀態 (UPSERT)
-  async function saveGlobalProfile(gradeClass, seatNumber, nickname, coinsBalance, purchasedItems) {
+  // 6. 儲存或更新用戶全域資產狀態與外觀設定 (UPSERT)
+  async function saveGlobalProfile(gradeClass, seatNumber, nickname, coinsBalance, purchasedItems, equippedAvatar = 'avatar-default', equippedBorder = 'border-none', equippedBadges = [], unlockedAssets = ['avatar-default', 'border-none']) {
     const db = getSupabaseClient();
     if (!db) {
       throw new Error("Supabase 未初始化");
     }
 
-    // 將非陣列的值作轉換防呆
     const itemsArray = Array.isArray(purchasedItems) ? purchasedItems : [];
+    const badgesArray = Array.isArray(equippedBadges) ? equippedBadges : [];
+    const assetsArray = Array.isArray(unlockedAssets) ? unlockedAssets : [];
 
-    const integrityHash = await generateGlobalHash(gradeClass, seatNumber, nickname, coinsBalance, itemsArray);
+    const integrityHash = await generateGlobalHash(
+      gradeClass, 
+      seatNumber, 
+      nickname, 
+      coinsBalance, 
+      itemsArray,
+      equippedAvatar,
+      equippedBorder,
+      badgesArray,
+      assetsArray
+    );
 
     const { data, error } = await db
       .from('users_global')
@@ -147,6 +161,10 @@
         nickname: nickname,
         coins_balance: coinsBalance,
         purchased_items: itemsArray,
+        equipped_avatar: equippedAvatar,
+        equipped_border: equippedBorder,
+        equipped_badges: badgesArray,
+        unlocked_assets: assetsArray,
         integrity_hash: integrityHash,
         updated_at: new Date().toISOString()
       }, {

@@ -37,6 +37,9 @@
       if (home) {
         home.classList.remove('hidden');
       }
+      const adminView = document.getElementById('view-admin');
+      if (adminView) adminView.classList.add('hidden');
+      
       document.body.classList.remove('body-in-game');
       const scannerLine = document.querySelector('.scanner-line');
       if (scannerLine) scannerLine.style.display = '';

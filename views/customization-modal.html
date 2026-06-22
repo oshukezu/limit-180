@@ -1,0 +1,49 @@
+<div id="customization-modal" class="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center hidden z-50 p-4" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div class="hud-panel p-6 bg-slate-950 border-2 border-cyan-500 max-w-lg w-full relative max-h-[90vh] overflow-y-auto">
+    <!-- 關閉按鈕 -->
+    <button type="button" id="customization-close-btn" class="absolute top-4 right-4 text-slate-500 hover:text-white font-pixel text-sm transition-colors duration-200 focus:outline-none">✕</button>
+    
+    <div class="text-center mb-6 border-b border-cyan-500/20 pb-4">
+      <span class="text-xs font-pixel text-pink-500 glow-pink block mb-1">AGENT CUSTOMIZATION</span>
+      <h3 class="text-lg font-pixel text-cyan-400 glow-blue">特工個人外觀客製化</h3>
+    </div>
+
+    <!-- 特工預覽看板 -->
+    <div class="flex flex-col items-center gap-3 bg-slate-900/60 border border-slate-800 p-4 rounded-2xl mb-6 text-center">
+      <div class="relative w-20 h-20 flex items-center justify-center">
+        <!-- 當前頭貼框 -->
+        <div id="preview-avatar-border" class="absolute inset-0 rounded-full border-4 border-transparent flex items-center justify-center">
+          <!-- 當前頭像 -->
+          <div id="preview-avatar-img" class="w-16 h-16 rounded-full bg-slate-950 flex items-center justify-center text-3xl select-none">
+            🛡️
+          </div>
+        </div>
+      </div>
+      <div>
+        <div id="preview-agent-name" class="font-pixel text-sm text-white">---</div>
+        <div id="preview-agent-badges" class="flex gap-2 justify-center mt-1.5">
+          <!-- 配戴的徽章 -->
+        </div>
+      </div>
+    </div>
+
+    <!-- 分頁導航 -->
+    <div class="flex border-b border-slate-800 mb-4 font-pixel text-[10px]">
+      <button id="tab-custom-avatar" class="flex-1 text-center py-2 text-cyan-400 border-b-2 border-cyan-500 font-bold focus:outline-none cursor-pointer">特工頭像</button>
+      <button id="tab-custom-border" class="flex-1 text-center py-2 text-slate-400 hover:text-white border-b border-slate-800 focus:outline-none cursor-pointer">頭貼外框</button>
+      <button id="tab-custom-badge" class="flex-1 text-center py-2 text-slate-400 hover:text-white border-b border-slate-800 focus:outline-none cursor-pointer">配戴徽章</button>
+    </div>
+
+    <!-- 內容展示容器 -->
+    <div id="customization-content-area" class="space-y-4 max-h-[35vh] overflow-y-auto pr-1">
+      <!-- 動態載入選擇清單 -->
+    </div>
+
+    <!-- 儲存關閉按鈕 -->
+    <div class="flex justify-center mt-6 border-t border-slate-800 pt-4">
+      <button type="button" id="customization-save-btn" class="cyber-btn cyber-btn-green px-8 py-2.5 font-pixel text-xs text-green-400">
+        套用並保存設定
+      </button>
+    </div>
+  </div>
+</div>

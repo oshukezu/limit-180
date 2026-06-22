@@ -1,0 +1,85 @@
+<section id="view-admin" class="view-section hidden py-6 relative max-w-4xl mx-auto w-full px-4">
+  <button class="close-btn" id="admin-close-btn">&times;</button>
+  
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h2 class="text-2xl font-pixel text-white">⚡ 教師/管理員主控台</h2>
+      <p class="text-xs text-slate-400 font-tech mt-1">即時檢視班級學生成績表現、調整全域參數與派送獎勵金幣。</p>
+    </div>
+  </div>
+
+  <!-- 登入驗證面板 -->
+  <div id="admin-auth-panel" class="hud-panel p-8 bg-slate-900/90 border border-slate-800 text-center flex flex-col items-center gap-4 max-w-md mx-auto">
+    <span class="text-4xl">🔑</span>
+    <h3 class="text-lg font-pixel text-cyan-400">管理授權安全校驗</h3>
+    <p class="text-[10px] text-slate-500 font-tech">請輸入教師存取授權密鑰，方可讀取學生雲端數據。</p>
+    <div class="w-full space-y-3">
+      <input type="password" id="admin-password-input" placeholder="輸入存取密鑰..."
+        class="w-full bg-slate-950 border border-slate-800 px-3 py-2 text-sm text-center text-cyan-400 rounded focus:outline-none focus:border-cyan-500 font-pixel">
+      <button id="admin-auth-submit-btn" class="cyber-btn cyber-btn-green w-full py-2 font-pixel text-xs text-green-400">
+        驗證登入
+      </button>
+      <div id="admin-auth-error" class="text-[10px] text-red-500 font-pixel hidden">密鑰無效，拒絕存取！</div>
+    </div>
+  </div>
+
+  <!-- 登入後的主面板 -->
+  <div id="admin-main-panel" class="hidden flex flex-col gap-6">
+    <!-- 篩選列 -->
+    <div class="hud-panel p-4 bg-slate-900/80 border border-slate-800 flex flex-wrap items-center justify-between gap-4 font-pixel text-xs">
+      <div class="flex items-center gap-2">
+        <span class="text-slate-400">選擇班級:</span>
+        <select id="admin-class-select" class="bg-slate-950 border border-slate-800 text-cyan-400 px-2 py-1 rounded focus:outline-none focus:border-cyan-500">
+          <option value="">載入中...</option>
+        </select>
+      </div>
+      <div class="text-[10px] text-slate-500">
+        學生總數: <span id="admin-student-count" class="text-white">0</span> 人
+      </div>
+    </div>
+
+    <!-- 學生名冊表格 -->
+    <div class="hud-panel p-4 bg-slate-900/90 border border-slate-800 overflow-x-auto">
+      <table class="w-full text-left font-tech text-xs border-collapse">
+        <thead>
+          <tr class="border-b border-slate-800 text-slate-400 uppercase tracking-wider text-[10px]">
+            <th class="py-2 px-3">座號</th>
+            <th class="py-2 px-3">特工暱稱</th>
+            <th class="py-2 px-3 text-right">累積金幣 (星)</th>
+            <th class="py-2 px-3 text-right">今日賺取</th>
+            <th class="py-2 px-3 text-center">錯題數量</th>
+            <th class="py-2 px-3 text-center">管理操作</th>
+          </tr>
+        </thead>
+        <tbody id="admin-students-list" class="divide-y divide-slate-800/40">
+          <!-- JS 動態插入 -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 全班性管理操作面板 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- 派發獎品 -->
+      <div class="hud-panel p-5 bg-slate-900/80 border border-slate-800 flex flex-col gap-3 font-pixel">
+        <h4 class="text-xs text-green-400 glow-green">// 全班獎勵派發 GLOBAL DISPATCH //</h4>
+        <p class="text-[9px] text-slate-500 font-tech">一鍵為當前班級所有註冊學生加發指定金額的金幣。</p>
+        <div class="flex gap-2 mt-2">
+          <input type="number" id="admin-batch-coins" placeholder="輸入金幣數量..."
+            class="flex-1 bg-slate-950 border border-slate-800 px-3 py-2 text-xs text-green-400 rounded focus:outline-none focus:border-green-500">
+          <button id="admin-batch-coins-btn" class="cyber-btn cyber-btn-green px-4 py-2 text-xs text-green-400 rounded">
+            派發金幣
+          </button>
+        </div>
+      </div>
+
+      <!-- 資料維護 -->
+      <div class="hud-panel p-5 bg-slate-900/80 border border-slate-800 flex flex-col gap-3 font-pixel">
+        <h4 class="text-xs text-pink-500 glow-pink">// 班級錯題一鍵維護 RE-CALIBRATE //</h4>
+        <p class="text-[9px] text-slate-500 font-tech">為當前班級內所有學生的一鍵清除所有的錯題記錄，釋放記憶體。</p>
+        <button id="admin-batch-reset-btn" class="cyber-btn cyber-btn-pink w-full py-2.5 text-xs text-pink-500 rounded mt-2">
+          ⚡ 清空全班錯題本
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
