@@ -93,9 +93,6 @@
               <div class="text-xs font-pixel text-yellow-400">${isMUnlocked ? `${avgAccPct}%` : `🔒 前任務達 ${reqPct}%正確`}</div>
             </div>
             <h4 class="text-base font-bold text-white mb-1">${config.desc}</h4>
-            <p class="text-[11px] text-slate-400 font-tech mb-2">
-              點擊卡片展開子關卡 (20關點陣挑戰)
-            </p>
             
             <!-- Hidden levels select grid -->
             <div class="mission-levels-grid grid grid-cols-5 gap-2 mt-4 pt-3 border-t border-slate-800 hidden" id="levels-grid-${i}">
