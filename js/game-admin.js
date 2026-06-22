@@ -33,6 +33,7 @@
         this.authorized = true;
         if (errorMsg) errorMsg.classList.add('hidden');
         this.initAdmin();
+        window.dispatchEvent(new CustomEvent('limit180AdminAuthorized'));
       } else {
         if (errorMsg) {
           errorMsg.classList.remove('hidden');

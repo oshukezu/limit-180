@@ -2,9 +2,21 @@
 // Manages promo codes redemption and cheat codes unlocking for testing.
 
 (function() {
+  function getCurrentIdentity() {
+    try {
+      const profileRaw = localStorage.getItem('limit180_user_profile');
+      if (!profileRaw) return null;
+      const parsed = JSON.parse(profileRaw);
+      if (!parsed?.grade_class || !parsed?.seat_number || !parsed?.nickname) return null;
+      return parsed;
+    } catch (_) {
+      return null;
+    }
+  }
+
   const StoreRedeem = {
     // 兌換代碼功能
-    redeemCode(code) {
+    async redeemCode(code) {
       const normalized = code.trim().toUpperCase();
       const msgEl = document.getElementById('redeem-msg');
       if (!msgEl) return;
@@ -18,65 +30,56 @@
         msgEl.classList.remove('hidden');
         return;
       }
-
-      const profile = window.MathSprintStorage.getProfile();
-      let success = false;
-      let alertMsg = '';
-
-      // 檢查兌換代碼
-      if (normalized === 'UNLOCK7') {
-        // 作弊測試碼：解鎖全關卡 + 200萬金幣
-        profile.total_stars = (profile.total_stars || 0) + 2000000;
-        profile.today_earnings = (profile.today_earnings || 0) + 2000000;
-        profile.max_unlocked_phase = 5; // 五個階段全解鎖
-        profile.placement_status = 'ELITE'; // 段位直接成菁英
-        
-        // 將 M1-M50 所有關卡標記為已通過 (100% 正確率 3星)
-        const MISSION_CONFIGS = window.MathSprintConfigs.MISSION_CONFIGS;
-        Object.keys(MISSION_CONFIGS).forEach(mId => {
-          for (let lId = 1; lId <= 20; lId++) {
-            const key = `mission-${mId}-level-${lId}`;
-            if (!profile.level_records[key]) {
-              profile.level_records[key] = {
-                stars: 200 * lId, // 賦予基礎星等分數
-                best_avg_time: 1.5,
-                max_combo: 20,
-                min_time: 1.0,
-                accuracy: 1.0,
-                is_passed: true
-              };
-            } else {
-              profile.level_records[key].is_passed = true;
-              profile.level_records[key].accuracy = Math.max(profile.level_records[key].accuracy || 0, 1.0);
-            }
-          }
-        });
-        
-        window.MathSprintStorage.saveProfile(profile);
-        success = true;
-        alertMsg = '🔓 測試代碼生效：已解鎖全關卡與 Mission！並獲得 2,000,000 💰 金幣！';
-      } else if (normalized === 'COINS88') {
-        // 一般獎勵碼 1：+88,000 金幣
-        profile.total_stars = (profile.total_stars || 0) + 88000;
-        profile.today_earnings = (profile.today_earnings || 0) + 88000;
-        window.MathSprintStorage.saveProfile(profile);
-        success = true;
-        alertMsg = '🎁 兌換成功：獲得 88,000 💰 金幣！';
-      } else if (normalized === 'SECRET7') {
-        // 一般獎勵碼 2：+150,000 金幣
-        profile.total_stars = (profile.total_stars || 0) + 150000;
-        profile.today_earnings = (profile.today_earnings || 0) + 150000;
-        window.MathSprintStorage.saveProfile(profile);
-        success = true;
-        alertMsg = '🎁 兌換成功：獲得 150,000 💰 金幣！';
-      } else {
-        msgEl.textContent = '❌ 無效的兌換代碼！';
+      if (!/^[A-Z0-9]{7}$/.test(normalized)) {
+        msgEl.textContent = '❌ 代碼需為 7 位英數字。';
         msgEl.className = 'text-[9px] text-red-400 font-tech';
         msgEl.classList.remove('hidden');
         return;
       }
 
-      if (success) {
+      const identity = getCurrentIdentity();
+      if (!identity) {
+        msgEl.textContent = '❌ 請先完成身份綁定後再兌換。';
+        msgEl.className = 'text-[9px] text-red-400 font-tech';
+        msgEl.classList.remove('hidden');
+        return;
+      }
+
+      if (!window.MathSprintSupabaseService?.redeemPromoCode) {
+        msgEl.textContent = '❌ 雲端功能未啟用，無法兌換代碼。';
+        msgEl.className = 'text-[9px] text-red-400 font-tech';
+        msgEl.classList.remove('hidden');
+        return;
+      }
+
+      try {
+        const result = await window.MathSprintSupabaseService.redeemPromoCode(
+          normalized,
+          identity.grade_class,
+          identity.seat_number,
+          identity.nickname
+        );
+
+        const profile = window.MathSprintStorage.getProfile();
+        const earned = Number(result.coinsReward || 0);
+        profile.total_stars = (profile.total_stars || 0) + earned;
+        profile.today_earnings = (profile.today_earnings || 0) + earned;
+        window.MathSprintStorage.saveProfile(profile);
+
+        if (window.MathSprintSupabaseService.saveGlobalProfile) {
+          await window.MathSprintSupabaseService.saveGlobalProfile(
+            identity.grade_class,
+            identity.seat_number,
+            identity.nickname,
+            profile.total_stars || 0,
+            profile.purchased_themes || ['akaimon'],
+            profile.equipped_avatar || 'avatar-default',
+            profile.equipped_border || 'border-none',
+            profile.equipped_badges || [],
+            profile.unlocked_assets || ['avatar-default', 'border-none']
+          );
+        }
+
         msgEl.textContent = '✓ 兌換成功！';
         msgEl.className = 'text-[9px] text-green-400 font-tech';
         msgEl.classList.remove('hidden');
@@ -93,9 +96,13 @@
         if (window.MathSprintAudio && window.MathSprintAudio.play) {
           window.MathSprintAudio.play('success');
         }
-        
-        alert(alertMsg);
+
+        alert(`🎁 兌換成功：獲得 ${earned.toLocaleString('zh-TW')} 💰 金幣！`);
         document.getElementById('redeem-code-input').value = '';
+      } catch (err) {
+        msgEl.textContent = `❌ ${err?.message || '兌換失敗'}`;
+        msgEl.className = 'text-[9px] text-red-400 font-tech';
+        msgEl.classList.remove('hidden');
       }
     }
   };
