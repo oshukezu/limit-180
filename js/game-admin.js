@@ -9,7 +9,7 @@
   const BADGES = window.MATH_SPRINT_BADGES || {};
 
   const Customization = {
-    currentTab: 'avatar', // avatar, border, badge
+    currentTab: 'theme', // theme, avatar, border, badge
     tempProfile: {},      // 用於暫存選擇但尚未儲存的外觀
 
     openModal() {
@@ -18,6 +18,8 @@
 
       const profile = window.MathSprintStorage.getProfile();
       this.tempProfile = {
+        equipped_theme: profile.equipped_theme || 'akaimon',
+        purchased_themes: [...(profile.purchased_themes || ['akaimon'])],
         equipped_avatar: profile.equipped_avatar || 'avatar-default',
         equipped_border: profile.equipped_border || 'border-none',
         equipped_badges: [...(profile.equipped_badges || [])],
@@ -25,7 +27,7 @@
       };
 
       this.updatePreview();
-      this.switchTab('avatar');
+      this.switchTab('theme');
       modal.classList.remove('hidden');
     },
 
@@ -37,11 +39,11 @@
 
       // 更新頭像
       const avObj = AVATARS[this.tempProfile.equipped_avatar] || AVATARS['avatar-default'];
-      if (avImg) avImg.textContent = avObj.icon;
+      if (avImg) avImg.textContent = avObj ? avObj.icon : '🛡️';
 
       // 更新頭像框
       const borObj = BORDERS[this.tempProfile.equipped_border] || BORDERS['border-none'];
-      if (avBorder) {
+      if (avBorder && borObj) {
         avBorder.style.borderColor = borObj.color;
         if (borObj.id !== 'border-none') {
           avBorder.style.boxShadow = `0 0 10px ${borObj.color}`;
@@ -58,23 +60,17 @@
       if (avBadges) {
         avBadges.innerHTML = '';
         const badges = this.tempProfile.equipped_badges || [];
-        const badgeMeta = {
-          first_step: '🐣',
-          error_buster: '🧹',
-          mission_clear: '👑',
-          stars_50: '💰',
-          mission_perfect: '💎'
-        };
-
         if (badges.length === 0) {
           avBadges.innerHTML = `<span class="text-[9px] text-slate-600">// 未配戴徽章 //</span>`;
         } else {
           badges.forEach(bId => {
-            const icon = badgeMeta[bId] || '🎖️';
-            const span = document.createElement('span');
-            span.className = 'text-base';
-            span.textContent = icon;
-            avBadges.appendChild(span);
+            const b = window.MATH_SPRINT_BADGES[bId];
+            if (b) {
+              const span = document.createElement('span');
+              span.className = 'text-base';
+              span.textContent = b.icon;
+              avBadges.appendChild(span);
+            }
           });
         }
       }
@@ -82,7 +78,7 @@
 
     switchTab(tabType) {
       this.currentTab = tabType;
-      const tabs = ['avatar', 'border', 'badge'];
+      const tabs = ['theme', 'avatar', 'border', 'badge'];
       tabs.forEach(t => {
         const btn = document.getElementById(`tab-custom-${t}`);
         if (btn) {
@@ -102,31 +98,51 @@
       container.innerHTML = '';
 
       const profile = window.MathSprintStorage.getProfile();
-      const currentCoins = profile.total_stars || 0;
 
-      if (this.currentTab === 'avatar') {
-        // 渲染頭像
+      if (this.currentTab === 'theme') {
+        const themes = window.ThemeManager.THEMES;
+        const ownedThemes = this.tempProfile.purchased_themes || ['akaimon'];
+
+        Object.keys(themes).forEach(key => {
+          const theme = themes[key];
+          const isOwned = ownedThemes.includes(theme.id);
+          if (!isOwned) return;
+
+          const isSelected = this.tempProfile.equipped_theme === theme.id;
+          const row = document.createElement('div');
+          row.className = `p-3 bg-slate-900 border flex justify-between items-center rounded-xl font-pixel text-xs ${isSelected ? 'border-cyan-500' : 'border-slate-800'}`;
+
+          let btnHtml = isSelected 
+            ? `<span class="text-cyan-400">已選定</span>`
+            : `<button class="cyber-btn px-4 py-1.5 text-[10px] text-cyan-400 rounded" onclick="window.AgentCustomization.selectTheme('${theme.id}')">裝備</button>`;
+
+          row.innerHTML = `
+            <div class="flex items-center gap-3">
+              <div class="flex -space-x-1.5 shrink-0">
+                <div class="w-4 h-4 rounded-full border border-slate-950" style="background-color: ${theme.preview[0]};"></div>
+                <div class="w-4 h-4 rounded-full border border-slate-950" style="background-color: ${theme.preview[1]};"></div>
+                <div class="w-4 h-4 rounded-full border border-slate-950" style="background-color: ${theme.preview[2]};"></div>
+              </div>
+              <span class="text-white">${theme.name}</span>
+            </div>
+            <div>${btnHtml}</div>
+          `;
+          container.appendChild(row);
+        });
+
+      } else if (this.currentTab === 'avatar') {
         Object.keys(AVATARS).forEach(key => {
           const av = AVATARS[key];
           const isUnlocked = this.tempProfile.unlocked_assets.includes(av.id);
-          const isSelected = this.tempProfile.equipped_avatar === av.id;
+          if (!isUnlocked) return;
 
+          const isSelected = this.tempProfile.equipped_avatar === av.id;
           const row = document.createElement('div');
           row.className = `p-3 bg-slate-900 border flex justify-between items-center rounded-xl font-pixel text-xs ${isSelected ? 'border-cyan-500' : 'border-slate-800'}`;
           
-          let btnHtml = '';
-          if (isSelected) {
-            btnHtml = `<span class="text-cyan-400">已選定</span>`;
-          } else if (isUnlocked) {
-            btnHtml = `<button class="cyber-btn px-4 py-1.5 text-[10px] text-cyan-400 rounded" onclick="window.AgentCustomization.selectAvatar('${av.id}')">裝備</button>`;
-          } else {
-            const canAfford = currentCoins >= av.price;
-            if (canAfford) {
-              btnHtml = `<button class="cyber-btn cyber-btn-green px-4 py-1.5 text-[10px] text-green-400 rounded" onclick="window.AgentCustomization.unlockAsset('${av.id}', ${av.price})">解鎖 💰${av.price.toLocaleString()}</button>`;
-            } else {
-              btnHtml = `<span class="text-slate-600 text-[10px]">餘額不足</span>`;
-            }
-          }
+          let btnHtml = isSelected 
+            ? `<span class="text-cyan-400">已選定</span>`
+            : `<button class="cyber-btn px-4 py-1.5 text-[10px] text-cyan-400 rounded" onclick="window.AgentCustomization.selectAvatar('${av.id}')">裝備</button>`;
 
           row.innerHTML = `
             <div class="flex items-center gap-3">
@@ -137,33 +153,24 @@
           `;
           container.appendChild(row);
         });
+
       } else if (this.currentTab === 'border') {
-        // 渲染頭像框
         Object.keys(BORDERS).forEach(key => {
           const bor = BORDERS[key];
           const isUnlocked = this.tempProfile.unlocked_assets.includes(bor.id);
-          const isSelected = this.tempProfile.equipped_border === bor.id;
+          if (!isUnlocked) return;
 
+          const isSelected = this.tempProfile.equipped_border === bor.id;
           const row = document.createElement('div');
           row.className = `p-3 bg-slate-900 border flex justify-between items-center rounded-xl font-pixel text-xs ${isSelected ? 'border-cyan-500' : 'border-slate-800'}`;
 
-          let btnHtml = '';
-          if (isSelected) {
-            btnHtml = `<span class="text-cyan-400">已選定</span>`;
-          } else if (isUnlocked) {
-            btnHtml = `<button class="cyber-btn px-4 py-1.5 text-[10px] text-cyan-400 rounded" onclick="window.AgentCustomization.selectBorder('${bor.id}')">裝備</button>`;
-          } else {
-            const canAfford = currentCoins >= bor.price;
-            if (canAfford) {
-              btnHtml = `<button class="cyber-btn cyber-btn-green px-4 py-1.5 text-[10px] text-green-400 rounded" onclick="window.AgentCustomization.unlockAsset('${bor.id}', ${bor.price})">解鎖 💰${bor.price.toLocaleString()}</button>`;
-            } else {
-              btnHtml = `<span class="text-slate-600 text-[10px]">餘額不足</span>`;
-            }
-          }
+          let btnHtml = isSelected 
+            ? `<span class="text-cyan-400">已選定</span>`
+            : `<button class="cyber-btn px-4 py-1.5 text-[10px] text-cyan-400 rounded" onclick="window.AgentCustomization.selectBorder('${bor.id}')">裝備</button>`;
 
           row.innerHTML = `
             <div class="flex items-center gap-3">
-              <div class="w-8 h-8 rounded-full border-4 flex items-center justify-center" style="border-color: ${bor.color};">
+              <div class="w-8 h-8 rounded-full border-4 flex items-center justify-center bg-slate-950" style="border-color: ${bor.color};">
                 <span class="text-xs">👤</span>
               </div>
               <span class="text-white">${bor.name}</span>
@@ -172,14 +179,13 @@
           `;
           container.appendChild(row);
         });
+
       } else if (this.currentTab === 'badge') {
-        // 渲染徽章配戴
         const unlockedAchievements = profile.unlocked_achievements || [];
         const badgeMeta = window.MATH_SPRINT_BADGES;
 
         let hasBadges = false;
         Object.keys(badgeMeta).forEach(bId => {
-          // 動態檢查此徽章是否解鎖（成就牆有此成就，或者符合達成條件）
           const isUnlocked = unlockedAchievements.includes(bId) || 
                              unlockedAchievements.some(a => a.endsWith('_' + bId)) ||
                              (bId === 'error_buster' && (profile.total_review_correct_count || 0) >= 20);
@@ -222,11 +228,16 @@
           container.innerHTML = `
             <div class="text-center py-8 font-pixel text-slate-600 text-xs">
               🔒 尚未獲得任何特工徽章！<br>
-              請至關卡挑戰中解鎖成就。
+              請至關卡挑戰中解鎖，或在商店中購買。
             </div>
           `;
         }
       }
+    },
+
+    selectTheme(themeId) {
+      this.tempProfile.equipped_theme = themeId;
+      this.renderList();
     },
 
     selectAvatar(avId) {
@@ -252,32 +263,6 @@
       this.tempProfile.equipped_badges = this.tempProfile.equipped_badges.filter(id => id !== bId);
       this.updatePreview();
       this.renderList();
-    },
-
-    unlockAsset(assetId, price) {
-      // 獲取該外觀的顯示名稱
-      const name = (AVATARS[assetId]?.name || BORDERS[assetId]?.name || '新外觀').replace(/[🛡️🐱🕶️👑🥷✨⚡🌸]/g, '').trim();
-      if (!confirm(`確定要花費 💰${price.toLocaleString()} 金幣解鎖外觀「${name}」嗎？`)) {
-        return;
-      }
-
-      const profile = window.MathSprintStorage.getProfile();
-      if ((profile.total_stars || 0) < price) {
-        alert('特工，您的金幣餘額不足以解鎖此項外觀！');
-        return;
-      }
-
-      profile.total_stars -= price;
-      profile.unlocked_assets = profile.unlocked_assets || ['avatar-default', 'border-none'];
-      profile.unlocked_assets.push(assetId);
-      window.MathSprintStorage.saveProfile(profile);
-
-      // 同步臨時狀態
-      this.tempProfile.unlocked_assets.push(assetId);
-      alert('🔓 成功解鎖新外觀項目！');
-      
-      this.renderList();
-      this.updatePreview();
     },
 
     saveAndApply() {
@@ -659,8 +644,8 @@
       });
     }
 
-    // 綁定分頁按鈕
-    ['avatar', 'border', 'badge'].forEach(tab => {
+    // 綁定分頁按鈕 (包含背景主題)
+    ['theme', 'avatar', 'border', 'badge'].forEach(tab => {
       const tabBtn = document.getElementById(`tab-custom-${tab}`);
       if (tabBtn) {
         tabBtn.addEventListener('click', () => Customization.switchTab(tab));
@@ -697,47 +682,104 @@
       batchResetBtn.addEventListener('click', () => Admin.batchResetWrong());
     }
 
-    // 實時裝備框線渲染至大廳與首頁
+    // 實時裝備框線與檔案名牌渲染至首頁大卡片
     window.addEventListener('mathSprintProfileUpdated', () => {
       const profile = window.MathSprintStorage.getProfile();
-      // 在首頁個人資訊橫條加上頭像與頭貼框渲染
-      const profileInfoBar = document.getElementById('user-profile-bar');
-      if (profileInfoBar) {
-        const infoEl = document.getElementById('user-profile-info');
-        const avObj = AVATARS[profile.equipped_avatar] || AVATARS['avatar-default'];
-        const borObj = BORDERS[profile.equipped_border] || BORDERS['border-none'];
-        
-        let borderStyle = '';
+      
+      const avImg = document.getElementById('home-avatar-img');
+      const avBorder = document.getElementById('home-avatar-border');
+      const agentName = document.getElementById('home-agent-nickname');
+      const classInfo = document.getElementById('home-agent-class-info');
+      const badgesContainer = document.getElementById('home-agent-badges');
+      const maxStageBadge = document.getElementById('home-max-stage-badge');
+
+      const avObj = AVATARS[profile.equipped_avatar] || AVATARS['avatar-default'] || { icon: '🛡️' };
+      const borObj = BORDERS[profile.equipped_border] || BORDERS['border-none'] || { color: 'transparent', id: 'border-none' };
+      
+      // 1. 更新頭像
+      if (avImg) avImg.textContent = avObj.icon;
+
+      // 2. 更新頭像框
+      if (avBorder) {
+        avBorder.style.borderColor = borObj.color;
         if (borObj.id !== 'border-none') {
-          borderStyle = `border: 2px solid ${borObj.color}; box-shadow: 0 0 5px ${borObj.color};`;
+          avBorder.style.boxShadow = `0 0 10px ${borObj.color}`;
+        } else {
+          avBorder.style.boxShadow = 'none';
+        }
+      }
+
+      // 3. 更新暱稱
+      const uProfile = JSON.parse(localStorage.getItem('limit180_user_profile') || '{}');
+      if (agentName) agentName.textContent = uProfile.nickname || profile.nickname || '訪客特工';
+
+      // 4. 更新班級座號
+      if (classInfo) {
+        const grade = profile.grade_class.charAt(0);
+        const classNum = parseInt(profile.grade_class.substring(1));
+        const chineseNumbers = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九"];
+        
+        let displayClass = `${profile.grade_class}班`;
+        if (grade >= '1' && grade <= '9' && !isNaN(classNum)) {
+          const gradeStr = chineseNumbers[parseInt(grade)] || grade;
+          displayClass = `${gradeStr}年${classNum}班`;
+        }
+        classInfo.textContent = `${displayClass} 座號 ${profile.seat_number} 號`;
+      }
+
+      // 5. 更新徽章
+      if (badgesContainer) {
+        badgesContainer.innerHTML = '';
+        const equippedBadges = profile.equipped_badges || [];
+        if (equippedBadges.length === 0) {
+          badgesContainer.innerHTML = `<span class="text-[9px] text-slate-500">// 尚未配戴徽章 //</span>`;
+        } else {
+          equippedBadges.forEach(bId => {
+            const b = window.MATH_SPRINT_BADGES[bId];
+            if (b) {
+              const span = document.createElement('span');
+              span.className = 'text-sm cursor-help';
+              span.textContent = b.icon;
+              span.title = `${b.name}: ${b.desc}`;
+              badgesContainer.appendChild(span);
+            }
+          });
+        }
+      }
+
+      // 6. 計算並更新最高通關關卡 (Stage 勳章)
+      if (maxStageBadge) {
+        let maxMission = 1;
+        let maxLevel = 1;
+        let hasAnyRecord = false;
+
+        if (profile.level_records) {
+          Object.keys(profile.level_records).forEach(key => {
+            const match = key.match(/mission-(\d+)-level-(\d+)/);
+            if (match) {
+              const m = parseInt(match[1]);
+              const l = parseInt(match[2]);
+              const record = profile.level_records[key];
+              if (record && record.is_passed) {
+                hasAnyRecord = true;
+                if (m > maxMission || (m === maxMission && l > maxLevel)) {
+                  maxMission = m;
+                  maxLevel = l;
+                }
+              }
+            }
+          });
         }
 
-        // 修改頭貼顯示
-        if (infoEl) {
-          // 動態替換頭貼與框線 html
-          const grade = profile.grade_class.charAt(0);
-          const classNum = parseInt(profile.grade_class.substring(1));
-          const chineseNumbers = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九"];
-          
-          let displayClass = `${profile.grade_class}班`;
-          if (grade >= '1' && grade <= '9' && !isNaN(classNum)) {
-            const gradeStr = chineseNumbers[parseInt(grade)] || grade;
-            displayClass = `${gradeStr}年${classNum}班`;
+        if (hasAnyRecord) {
+          maxStageBadge.textContent = `M${maxMission} L${maxLevel}`;
+        } else {
+          // 定級測試判定
+          if (profile.placement_status === 'ELITE') {
+            maxStageBadge.textContent = 'M21 L1';
+          } else {
+            maxStageBadge.textContent = 'M1 L1';
           }
-
-          const badgeIcons = (profile.equipped_badges || []).map(bId => {
-            const b = window.MATH_SPRINT_BADGES[bId];
-            return b ? b.icon : '🎖️';
-          }).join('');
-
-          infoEl.innerHTML = `
-            <div class="flex items-center gap-2">
-              <div class="w-7 h-7 rounded-full flex items-center justify-center text-sm" style="${borderStyle}">
-                ${avObj.icon}
-              </div>
-              <span>${displayClass} 座號${profile.seat_number} ${profile.nickname} ${badgeIcons}</span>
-            </div>
-          `;
         }
       }
     });

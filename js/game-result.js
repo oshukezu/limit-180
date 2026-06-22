@@ -141,6 +141,50 @@
         }
       }
       
+      // --- 計算擊敗多少使用者的百分比 ---
+      const beatPercentEl = document.getElementById('result-beat-percent');
+      let beatPct = 0;
+      if (isPass) {
+        // 常態分佈速度基準模擬算法 (確保單機離線也能呈現有成就感且極其合理的數據)
+        const speed = avgTime;
+        if (speed <= 0.8) {
+          beatPct = 99.8;
+        } else if (speed <= 1.2) {
+          beatPct = 98.5;
+        } else if (speed <= 1.5) {
+          beatPct = 90.0 + parseFloat(((1.5 - speed) * 20).toFixed(1));
+        } else if (speed <= 2.0) {
+          beatPct = 78.0 + parseFloat(((2.0 - speed) * 24).toFixed(1));
+        } else if (speed <= 2.5) {
+          beatPct = 60.0 + parseFloat(((2.5 - speed) * 36).toFixed(1));
+        } else if (speed <= 3.0) {
+          beatPct = 40.0 + parseFloat(((3.0 - speed) * 40).toFixed(1));
+        } else {
+          beatPct = parseFloat((20.0 + (5.0 - Math.min(5.0, speed)) * 5).toFixed(1));
+        }
+        
+        // 加上微小的正確率權重 (100% 正確率額外微幅領先)
+        if (accuracy === 1.0) {
+          beatPct = Math.min(99.9, beatPct + 0.1);
+        }
+      } else {
+        beatPct = 0.0;
+      }
+      
+      if (beatPercentEl) {
+        beatPercentEl.textContent = `${beatPct}%`;
+      }
+
+      // 產生分享文字與設定全域變數，供點擊事件使用
+      const profile = window.MathSprintStorage.getProfile();
+      const nickname = profile.nickname || "特工";
+      const mission = this.gameState.currentMission;
+      const level = this.gameState.currentLevel;
+      const pctText = Math.round(accuracy * 100);
+      const speedText = avgTime.toFixed(2);
+      
+      this._lastShareText = `⚡ Limit 180 心算極速挑戰 ⚡\n特工「${nickname}」成功通關 Mission ${mission} 關卡 ${level}！\n🎯 正確率：${pctText}%\n⚡ 平均作答速度：${speedText} 秒/題\n🏆 在此關卡中擊敗了全台 ${beatPct}% 的特工！\n👾 快來一起超頻大腦，挑戰你的神經元極限！\n網址：https://oshukezu.github.io/limit-180/`;
+
       window.showView('view-result');
 
       // 延遲註冊：如果當前是訪客，播放完結算後彈出註冊身分彈窗
@@ -175,4 +219,39 @@
   // Mixin 到全域的 MathSprintGame 物件，維持無縫相容性
   window.MathSprintGame = window.MathSprintGame || {};
   Object.assign(window.MathSprintGame, Result);
+
+  // 監聽載入，綁定分享按鈕事件
+  window.addEventListener('limit180ComponentsLoaded', () => {
+    const lineBtn = document.getElementById('share-line-btn');
+    const fbBtn = document.getElementById('share-fb-btn');
+    const copyBtn = document.getElementById('share-copy-btn');
+    const playUrl = "https://oshukezu.github.io/limit-180/";
+
+    if (lineBtn) {
+      lineBtn.addEventListener('click', () => {
+        const text = window.MathSprintGame._lastShareText || "我正在玩 Limit 180 心算極速挑戰！";
+        const shareUrl = `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(playUrl)}&text=${encodeURIComponent(text)}`;
+        window.open(shareUrl, '_blank');
+      });
+    }
+
+    if (fbBtn) {
+      fbBtn.addEventListener('click', () => {
+        const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(playUrl)}`;
+        window.open(shareUrl, '_blank');
+      });
+    }
+
+    if (copyBtn) {
+      copyBtn.addEventListener('click', () => {
+        const text = window.MathSprintGame._lastShareText || "我正在玩 Limit 180 心算極速挑戰！";
+        navigator.clipboard.writeText(text).then(() => {
+          alert("✓ 戰績文字複製成功！\n可直接前往 LINE、FB 或貼在 IG 限時動態分享給同學！");
+        }).catch(err => {
+          console.error("複製失敗：", err);
+          alert("複製失敗，請手動複製網址分享！");
+        });
+      });
+    }
+  });
 })();

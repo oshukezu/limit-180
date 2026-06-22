@@ -256,19 +256,11 @@
       }
     },
 
-    // 產生按鈕的 HTML
+    // 產生按鈕的 HTML (商店只負責購買)
     generateButtonHtml(itemId, price, isPurchased, isEquipped, currentCoins, type) {
-      if (isEquipped) {
+      if (isEquipped || isPurchased) {
         return `
-          <button class="px-4 py-2 text-xs font-pixel rounded bg-slate-800 text-slate-500 border border-slate-700 cursor-default" disabled>
-            裝備中
-          </button>
-        `;
-      } else if (isPurchased) {
-        return `
-          <button class="px-4 py-2 text-xs font-pixel rounded bg-cyan-950/40 text-cyan-400 border border-cyan-500 hover:bg-cyan-500 hover:text-black transition-all duration-200" onclick="window.GameStore.equip('${itemId}', '${type}')">
-            裝備
-          </button>
+          <span class="text-slate-500 text-xs font-pixel">// 已解鎖 //</span>
         `;
       } else {
         const canAfford = currentCoins >= price;
@@ -294,45 +286,6 @@
           `;
         }
       }
-    },
-
-    // 裝備商品
-    equip(itemId, type) {
-      const profile = window.MathSprintStorage.getProfile();
-
-      if (type === 'theme') {
-        if (!profile.purchased_themes.includes(itemId)) return;
-        profile.equipped_theme = itemId;
-        window.MathSprintStorage.saveProfile(profile);
-        window.ThemeManager.applyTheme(itemId);
-      } else if (type === 'avatar') {
-        if (!profile.unlocked_assets.includes(itemId)) return;
-        profile.equipped_avatar = itemId;
-        window.MathSprintStorage.saveProfile(profile);
-      } else if (type === 'border') {
-        if (!profile.unlocked_assets.includes(itemId)) return;
-        profile.equipped_border = itemId;
-        window.MathSprintStorage.saveProfile(profile);
-      } else if (type === 'badge') {
-        profile.unlocked_achievements = profile.unlocked_achievements || [];
-        if (!profile.unlocked_achievements.includes(itemId)) return;
-        
-        profile.equipped_badges = profile.equipped_badges || [];
-        // 若已經裝備該徽章，點擊則解除裝備
-        if (profile.equipped_badges.includes(itemId)) {
-          profile.equipped_badges = profile.equipped_badges.filter(id => id !== itemId);
-        } else {
-          // 上限 2 個
-          if (profile.equipped_badges.length >= 2) {
-            alert('最多只能配戴 2 個徽章！請先點擊已配戴的徽章解除。');
-            return;
-          }
-          profile.equipped_badges.push(itemId);
-        }
-        window.MathSprintStorage.saveProfile(profile);
-      }
-
-      this.renderStore();
     },
 
     // 購買商品
