@@ -46,6 +46,7 @@
 
 ### 🎮 元件化關卡架構與多主題商店
 * **模組化 Mission 拆分**：各關卡的題目生成演算法已徹底解耦，拆分至 `js/missions/` 獨立元件中，方便未來隨時擴充新題目類型。
+* **單一檔案不超過 400 行限制**：專案經過極限重構，將龐大的檔案重構為多個高內聚的微型子元件（如 `storage-locks.js`、`storage-wrong.js`、`game-store-redeem.js`、`game-customization.js` 與 `game-lifecycle.js`），確保專案中沒有任何單一 JS 檔案行數超過 400 行，極大提升可讀性與維護性。
 * **多主題配色與特工商店**：
   1. **「赤門櫻花」 (預設裝備)**：古風粉黑配色，完全移除霓虹發光特效（去 glow/去 panel 邊條漸層/去按鈕 Hover 發光），並改用動態粉色落櫻飄雪（Sakura Canvas）作為背景，視覺感受溫潤舒適。
   2. **「特務霓虹」 (80,000 💰 金幣解鎖)**：經典 Cyberpunk 霓虹風格，擁有 `@keyframes scan-double` 藍粉雙軌流光背景與全螢幕發光特效。

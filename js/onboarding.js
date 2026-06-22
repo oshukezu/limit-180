@@ -1,11 +1,5 @@
 // Limit 180 玩家身份綁定與 Onboarding 模組
 (function() {
-  // 敏感詞過濾清單 (簡易防霸凌過濾)
-  const SENSITIVE_WORDS = [
-    '幹', '傻逼', '垃圾', '智障', '死', '白癡', '白痴', '廢物', 
-    'fuck', 'shit', 'bitch', '幹你娘', '機掰', '屁股', '笨蛋', '智障'
-  ];
-
   let modal = null;
   let form = null;
   let errorMsg = null;
@@ -15,46 +9,31 @@
 
   // 1. 初始化監聽與 UI 元件
   window.addEventListener('limit180ComponentsLoaded', () => {
-    modal = document.getElementById('profile-modal');
-    form = document.getElementById('profile-form');
-    errorMsg = document.getElementById('profile-error-msg');
-    profileBar = document.getElementById('user-profile-bar');
-    profileInfo = document.getElementById('user-profile-info');
+    const getEl = id => document.getElementById(id);
+    modal = getEl('profile-modal');
+    form = getEl('profile-form');
+    errorMsg = getEl('profile-error-msg');
+    profileBar = getEl('user-profile-bar');
+    profileInfo = getEl('user-profile-info');
 
-    if (form) {
-      form.addEventListener('submit', handleFormSubmit);
-    }
+    if (form) form.addEventListener('submit', handleFormSubmit);
 
-    const inputClass = document.getElementById('profile-class');
+    const inputClass = getEl('profile-class');
     if (inputClass) {
       inputClass.addEventListener('input', (e) => {
-        // 自動將英文轉大寫，並剔除空格、特殊符號與中文
         let val = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-        // 限制前兩位只能是英文字母，後面三位只能是數字，總長度最多 5 位
-        let letterPart = val.substring(0, 2).replace(/[^A-Z]/g, '');
-        let digitPart = val.substring(2, 5).replace(/[^0-9]/g, '');
-        e.target.value = letterPart + digitPart;
+        e.target.value = val.substring(0, 2).replace(/[^A-Z]/g, '') + val.substring(2, 5).replace(/[^0-9]/g, '');
       });
     }
 
-    const editBtn = document.getElementById('edit-profile-btn');
-    if (editBtn) {
-      editBtn.addEventListener('click', () => showProfileModal(true));
-    }
+    const editBtn = getEl('edit-profile-btn');
+    if (editBtn) editBtn.addEventListener('click', () => showProfileModal(true));
 
-    const closeBtn = document.getElementById('profile-close-btn');
-    if (closeBtn) {
-      closeBtn.addEventListener('click', () => {
-        if (modal) modal.classList.add('hidden');
-      });
-    }
+    const closeBtn = getEl('profile-close-btn');
+    if (closeBtn) closeBtn.addEventListener('click', () => modal?.classList.add('hidden'));
 
-    const skipBtn = document.getElementById('profile-skip-btn');
-    if (skipBtn) {
-      skipBtn.addEventListener('click', () => {
-        if (modal) modal.classList.add('hidden');
-      });
-    }
+    const skipBtn = getEl('profile-skip-btn');
+    if (skipBtn) skipBtn.addEventListener('click', () => modal?.classList.add('hidden'));
 
     checkUserOnboarding();
   });
@@ -147,31 +126,25 @@
     const inputSeat = document.getElementById('profile-seat').value.trim();
     const inputNickname = document.getElementById('profile-nickname').value.trim();
 
-    // 驗證班級 (一律以英文字母 2 位 + 數字 3 位做定義，如 ST501)
-    if (!/^[A-Z]{2}[0-9]{3}$/.test(inputClass)) {
-      showError("班級格式錯誤，須為 2 位英文字母 + 3 位數字組合（例如：ST501）");
-      return;
-    }
+    const validator = window.MathSprintOnboardingValidator;
+    if (validator) {
+      const clsRes = validator.validateClass(inputClass);
+      if (!clsRes.valid) {
+        showError(clsRes.error);
+        return;
+      }
 
-    // 驗證座號 (1-50號)
-    const seatNum = parseInt(inputSeat);
-    if (isNaN(seatNum) || seatNum < 1 || seatNum > 50) {
-      showError("座號錯誤，須為 1 至 50 號");
-      return;
-    }
+      const seatRes = validator.validateSeat(inputSeat);
+      if (!seatRes.valid) {
+        showError(seatRes.error);
+        return;
+      }
 
-    // 驗證暱稱長度 (2-8字元)
-    if (inputNickname.length < 2 || inputNickname.length > 8) {
-      showError("暱稱長度須在 2 至 8 個字元之間");
-      return;
-    }
-
-    // 防霸警過濾
-    const lowercaseNick = inputNickname.toLowerCase();
-    const containsSensitive = SENSITIVE_WORDS.some(word => lowercaseNick.includes(word));
-    if (containsSensitive) {
-      showError("暱稱包含敏感詞，請重新輸入");
-      return;
+      const nickRes = validator.validateNickname(inputNickname);
+      if (!nickRes.valid) {
+        showError(nickRes.error);
+        return;
+      }
     }
 
     // 取得提交按鈕
@@ -351,7 +324,6 @@
   // 5. 更新首頁右上角的身份顯示
   function updateUserProfileBar(profile) {
     if (!profileBar || !profileInfo) return;
-    
     const editBtn = document.getElementById('edit-profile-btn');
     if (profile.grade_class === '訪客') {
       profileInfo.textContent = `訪客特工 通關首局後綁定成績`;
@@ -359,20 +331,13 @@
       profileBar.classList.remove('hidden');
       return;
     }
-    
     if (editBtn) editBtn.classList.remove('hidden');
-    
-    // 解析班級名稱 (e.g. 501 轉為 五年一班，或者直接顯示 [501班])
     const grade = profile.grade_class.charAt(0);
-    const classNum = parseInt(profile.grade_class.substring(1));
-    const chineseNumbers = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九"];
-    
-    let displayClass = `${profile.grade_class}班`;
-    if (grade >= '1' && grade <= '9' && !isNaN(classNum)) {
-      const gradeStr = chineseNumbers[parseInt(grade)] || grade;
-      displayClass = `${gradeStr}年${classNum}班`;
-    }
-
+    const num = parseInt(profile.grade_class.substring(1));
+    const cns = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九"];
+    const displayClass = (grade >= '1' && grade <= '9' && !isNaN(num))
+      ? `${cns[parseInt(grade)] || grade}年${num}班`
+      : `${profile.grade_class}班`;
     profileInfo.textContent = `${displayClass} 座號${profile.seat_number} ${profile.nickname}`;
     profileBar.classList.remove('hidden');
   }
@@ -383,57 +348,35 @@
     const profileStr = localStorage.getItem('limit180_user_profile');
     if (!profileStr) return;
     const u = JSON.parse(profileStr);
+    if (!window.MathSprintStorage) return;
 
-    if (window.MathSprintStorage) {
-      const localProfile = window.MathSprintStorage.getProfile();
-      let missionStars = 0;
-      let totalTime = 0;
-      let count = 0;
-      let minTime = 999;
+    const lp = window.MathSprintStorage.getProfile();
+    let stars = 0, totalTime = 0, count = 0, minTime = 999;
 
-      for (let l = 1; l <= 20; l++) {
-        const rec = localProfile.level_records[`mission-${missionId}-level-${l}`];
-        if (rec) {
-          missionStars += rec.stars || 0;
-          if (rec.stars > 0 && rec.best_avg_time && rec.best_avg_time < 999) {
-            totalTime += rec.best_avg_time;
-            count++;
-          }
-          if (rec.min_time && rec.min_time < minTime) {
-            minTime = rec.min_time;
-          }
+    for (let l = 1; l <= 20; l++) {
+      const rec = lp.level_records[`mission-${missionId}-level-${l}`];
+      if (rec) {
+        stars += rec.stars || 0;
+        if (rec.stars > 0 && rec.best_avg_time && rec.best_avg_time < 999) {
+          totalTime += rec.best_avg_time;
+          count++;
         }
+        if (rec.min_time && rec.min_time < minTime) minTime = rec.min_time;
       }
+    }
+    if (Number(missionId) === 1) stars += (lp.bonus_stars || 0);
 
-      // 延遲註冊合流運算：若是 Mission 1，則把本地所有 bonus_stars 一併加進來同步到雲端！
-      if (Number(missionId) === 1) {
-        missionStars += (localProfile.bonus_stars || 0);
-      }
-
-      const avgTime = count > 0 ? parseFloat((totalTime / count).toFixed(3)) : 999;
-      
-      // 只有在真的有星數或通關紀錄時才上傳
-      if (missionStars > 0 && avgTime < 999) {
-        if (window.MathSprintSupabaseService && window.MathSprintSupabaseService.saveRecord) {
-          try {
-            await window.MathSprintSupabaseService.saveRecord(
-              u.grade_class,
-              u.seat_number,
-              u.nickname,
-              missionId,
-              missionStars,
-              avgTime,
-              minTime === 999 ? 99.9 : parseFloat(minTime.toFixed(3))
-            );
-            console.log(`[Onboarding] 雲端 Mission ${missionId} 進度同步成功。`);
-            // 實時重新整理首頁排行榜
-            if (window.MathSprintLeaderboard && window.MathSprintLeaderboard.renderLeaderboard) {
-              window.MathSprintLeaderboard.renderLeaderboard().catch(() => {});
-            }
-          } catch (e) {
-            console.warn(`[Onboarding] 雲端 Mission ${missionId} 進度自動同步失敗：`, e.message);
-          }
-        }
+    const avgTime = count > 0 ? parseFloat((totalTime / count).toFixed(3)) : 999;
+    
+    if (stars > 0 && avgTime < 999 && window.MathSprintSupabaseService?.saveRecord) {
+      try {
+        await window.MathSprintSupabaseService.saveRecord(
+          u.grade_class, u.seat_number, u.nickname, missionId, stars, avgTime,
+          minTime === 999 ? 99.9 : parseFloat(minTime.toFixed(3))
+        );
+        window.MathSprintLeaderboard?.renderLeaderboard().catch(() => {});
+      } catch (e) {
+        console.warn(`[Onboarding] 雲端同步失敗：`, e.message);
       }
     }
   }

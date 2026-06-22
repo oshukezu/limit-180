@@ -2,78 +2,6 @@
 // Manages theme preview rendering, coin validation, purchasing, and applying new themes.
 
 (function() {
-  const AVATARS = {
-    'avatar-default': { id: 'avatar-default', name: '🛡️ 實習特工', icon: '🛡️', price: 0 },
-    'avatar-cat': { id: 'avatar-cat', name: '🐱 靈貓算力', icon: '🐱', price: 0 },
-    'avatar-cypher': { id: 'avatar-cypher', name: '🕶️ 駭客專家', icon: '🕶️', price: 20000 },
-    'avatar-overlord': { id: 'avatar-overlord', name: '👑 心算霸主', icon: '👑', price: 100000 },
-    'avatar-ninja': { id: 'avatar-ninja', name: '🥷 隱形忍者', icon: '🥷', price: 150000 },
-    'avatar-star': { id: 'avatar-star', name: '✨ 璀璨超頻', icon: '✨', price: 250000 },
-    'avatar-fox': { id: 'avatar-fox', name: '🦊 算力赤狐', icon: '🦊', price: 15000 },
-    'avatar-dragon': { id: 'avatar-dragon', name: '🐉 核心神龍', icon: '🐉', price: 300000 },
-    'avatar-tiger': { id: 'avatar-tiger', name: '🐯 狂暴算虎', icon: '🐯', price: 50000 },
-    'avatar-rabbit': { id: 'avatar-rabbit', name: '🐰 矩陣玉兔', icon: '🐰', price: 18000 },
-    'avatar-koala': { id: 'avatar-koala', name: '🐨 沉穩無尾', icon: '🐨', price: 12000 },
-    'avatar-panda': { id: 'avatar-panda', name: '🐼 太極熊貓', icon: '🐼', price: 40000 },
-    'avatar-lion': { id: 'avatar-lion', name: '🦁 雄獅盟主', icon: '🦁', price: 80000 },
-    'avatar-unicorn': { id: 'avatar-unicorn', name: '🦄 獨角幻獸', icon: '🦄', price: 180000 },
-    'avatar-alien': { id: 'avatar-alien', name: '👽 矩陣星人', icon: '👽', price: 90000 },
-    'avatar-robot': { id: 'avatar-robot', name: '🤖 算力智械', icon: '🤖', price: 60000 },
-    'avatar-ghost': { id: 'avatar-ghost', name: '👻 幽靈代碼', icon: '👻', price: 35000 },
-    'avatar-fire': { id: 'avatar-fire', name: '🔥 烈焰特工', icon: '🔥', price: 75000 },
-    'avatar-water': { id: 'avatar-water', name: '💧 脈衝流水', icon: '💧', price: 28000 },
-    'avatar-earth': { id: 'avatar-earth', name: '🌱 蓋亞心靈', icon: '🌱', price: 22000 }
-  };
-
-  const BORDERS = {
-    'border-none': { id: 'border-none', name: '無外框', color: 'transparent', price: 0 },
-    'border-cyan': { id: 'border-cyan', name: '⚡ 脈衝電青', color: '#00f0ff', price: 30000 },
-    'border-pink': { id: 'border-pink', name: '🌸 櫻花落瓣', color: '#F1C4CD', price: 50000 },
-    'border-gold': { id: 'border-gold', name: '👑 帝國黃金', color: '#ffd700', price: 200000 },
-    'border-red': { id: 'border-red', name: '🔥 烈火紅印', color: '#ff3b30', price: 45000 },
-    'border-purple': { id: 'border-purple', name: '🔮 霓虹幽紫', color: '#af52de', price: 60000 },
-    'border-green': { id: 'border-green', name: '🔋 矩陣毒綠', color: '#34c759', price: 25000 },
-    'border-orange': { id: 'border-orange', name: '☄️ 火山熔岩', color: '#ff9500', price: 80000 },
-    'border-blue': { id: 'border-blue', name: '💧 深海冰藍', color: '#007aff', price: 35000 },
-    'border-white': { id: 'border-white', name: '◽ 純潔矩陣', color: '#ffffff', price: 10000 },
-    'border-dark': { id: 'border-dark', name: '🖤 暗夜幽影', color: '#1c1c1e', price: 55000 },
-    'border-rainbow': { id: 'border-rainbow', name: '🌈 彩虹光柵', color: 'linear-gradient(to right, red, orange, yellow, green, blue, purple)', price: 500000 },
-    'border-platinum': { id: 'border-platinum', name: '💎 璀璨鉑金', color: '#e5e5ea', price: 400000 },
-    'border-neon-pink': { id: 'border-neon-pink', name: '👙 賽博霓粉', color: '#ff007f', price: 95000 },
-    'border-acid': { id: 'border-acid', name: '🥑 酸性熒光', color: '#ccff00', price: 70000 },
-    'border-shadow': { id: 'border-shadow', name: '🌫️ 虛空迷霧', color: '#8e8e93', price: 48000 },
-    'border-laser': { id: 'border-laser', name: '📡 激光鐳射', color: '#5856d6', price: 120000 },
-    'border-sand': { id: 'border-sand', name: '🏜️ 狂沙風暴', color: '#c5a059', price: 32000 },
-    'border-matrix': { id: 'border-matrix', name: '📟 虛擬矩陣', color: '#39ff14', price: 160000 }
-  };
-
-  const BADGES = {
-    'first_step': { id: 'first_step', name: '初試身手', icon: '🐣', desc: '通過 Stage 01', price: 0 },
-    'error_buster': { id: 'error_buster', name: '錯題終結者', icon: '🧹', desc: '消除 20 題錯題', price: 0 },
-    'mission_clear': { id: 'mission_clear', name: '達成任務', icon: '👑', desc: 'Stage 20 達 S 級', price: 0 },
-    'stars_50': { id: 'stars_50', name: '獎金達標', icon: '💰', desc: '累積高額金幣獎勵', price: 0 },
-    'mission_perfect': { id: 'mission_perfect', name: '完美達標', icon: '💎', desc: '單關所有題 100% 正確', price: 0 },
-    'badge-speedster': { id: 'badge-speedster', name: '超頻閃電', icon: '⚡', desc: '平均答題時間 < 1 秒', price: 20000 },
-    'badge-persistent': { id: 'badge-persistent', name: '毅力特工', icon: '🧗', desc: '完成 100 局遊戲', price: 30000 },
-    'badge-millionaire': { id: 'badge-millionaire', name: '百萬富翁', icon: '🏦', desc: '擁有 100 萬金幣', price: 50000 },
-    'badge-gambler': { id: 'badge-gambler', name: '極限狂熱', icon: '🎰', desc: '挑戰 Mission 50 通關', price: 80000 },
-    'badge-heart': { id: 'badge-heart', name: '心算之心', icon: '❤️', desc: '愛與計算的化身', price: 10000 },
-    'badge-brain': { id: 'badge-brain', name: '超腦覺醒', icon: '🧠', desc: '算力突破天際', price: 120000 },
-    'badge-comet': { id: 'badge-comet', name: '流星暴擊', icon: '☄️', desc: '連擊數突破 50 combo', price: 40000 },
-    'badge-rocket': { id: 'badge-rocket', name: '火箭升空', icon: '🚀', desc: '升級速度飛快', price: 15000 },
-    'badge-shield': { id: 'badge-shield', name: '護盾守護', icon: '🛡️', desc: '答對率 100% 且無失誤', price: 25000 },
-    'badge-ghost': { id: 'badge-ghost', name: '幻影代碼', icon: '👻', desc: '極速通關無蹤影', price: 65000 },
-    'badge-clover': { id: 'badge-clover', name: '幸運草', icon: '🍀', desc: '運氣也是實力的一部分', price: 12000 },
-    'badge-cup': { id: 'badge-cup', name: '冠軍金盃', icon: '🏆', desc: '全台排行榜第一名', price: 150000 },
-    'badge-music': { id: 'badge-music', name: '算術音符', icon: '🎵', desc: '計算如音樂般流暢', price: 8000 },
-    'badge-skull': { id: 'badge-skull', name: '深淵霸王', icon: '💀', desc: '挑戰地獄難度 Mission', price: 100000 },
-    'badge-star': { id: 'badge-star', name: '璀璨特工', icon: '⭐', desc: '獲得所有 S 級通關', price: 180000 }
-  };
-
-  window.MATH_SPRINT_AVATARS = AVATARS;
-  window.MATH_SPRINT_BORDERS = BORDERS;
-  window.MATH_SPRINT_BADGES = BADGES;
-
   const Store = {
     currentTab: 'theme', // theme, avatar, border, badge
 
@@ -375,135 +303,29 @@
     switchTab(tabType) {
       this.currentTab = tabType;
       this.renderStore();
-    },
-    
-    // 兌換代碼功能
-    redeemCode(code) {
-      const normalized = code.trim().toUpperCase();
-      const msgEl = document.getElementById('redeem-msg');
-      if (!msgEl) return;
-      
-      msgEl.classList.remove('hidden', 'text-green-400', 'text-red-400');
-      msgEl.classList.add('text-slate-400');
-      
-      if (!normalized) {
-        msgEl.textContent = '❌ 請輸入代碼！';
-        msgEl.className = 'text-[9px] text-red-400 font-tech';
-        msgEl.classList.remove('hidden');
-        return;
-      }
-
-      const profile = window.MathSprintStorage.getProfile();
-      let success = false;
-      let alertMsg = '';
-
-      // 檢查兌換代碼
-      if (normalized === 'UNLOCK7') {
-        // 作弊測試碼：解鎖全關卡 + 200萬金幣
-        profile.total_stars = (profile.total_stars || 0) + 2000000;
-        profile.today_earnings = (profile.today_earnings || 0) + 2000000;
-        profile.max_unlocked_phase = 5; // 五個階段全解鎖
-        profile.placement_status = 'ELITE'; // 段位直接成菁英
-        
-        // 將 M1-M50 所有關卡標記為已通過 (100% 正確率 3星)
-        const MISSION_CONFIGS = window.MathSprintConfigs.MISSION_CONFIGS;
-        Object.keys(MISSION_CONFIGS).forEach(mId => {
-          for (let lId = 1; lId <= 20; lId++) {
-            const key = `mission-${mId}-level-${lId}`;
-            if (!profile.level_records[key]) {
-              profile.level_records[key] = {
-                stars: 200 * lId, // 賦予基礎星等分數
-                best_avg_time: 1.5,
-                max_combo: 20,
-                min_time: 1.0,
-                accuracy: 1.0,
-                is_passed: true
-              };
-            } else {
-              profile.level_records[key].is_passed = true;
-              profile.level_records[key].accuracy = Math.max(profile.level_records[key].accuracy || 0, 1.0);
-            }
-          }
-        });
-        
-        window.MathSprintStorage.saveProfile(profile);
-        success = true;
-        alertMsg = '🔓 測試代碼生效：已解鎖全關卡與 Mission！並獲得 2,000,000 💰 金幣！';
-      } else if (normalized === 'COINS88') {
-        // 一般獎勵碼 1：+88,000 金幣
-        profile.total_stars = (profile.total_stars || 0) + 88000;
-        profile.today_earnings = (profile.today_earnings || 0) + 88000;
-        window.MathSprintStorage.saveProfile(profile);
-        success = true;
-        alertMsg = '🎁 兌換成功：獲得 88,000 💰 金幣！';
-      } else if (normalized === 'SECRET7') {
-        // 一般獎勵碼 2：+150,000 金幣
-        profile.total_stars = (profile.total_stars || 0) + 150000;
-        profile.today_earnings = (profile.today_earnings || 0) + 150000;
-        window.MathSprintStorage.saveProfile(profile);
-        success = true;
-        alertMsg = '🎁 兌換成功：獲得 150,000 💰 金幣！';
-      } else {
-        msgEl.textContent = '❌ 無效的兌換代碼！';
-        msgEl.className = 'text-[9px] text-red-400 font-tech';
-        msgEl.classList.remove('hidden');
-        return;
-      }
-
-      if (success) {
-        msgEl.textContent = '✓ 兌換成功！';
-        msgEl.className = 'text-[9px] text-green-400 font-tech';
-        msgEl.classList.remove('hidden');
-        
-        // 重新渲染商店餘額與首頁
-        this.renderStore();
-        if (window.MathSprintGame && window.MathSprintGame.renderHome) {
-          window.MathSprintGame.renderHome();
-        }
-        
-        // 撥放音效
-        if (window.MathSprintAudio && window.MathSprintAudio.play) {
-          window.MathSprintAudio.play('success');
-        }
-        
-        alert(alertMsg);
-        document.getElementById('redeem-code-input').value = '';
-      }
     }
   };
 
-  window.GameStore = Store;
+  // Export or Merge Store
+  window.GameStore = window.GameStore || {};
+  Object.assign(window.GameStore, Store);
 
-    // 綁定商店 Tab 分頁按鈕
+  // 綁定商店 Tab 分頁按鈕
+  window.addEventListener('limit180ComponentsLoaded', () => {
     ['theme', 'avatar', 'border', 'badge'].forEach(tab => {
       const tabBtn = document.getElementById(`store-tab-${tab}`);
       if (tabBtn) {
         tabBtn.addEventListener('click', () => {
-          Store.switchTab(tab);
+          window.GameStore.switchTab(tab);
         });
       }
     });
-
-    // 綁定商店按鈕
-    const submitBtn = document.getElementById('redeem-submit-btn');
-    const inputEl = document.getElementById('redeem-code-input');
-    
-    if (submitBtn && inputEl) {
-      submitBtn.addEventListener('click', () => {
-        Store.redeemCode(inputEl.value);
-      });
-      inputEl.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          Store.redeemCode(inputEl.value);
-        }
-      });
-    }
   });
 
   // 監聽存檔變更以自動重新渲染（例如玩家在大廳賺取金幣回到商店時）
   window.addEventListener('mathSprintProfileUpdated', () => {
     if (window.currentView === 'view-store') {
-      Store.renderStore();
+      window.GameStore.renderStore();
     }
   });
 })();
