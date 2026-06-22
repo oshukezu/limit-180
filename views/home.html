@@ -1,47 +1,44 @@
-<section id="view-home" class="view-section py-8 flex flex-col items-center">
-  <!-- 用戶身份綁定右上角顯示區 -->
-  <div id="user-profile-bar" class="w-full max-w-4xl flex justify-center items-center mb-6 px-4 hidden">
-    <div
-      class="flex items-center gap-3 bg-slate-950/80 border border-slate-800 p-2.5 rounded shadow-none text-xs sm:text-sm font-pixel text-slate-400 mx-auto text-center">
-      👤 <span id="user-profile-info" class="text-white"></span>
-      <button id="edit-profile-btn"
-        class="cyber-btn px-2 py-1 text-[10px] sm:text-xs text-slate-400 border-slate-600 font-pixel">修改暱稱</button>
+<section id="view-home" class="view-section py-8 flex flex-col items-center max-w-lg mx-auto w-full px-4">
+  <!-- (3) 獎金看板：移至最上方，字體放大且對比清晰 -->
+  <div class="w-full flex justify-between items-center bg-slate-950/80 border-2 border-slate-800 p-4 rounded-2xl mb-8 font-pixel text-center">
+    <div class="flex-1 border-r border-slate-800">
+      <span class="block text-slate-400 text-xs mb-1">🪙 累積總獎金</span>
+      <span id="profile-total-stars" class="text-3xl text-[#39ff14] font-black">0</span>
+    </div>
+    <div class="flex-1">
+      <span class="block text-slate-400 text-xs mb-1">🔥 今日新賺取</span>
+      <span id="profile-today-earnings" class="text-3xl text-yellow-400 font-black">0</span>
     </div>
   </div>
 
-  <div class="text-center mb-10">
-    <p class="text-xs font-pixel text-slate-500 mb-2">Mind Retention Lab.</p>
-    <h2 class="text-4xl md:text-5xl font-pixel text-white tracking-widest uppercase">Limit 180</h2>
-    <p class="text-slate-400 text-sm mt-3 font-tech max-w-2xl mx-auto">
-      挑戰3分鐘內做完100題的極速心算極限！而且必須全對！克服「東大數學之鬼」的挑戰 😎
-    </p>
+  <!-- (1) 標題區塊：標題字體縮小，減少視覺干擾 -->
+  <div class="text-center mb-8">
+    <p class="text-[10px] font-pixel text-slate-500 tracking-widest mb-1">MIND RETENTION LAB.</p>
+    <h2 class="text-3xl font-pixel text-white tracking-widest uppercase">Limit 180</h2>
   </div>
 
-  <!-- 核心入口按鈕垂直置中堆疊 -->
-  <div class="flex flex-col items-center space-y-6 w-full max-w-md mx-auto mb-10 font-pixel">
-    <!-- 速算挑戰模式按鈕組 -->
-    <div class="w-full flex flex-col items-center">
-      <button id="start-levels-btn" class="neon-green-btn w-full py-6 text-2xl font-black rounded-2xl tracking-widest">
+  <!-- 核心入口按鈕垂直置中堆疊：字體極大、直覺好點 -->
+  <div class="flex flex-col space-y-6 w-full font-pixel">
+    <!-- 速算挑戰模式按鈕組 (移除下方說明與重複的今日累積獎金) -->
+    <div class="w-full">
+      <button id="start-levels-btn" class="neon-green-btn w-full py-8 text-3xl font-black rounded-3xl tracking-widest">
         速算挑戰模式
       </button>
-      <div class="flex flex-wrap items-center justify-center gap-3 mt-2 text-xs text-slate-400">
-        <span>累積獎金: <span id="profile-total-stars" class="text-[#39ff14] font-bold">0</span> 💰</span>
-        <span>今日獎金: <span id="profile-today-earnings" class="text-yellow-400 font-bold">0</span> 💰</span>
-      </div>
-      <p class="text-slate-500 text-[10px] mt-1 font-tech text-center">挑戰「東大數學之鬼」的目標，由淺入深的心算關卡</p>
     </div>
 
-    <!-- 錯題消除訓練按鈕組 -->
-    <div class="w-full flex flex-col items-center">
-      <button id="start-review-btn" class="neon-green-btn w-full py-6 text-2xl font-black rounded-2xl tracking-widest">
+    <!-- 錯題消除訓練按鈕組 (移除下方待消除題數與說明文字) -->
+    <div class="w-full">
+      <button id="start-review-btn" class="neon-green-btn w-full py-8 text-3xl font-black rounded-3xl tracking-widest" style="background: #db2777; color: white; box-shadow: 0 0 15px rgba(219,39,119,0.4); border-color: #db2777;">
         錯題消除訓練
       </button>
-      <div class="flex items-center gap-2 mt-2 text-xs text-slate-400">
-        <span>待消除錯題:</span>
-        <span id="profile-wrong-count" class="text-white font-bold">0</span>
-        <span>題</span>
-      </div>
-      <p class="text-slate-500 text-[10px] mt-1 font-tech text-center">重新答對 3 次即可消除做錯題目</p>
+    </div>
+  </div>
+
+  <!-- 用戶暱稱與修改暱稱：以次要輔助狀態移至底部 -->
+  <div id="user-profile-bar" class="w-full flex justify-center items-center mt-12 hidden">
+    <div class="flex items-center gap-3 bg-slate-950/80 border border-slate-900 px-4 py-2 rounded-xl text-xs font-pixel text-slate-500">
+      👤 <span id="user-profile-info" class="text-slate-300"></span>
+      <button id="edit-profile-btn" class="text-[10px] text-cyan-400 underline ml-2">修改名字</button>
     </div>
   </div>
 
