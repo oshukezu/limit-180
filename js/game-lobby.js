@@ -9,8 +9,8 @@
       const starsEl = document.getElementById('profile-total-stars');
       const todayEl = document.getElementById('profile-today-earnings');
       const wrongEl = document.getElementById('profile-wrong-count');
-      if (starsEl) starsEl.textContent = (profile.total_stars || 0).toLocaleString('zh-TW');
-      if (todayEl) todayEl.textContent = (profile.today_earnings || 0).toLocaleString('zh-TW');
+      if (starsEl) starsEl.textContent = window.formatCoins(profile.total_stars || 0, false);
+      if (todayEl) todayEl.textContent = window.formatCoins(profile.today_earnings || 0, false);
       if (wrongEl) wrongEl.textContent = profile.wrong_questions_db.length;
     },
 
@@ -25,8 +25,8 @@
       const todayEl = document.getElementById('lobby-today-earnings');
       const maxLvlEl = document.getElementById('lobby-max-level');
       
-      if (starsEl) starsEl.textContent = (profile.total_stars || 0).toLocaleString('zh-TW');
-      if (todayEl) todayEl.textContent = (profile.today_earnings || 0).toLocaleString('zh-TW');
+      if (starsEl) starsEl.textContent = window.formatCoins(profile.total_stars || 0, true);
+      if (todayEl) todayEl.textContent = window.formatCoins(profile.today_earnings || 0, true);
 
       const MISSION_CONFIGS = window.MathSprintConfigs.MISSION_CONFIGS;
 

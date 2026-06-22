@@ -389,6 +389,16 @@
     }
   };
 
+  // 全域金幣格式化邏輯
+  window.formatCoins = function(amount, forceFull = false) {
+    if (amount === undefined || amount === null) return '0';
+    if (!forceFull && amount >= 1000000) {
+      const mVal = amount / 1000000;
+      return (mVal % 1 === 0 ? mVal.toFixed(0) : mVal.toFixed(2)) + 'M';
+    }
+    return amount.toLocaleString('zh-TW');
+  };
+
   // Export to window
   window.MathSprintStorage = Storage;
 })();

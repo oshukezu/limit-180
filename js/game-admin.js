@@ -2,84 +2,11 @@
 (function() {
   
   // ============================================================
-  // 1. 特工個人外觀客製化邏輯 (Customization Module)
+  // 1. 特工個人外觀定義 (直接讀取全域定義，防止加載順序 Bug)
   // ============================================================
-  // ============================================================
-  // 1. 特工個人外觀定義 (擴充至各 20 種商品項目)
-  // ============================================================
-  const AVATARS = {
-    'avatar-default': { id: 'avatar-default', name: '🛡️ 實習特工', icon: '🛡️', price: 0 },
-    'avatar-cat': { id: 'avatar-cat', name: '🐱 靈貓算力', icon: '🐱', price: 0 },
-    'avatar-cypher': { id: 'avatar-cypher', name: '🕶️ 駭客專家', icon: '🕶️', price: 20000 },
-    'avatar-overlord': { id: 'avatar-overlord', name: '👑 心算霸主', icon: '👑', price: 100000 },
-    'avatar-ninja': { id: 'avatar-ninja', name: '🥷 隱形忍者', icon: '🥷', price: 150000 },
-    'avatar-star': { id: 'avatar-star', name: '✨ 璀璨超頻', icon: '✨', price: 250000 },
-    'avatar-fox': { id: 'avatar-fox', name: '🦊 算力赤狐', icon: '🦊', price: 15000 },
-    'avatar-dragon': { id: 'avatar-dragon', name: '🐉 核心神龍', icon: '🐉', price: 300000 },
-    'avatar-tiger': { id: 'avatar-tiger', name: '🐯 狂暴算虎', icon: '🐯', price: 50000 },
-    'avatar-rabbit': { id: 'avatar-rabbit', name: '🐰 矩陣玉兔', icon: '🐰', price: 18000 },
-    'avatar-koala': { id: 'avatar-koala', name: '🐨 沉穩無尾', icon: '🐨', price: 12000 },
-    'avatar-panda': { id: 'avatar-panda', name: '🐼 太極熊貓', icon: '🐼', price: 40000 },
-    'avatar-lion': { id: 'avatar-lion', name: '🦁 雄獅盟主', icon: '🦁', price: 80000 },
-    'avatar-unicorn': { id: 'avatar-unicorn', name: '🦄 獨角幻獸', icon: '🦄', price: 180000 },
-    'avatar-alien': { id: 'avatar-alien', name: '👽 矩陣星人', icon: '👽', price: 90000 },
-    'avatar-robot': { id: 'avatar-robot', name: '🤖 算力智械', icon: '🤖', price: 60000 },
-    'avatar-ghost': { id: 'avatar-ghost', name: '👻 幽靈代碼', icon: '👻', price: 35000 },
-    'avatar-fire': { id: 'avatar-fire', name: '🔥 烈焰特工', icon: '🔥', price: 75000 },
-    'avatar-water': { id: 'avatar-water', name: '💧 脈衝流水', icon: '💧', price: 28000 },
-    'avatar-earth': { id: 'avatar-earth', name: '🌱 蓋亞心靈', icon: '🌱', price: 22000 }
-  };
-
-  const BORDERS = {
-    'border-none': { id: 'border-none', name: '無外框', color: 'transparent', price: 0 },
-    'border-cyan': { id: 'border-cyan', name: '⚡ 脈衝電青', color: '#00f0ff', price: 30000 },
-    'border-pink': { id: 'border-pink', name: '🌸 櫻花落瓣', color: '#F1C4CD', price: 50000 },
-    'border-gold': { id: 'border-gold', name: '👑 帝國黃金', color: '#ffd700', price: 200000 },
-    'border-red': { id: 'border-red', name: '🔥 烈火紅印', color: '#ff3b30', price: 45000 },
-    'border-purple': { id: 'border-purple', name: '🔮 霓虹幽紫', color: '#af52de', price: 60000 },
-    'border-green': { id: 'border-green', name: '🔋 矩陣毒綠', color: '#34c759', price: 25000 },
-    'border-orange': { id: 'border-orange', name: '☄️ 火山熔岩', color: '#ff9500', price: 80000 },
-    'border-blue': { id: 'border-blue', name: '💧 深海冰藍', color: '#007aff', price: 35000 },
-    'border-white': { id: 'border-white', name: '◽ 純潔矩陣', color: '#ffffff', price: 10000 },
-    'border-dark': { id: 'border-dark', name: '🖤 暗夜幽影', color: '#1c1c1e', price: 55000 },
-    'border-rainbow': { id: 'border-rainbow', name: '🌈 彩虹光柵', color: 'linear-gradient(to right, red, orange, yellow, green, blue, purple)', price: 500000 },
-    'border-platinum': { id: 'border-platinum', name: '💎 璀璨鉑金', color: '#e5e5ea', price: 400000 },
-    'border-neon-pink': { id: 'border-neon-pink', name: '👙 賽博霓粉', color: '#ff007f', price: 95000 },
-    'border-acid': { id: 'border-acid', name: '🥑 酸性熒光', color: '#ccff00', price: 70000 },
-    'border-shadow': { id: 'border-shadow', name: '🌫️ 虛空迷霧', color: '#8e8e93', price: 48000 },
-    'border-laser': { id: 'border-laser', name: '📡 激光鐳射', color: '#5856d6', price: 120000 },
-    'border-sakura': { id: 'border-sakura', name: '🍡 櫻花春爛', color: '#ffb3ba', price: 110000 },
-    'border-sand': { id: 'border-sand', name: '🏜️ 狂沙風暴', color: '#c5a059', price: 32000 },
-    'border-matrix': { id: 'border-matrix', name: '📟 虛擬矩陣', color: '#39ff14', price: 160000 }
-  };
-
-  const BADGES = {
-    'first_step': { id: 'first_step', name: '初試身手', icon: '🐣', desc: '通過 Stage 01', price: 0 },
-    'error_buster': { id: 'error_buster', name: '錯題終結者', icon: '🧹', desc: '消除 20 題錯題', price: 0 },
-    'mission_clear': { id: 'mission_clear', name: '達成任務', icon: '👑', desc: 'Stage 20 達 S 級', price: 0 },
-    'stars_50': { id: 'stars_50', name: '獎金達標', icon: '💰', desc: '累積高額金幣獎勵', price: 0 },
-    'mission_perfect': { id: 'mission_perfect', name: '完美達標', icon: '💎', desc: '單關所有題 100% 正確', price: 0 },
-    'badge-speedster': { id: 'badge-speedster', name: '超頻閃電', icon: '⚡', desc: '平均答題時間 < 1 秒', price: 20000 },
-    'badge-persistent': { id: 'badge-persistent', name: '毅力特工', icon: '🧗', desc: '完成 100 局遊戲', price: 30000 },
-    'badge-millionaire': { id: 'badge-millionaire', name: '百萬富翁', icon: '🏦', desc: '擁有 100 萬金幣', price: 50000 },
-    'badge-gambler': { id: 'badge-gambler', name: '極限狂熱', icon: '🎰', desc: '挑戰 Mission 50 通關', price: 80000 },
-    'badge-heart': { id: 'badge-heart', name: '心算之心', icon: '❤️', desc: '愛與計算的化身', price: 10000 },
-    'badge-brain': { id: 'badge-brain', name: '超腦覺醒', icon: '🧠', desc: '算力突破天際', price: 120000 },
-    'badge-comet': { id: 'badge-comet', name: '流星暴擊', icon: '☄️', desc: '連擊數突破 50 combo', price: 40000 },
-    'badge-rocket': { id: 'badge-rocket', name: '火箭升空', icon: '🚀', desc: '升級速度飛快', price: 15000 },
-    'badge-shield': { id: 'badge-shield', name: '護盾守護', icon: '🛡️', desc: '答對率 100% 且無失誤', price: 25000 },
-    'badge-ghost': { id: 'badge-ghost', name: '幻影代碼', icon: '👻', desc: '極速通關無蹤影', price: 65000 },
-    'badge-clover': { id: 'badge-clover', name: '幸運草', icon: '🍀', desc: '運氣也是實力的一部分', price: 12000 },
-    'badge-cup': { id: 'badge-cup', name: '冠軍金盃', icon: '🏆', desc: '全台排行榜第一名', price: 150000 },
-    'badge-music': { id: 'badge-music', name: '算術音符', icon: '🎵', desc: '計算如音樂般流暢', price: 8000 },
-    'badge-skull': { id: 'badge-skull', name: '深淵霸王', icon: '💀', desc: '挑戰地獄難度 Mission', price: 100000 },
-    'badge-star': { id: 'badge-star', name: '璀璨特工', icon: '⭐', desc: '獲得所有 S 級通關', price: 180000 }
-  };
-
-  // 統一掛載到全域，方便 game-store 與 customization-modal 共享
-  window.MATH_SPRINT_AVATARS = AVATARS;
-  window.MATH_SPRINT_BORDERS = BORDERS;
-  window.MATH_SPRINT_BADGES = BADGES;
+  const AVATARS = window.MATH_SPRINT_AVATARS || {};
+  const BORDERS = window.MATH_SPRINT_BORDERS || {};
+  const BADGES = window.MATH_SPRINT_BADGES || {};
 
   const Customization = {
     currentTab: 'avatar', // avatar, border, badge
@@ -467,20 +394,23 @@
         const passCount = studentRecords.filter(r => r.stars > 0).length;
 
         tr.innerHTML = `
-          <td class="py-2.5 px-3 font-pixel text-slate-400">${student.seat_number} 號</td>
+          <td class="py-2.5 px-3 font-mono text-slate-400">${student.seat_number} 號</td>
           <td class="py-2.5 px-3">
             <div class="font-bold text-white flex items-center gap-1.5">
               <span>${student.nickname}</span>
-              <span class="text-[9px] text-cyan-400 font-pixel bg-cyan-950/20 px-1 py-0.5 rounded border border-cyan-800/30">M1-50 (${passCount}關)</span>
+              <span class="text-[9px] text-cyan-400 bg-cyan-950/20 px-1 py-0.5 rounded border border-cyan-800/30">M1-50 (${passCount}關)</span>
             </div>
           </td>
-          <td class="py-2.5 px-3 text-right text-green-400 font-mono font-bold">${(student.coins_balance || 0).toLocaleString()} 💰</td>
+          <td class="py-2.5 px-3 text-right text-green-400 font-mono font-bold">${window.formatCoins(student.coins_balance || 0)} 💰</td>
           <td class="py-2.5 px-3 text-right text-yellow-400 font-mono">--</td>
           <td class="py-2.5 px-3 text-center text-slate-400 font-mono">${(student.purchased_items && student.purchased_items.length) || 0}</td>
           <td class="py-2.5 px-3 text-center">
-            <div class="flex gap-2 justify-center">
+            <div class="flex flex-wrap gap-1 justify-center">
               <button class="cyber-btn px-2 py-1 text-[8px] text-cyan-400 rounded" onclick="window.GameAdmin.singleAward('${student.grade_class}', '${student.seat_number}', '${student.nickname}')">＋送金幣</button>
               <button class="cyber-btn cyber-btn-pink px-2 py-1 text-[8px] text-pink-500 rounded" onclick="window.GameAdmin.singleResetWrong('${student.grade_class}', '${student.seat_number}', '${student.nickname}')">⚡重設錯題</button>
+              <button class="cyber-btn px-2 py-1 text-[8px] text-yellow-400 rounded" onclick="window.GameAdmin.singleUpdateClass('${student.grade_class}', '${student.seat_number}', '${student.nickname}')">✎修班級</button>
+              <button class="cyber-btn px-2 py-1 text-[8px] text-orange-400 rounded" onclick="window.GameAdmin.singleUpdateSeat('${student.grade_class}', '${student.seat_number}', '${student.nickname}')">✎修座號</button>
+              <button class="cyber-btn cyber-btn-pink px-2 py-1 text-[8px] text-red-500 rounded font-bold" onclick="window.GameAdmin.singleDeleteMember('${student.grade_class}', '${student.seat_number}', '${student.nickname}')">✘刪除</button>
             </div>
           </td>
         `;
@@ -504,10 +434,8 @@
 
         const db = window.MathSprintSupabaseService.initSupabase();
         
-        // 由於 RLS 防護，管理員透過 SQL 語法或 Edge 覆寫資料。因安全政策設為全 ALL 開放，我們前端可以直接 Upsert 做修改
         student.coins_balance = (student.coins_balance || 0) + amount;
         
-        // 計算防改雜湊 (此處為了管理方便，使用與 supabase-service 相同的計算結構覆寫)
         if (window.MathSprintSupabaseService.saveGlobalProfile) {
           await window.MathSprintSupabaseService.saveGlobalProfile(
             gradeClass,
@@ -523,7 +451,7 @@
         }
 
         alert(`💰 成功將 ${amount.toLocaleString()} 金幣發送給該特工！`);
-        this.fetchData(); // 重新整理
+        this.fetchData(); 
       } catch (err) {
         alert('派發失敗：' + err.message);
       }
@@ -534,15 +462,126 @@
       if (!confirm(`⚠️ 確定要一鍵清空 [${gradeClass}班 ${seatNumber}號 ${nickname}] 的所有錯題資料庫嗎？`)) return;
 
       try {
-        const db = window.MathSprintSupabaseService.initSupabase();
-        
-        // 教師管理員清空特定學生的錯題。為了維持雲端同步架構，
-        // 我們直接將該學生的 users_global 中 purchased_items 移除（或在此系統中 purchased_items 紀錄的是錯題資料）
-        // 根據 Schema，錯題是紀錄在 users_profile 的關卡中或者是本機。
-        // 為保證教師控制權，我們可直接對學生本地進行指令重設，或者在此主控台做全班錯題本清空。
-        alert(`✓ 特工 [${nickname}] 錯題重設指令已安全發送！`);
+        // 我們直接將該學生的 users_global 中 purchased_items 設為空
+        const student = this.allGlobalData.find(s => s.grade_class === gradeClass && s.seat_number === seatNumber);
+        if (!student) return;
+
+        if (window.MathSprintSupabaseService.saveGlobalProfile) {
+          await window.MathSprintSupabaseService.saveGlobalProfile(
+            gradeClass,
+            seatNumber,
+            nickname,
+            student.coins_balance || 0,
+            [], // 清空已購買/錯題
+            student.equipped_avatar || 'avatar-default',
+            student.equipped_border || 'border-none',
+            student.equipped_badges || [],
+            student.unlocked_assets || ['avatar-default', 'border-none']
+          );
+        }
+        alert(`✓ 特工 [${nickname}] 錯題重設成功！`);
+        this.fetchData();
       } catch (err) {
         alert('重設失敗：' + err.message);
+      }
+    },
+
+    // 修正班級
+    async singleUpdateClass(gradeClass, seatNumber, nickname) {
+      const newClass = prompt(`請輸入 [${gradeClass}班 ${seatNumber}號 ${nickname}] 的新班級代號 (例如：ST501)：`, gradeClass);
+      if (newClass === null) return;
+      const formattedClass = newClass.trim().toUpperCase();
+      if (!formattedClass) {
+        alert('班級代號不能為空！');
+        return;
+      }
+
+      try {
+        const db = window.MathSprintSupabaseService.initSupabase();
+        if (!db) throw new Error("Supabase 未初始化");
+
+        // 1. 更新 users_global 中的班級
+        const { error: gError } = await db
+          .from('users_global')
+          .update({ grade_class: formattedClass })
+          .match({ grade_class: gradeClass, seat_number: seatNumber });
+
+        if (gError) throw gError;
+
+        // 2. 更新 users_profile 中對應的關卡成績班級
+        const { error: pError } = await db
+          .from('users_profile')
+          .update({ grade_class: formattedClass })
+          .match({ grade_class: gradeClass, seat_number: seatNumber });
+
+        alert(`✓ 成功將班級修改為：${formattedClass}`);
+        this.fetchData();
+      } catch (err) {
+        alert('修改班級失敗：' + err.message);
+      }
+    },
+
+    // 修正座號
+    async singleUpdateSeat(gradeClass, seatNumber, nickname) {
+      const newSeat = prompt(`請輸入 [${gradeClass}班 ${seatNumber}號 ${nickname}] 的新座號 (請輸入正整數)：`, seatNumber);
+      if (newSeat === null) return;
+      const formattedSeat = newSeat.trim();
+      if (!formattedSeat || isNaN(formattedSeat) || parseInt(formattedSeat) <= 0) {
+        alert('請輸入合法的正整數座號！');
+        return;
+      }
+
+      try {
+        const db = window.MathSprintSupabaseService.initSupabase();
+        if (!db) throw new Error("Supabase 未初始化");
+
+        // 1. 更新 users_global
+        const { error: gError } = await db
+          .from('users_global')
+          .update({ seat_number: formattedSeat })
+          .match({ grade_class: gradeClass, seat_number: seatNumber });
+
+        if (gError) throw gError;
+
+        // 2. 更新 users_profile
+        const { error: pError } = await db
+          .from('users_profile')
+          .update({ seat_number: formattedSeat })
+          .match({ grade_class: gradeClass, seat_number: seatNumber });
+
+        alert(`✓ 成功將座號修改為：${formattedSeat} 號`);
+        this.fetchData();
+      } catch (err) {
+        alert('修改座號失敗：' + err.message);
+      }
+    },
+
+    // 刪除會員
+    async singleDeleteMember(gradeClass, seatNumber, nickname) {
+      if (!confirm(`⚠️ 確定要【永久刪除】特工 [${gradeClass}班 ${seatNumber}號 ${nickname}] 的所有帳號資料與通關記錄嗎？此動作不可逆！`)) return;
+
+      try {
+        const db = window.MathSprintSupabaseService.initSupabase();
+        if (!db) throw new Error("Supabase 未初始化");
+
+        // 1. 刪除 users_global
+        const { error: gError } = await db
+          .from('users_global')
+          .delete()
+          .match({ grade_class: gradeClass, seat_number: seatNumber });
+
+        if (gError) throw gError;
+
+        // 2. 刪除 users_profile 關卡成績
+        const { error: pError } = await db
+          .from('users_profile')
+          .delete()
+          .match({ grade_class: gradeClass, seat_number: seatNumber });
+
+        alert(`✓ 特工 [${nickname}] 帳號與戰績已完全刪除！`);
+        this.fetchData();
+      } catch (err) {
+        alert('刪除失敗：' + err.message);
       }
     },
 
