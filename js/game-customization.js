@@ -15,6 +15,7 @@
     const agentName = document.getElementById('home-agent-nickname');
     const classInfo = document.getElementById('home-agent-class-info');
     const lastSyncEl = document.getElementById('home-last-sync-time');
+    const loginStreakEl = document.getElementById('home-login-streak');
     const badgesContainer = document.getElementById('home-agent-badges');
     const maxStageBadge = document.getElementById('home-max-stage-badge');
 
@@ -54,6 +55,11 @@
       } else {
         lastSyncEl.textContent = '最後同步：--';
       }
+    }
+
+    if (loginStreakEl) {
+      const day = Math.max(0, Number(localStorage.getItem('limit180_login_reward_streak') || 0));
+      loginStreakEl.textContent = `連續登入：Day ${day}`;
     }
 
     if (badgesContainer) {

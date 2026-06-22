@@ -6,6 +6,8 @@
   let profileBar = null;
   let profileInfo = null;
   let isSubmitting = false;
+  const LOGIN_REWARD_LAST_DATE_KEY = 'limit180_login_reward_last_date';
+  const LOGIN_REWARD_STREAK_KEY = 'limit180_login_reward_streak';
 
   // 1. 初始化監聽與 UI 元件
   window.addEventListener('limit180ComponentsLoaded', () => {
@@ -27,7 +29,19 @@
     }
 
     const editBtn = getEl('edit-profile-btn');
-    if (editBtn) editBtn.addEventListener('click', () => showProfileModal(true));
+    if (editBtn) {
+      editBtn.addEventListener('click', () => {
+        let identity = null;
+        try {
+          identity = JSON.parse(localStorage.getItem('limit180_user_profile') || 'null');
+        } catch (_) {
+          identity = null;
+        }
+        const isGuest = !identity || identity.grade_class === '訪客';
+        // 訪客點「會員登入」時要可輸入班級與座號，因此走非編輯模式
+        showProfileModal(!isGuest);
+      });
+    }
 
     const closeBtn = getEl('profile-close-btn');
     if (closeBtn) closeBtn.addEventListener('click', () => modal?.classList.add('hidden'));
@@ -38,14 +52,18 @@
     const cloudLoginBtn = getEl('profile-cloud-login-btn');
     if (cloudLoginBtn) cloudLoginBtn.addEventListener('click', handleCloudLogin);
 
-    checkUserOnboarding();
+    checkUserOnboarding().catch((err) => {
+      console.warn('[Onboarding] 初始化每日登入獎勵失敗：', err?.message || err);
+    });
   });
 
   // 2. 檢查是否已進行 Onboarding
-  function checkUserOnboarding() {
+  async function checkUserOnboarding() {
     const profileStr = localStorage.getItem('limit180_user_profile');
     if (profileStr) {
-      updateUserProfileBar(JSON.parse(profileStr));
+      const profile = JSON.parse(profileStr);
+      updateUserProfileBar(profile);
+      await grantDailyLoginRewardIfNeeded(profile);
     } else {
       // 匿名首玩：不強制跳出彈窗，改為在首頁身份欄提示訪客特工
       updateUserProfileBar({
@@ -53,6 +71,86 @@
         seat_number: '0',
         nickname: '未註冊特工'
       });
+    }
+  }
+
+  function getLocalDateString() {
+    return new Date().toLocaleDateString('sv');
+  }
+
+  function isConsecutiveDay(prevDateStr, todayDateStr) {
+    if (!prevDateStr || !todayDateStr) return false;
+    const prev = new Date(`${prevDateStr}T00:00:00`);
+    const today = new Date(`${todayDateStr}T00:00:00`);
+    if (Number.isNaN(prev.getTime()) || Number.isNaN(today.getTime())) return false;
+    const diffDays = Math.round((today - prev) / 86400000);
+    return diffDays === 1;
+  }
+
+  function computeDailyLoginReward(streakDay) {
+    const day = Math.max(1, Number(streakDay || 1));
+    const baseReward = day >= 30 ? 2500 : (500 + (day - 1) * 50);
+    const weeklyBonus = day % 7 === 0 ? 1000 : 0;
+    return {
+      day,
+      baseReward,
+      weeklyBonus,
+      totalReward: baseReward + weeklyBonus
+    };
+  }
+
+  async function grantDailyLoginRewardIfNeeded(identity) {
+    if (!identity || identity.grade_class === '訪客') return;
+    if (!window.MathSprintStorage) return;
+
+    const today = getLocalDateString();
+    const claimedDate = localStorage.getItem(LOGIN_REWARD_LAST_DATE_KEY);
+    if (claimedDate === today) return;
+
+    const prevStreak = Number(localStorage.getItem(LOGIN_REWARD_STREAK_KEY) || 0);
+    const nextStreak = isConsecutiveDay(claimedDate, today) ? (prevStreak + 1) : 1;
+    const reward = computeDailyLoginReward(nextStreak);
+
+    const localProfile = window.MathSprintStorage.getProfile();
+    localProfile.bonus_stars = (localProfile.bonus_stars || 0) + reward.totalReward;
+    localProfile.today_earnings = (localProfile.today_earnings || 0) + reward.totalReward;
+    window.MathSprintStorage.recalculateTotalStars(localProfile);
+    window.MathSprintStorage.saveProfile(localProfile);
+
+    localStorage.setItem(LOGIN_REWARD_LAST_DATE_KEY, today);
+    localStorage.setItem(LOGIN_REWARD_STREAK_KEY, String(reward.day));
+
+    if (window.MathSprintSupabaseService?.applyCoinTransaction) {
+      const gc = String(identity.grade_class || '').trim().toUpperCase();
+      const sn = String(identity.seat_number || '').trim();
+      const nn = String(identity.nickname || '').trim();
+      if (gc && sn && nn) {
+        const eventKey = `${gc}:${sn}:daily_login:${today}`;
+        await window.MathSprintSupabaseService.applyCoinTransaction(
+          gc,
+          sn,
+          nn,
+          reward.totalReward,
+          'daily_login_reward',
+          {
+            streakDay: reward.day,
+            baseReward: reward.baseReward,
+            weeklyBonus: reward.weeklyBonus,
+            rewardDate: today
+          },
+          eventKey
+        ).catch((err) => {
+          console.warn('[Onboarding] 每日登入獎勵雲端入帳失敗：', err?.message || err);
+        });
+      }
+    }
+
+    if (window.UIFeedback) {
+      const extra = reward.weeklyBonus > 0 ? `（含每7日加碼 +${reward.weeklyBonus.toLocaleString('zh-TW')}）` : '';
+      window.UIFeedback.toast(
+        `每日登入獎勵 Day ${reward.day}：+${reward.totalReward.toLocaleString('zh-TW')} 💰 ${extra}`.trim(),
+        'success'
+      );
     }
   }
 
@@ -370,6 +468,11 @@
       if (window.UIFeedback) {
         window.UIFeedback.toast(`登入成功，已同步 ${result.missions} 個任務與 ${result.coins.toLocaleString('zh-TW')} 💰`, 'success');
       }
+      await grantDailyLoginRewardIfNeeded({
+        grade_class: inputClass.toUpperCase(),
+        seat_number: inputSeat,
+        nickname: inputNickname
+      });
       modal?.classList.add('hidden');
     } catch (err) {
       showError(`跨裝置登入失敗：${err.message || '請稍後再試'}`);
