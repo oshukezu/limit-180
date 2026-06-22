@@ -403,11 +403,17 @@
     if (profile.grade_class === '訪客') {
       if (nameEl) nameEl.textContent = profile.nickname || '訪客特工';
       infoEl.textContent = `訪客特工・通關首局後綁定成績`;
-      if (editBtn) editBtn.classList.add('hidden');
+      if (editBtn) {
+        editBtn.classList.remove('hidden');
+        editBtn.textContent = '會員登入';
+      }
       profileBar.classList.remove('hidden');
       return;
     }
-    if (editBtn) editBtn.classList.remove('hidden');
+    if (editBtn) {
+      editBtn.classList.remove('hidden');
+      editBtn.textContent = '修改名字';
+    }
     const grade = profile.grade_class.charAt(0);
     const num = parseInt(profile.grade_class.substring(1));
     const cns = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九"];
