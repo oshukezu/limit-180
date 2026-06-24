@@ -45,9 +45,9 @@
         this.color = '#ffd700';
         this.shape = Math.random() > 0.35 ? 'coin' : 'diamond';
       } else if (activeTheme === 'abyss') {
-        this.y = initY ? (Math.random() * this.canvas.height) : -20;
+        this.y = initY ? (Math.random() * this.canvas.height) : this.canvas.height + 20;
         this.vx = Math.random() * 0.6 - 0.3;
-        this.vy = Math.random() * 0.7 + 0.4;
+        this.vy = -(Math.random() * 0.7 + 0.4);
         this.color = `rgba(255,255,255,${Math.random() * 0.35 + 0.45})`;
         this.shape = 'bubble';
       } else if (activeTheme === 'emerald') {
@@ -58,6 +58,7 @@
         this.shape = Math.random() > 0.5 ? 'square' : 'diamond';
       } else if (activeTheme === 'thunder') {
         this.y = initY ? (Math.random() * this.canvas.height) : -20;
+        this.r *= 2;
         this.vx = Math.random() * 1.2 - 0.6;
         this.vy = Math.random() * 1.4 + 0.8;
         this.color = Math.random() > 0.5 ? '#facc15' : '#fde047';
@@ -90,7 +91,7 @@
       this.deg += this.spin;
 
       // 飄出視窗則重置
-      if (activeTheme === 'lava') {
+      if (activeTheme === 'lava' || activeTheme === 'abyss') {
         // 向上飄出頂部重置
         if (this.y < -20 || this.x < -20 || this.x > this.canvas.width + 20) {
           this.reset(false);

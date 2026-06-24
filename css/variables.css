@@ -44,10 +44,10 @@ body.theme-aurora {
   --neon-green: #00e5ff;    /* 冰河藍 */
   --neon-blue: #7000ff;     /* 深紫羅蘭 */
   --neon-yellow: #00ffaa;
-  --dark-bg: #03001e;       /* 極地暗夜 */
-  --panel-bg: #0a0035;      /* 幽光面板 */
+  --dark-bg: #e8fff8;       /* 極光雪境 */
+  --panel-bg: #d9fbff;      /* 冰河面板 */
   --border-color: var(--neon-blue);
-  --text-primary: #FFF5F6;
+  --text-primary: #12333a;
 }
 
 /* 覆寫主題：黃金帝國 (Golden Empire) */
@@ -56,10 +56,10 @@ body.theme-gold {
   --neon-green: #ff9000;    /* 琥珀 */
   --neon-blue: #b8860b;     /* 青銅 */
   --neon-yellow: #ffd700;
-  --dark-bg: #100f00;       /* 暗金底 */
-  --panel-bg: #201e00;      /* 古銅面板 */
+  --dark-bg: #fff8d6;       /* 金砂底 */
+  --panel-bg: #fff0a8;      /* 亮金面板 */
   --border-color: var(--neon-blue);
-  --text-primary: #FFF5F6;
+  --text-primary: #3b2f00;
 }
 
 /* 覆寫主題：深海深淵 (Abyss) */
@@ -92,10 +92,10 @@ body.theme-emerald {
   --neon-green: #10b981;
   --neon-blue: #0ea5a0;
   --neon-yellow: #86efac;
-  --dark-bg: #03150f;
-  --panel-bg: #0a241b;
+  --dark-bg: #eafff3;
+  --panel-bg: #d6fbe8;
   --border-color: var(--neon-blue);
-  --text-primary: #ecfdf5;
+  --text-primary: #083a25;
 }
 
 /* 覆寫主題：雷暴核心 (Thunder) */
@@ -104,10 +104,10 @@ body.theme-thunder {
   --neon-green: #facc15;
   --neon-blue: #60a5fa;
   --neon-yellow: #fde047;
-  --dark-bg: #111827;
-  --panel-bg: #1f2937;
+  --dark-bg: #fff7c2;
+  --panel-bg: #fff0a0;
   --border-color: var(--neon-blue);
-  --text-primary: #f9fafb;
+  --text-primary: #352b00;
 }
 
 /* 覆寫主題：銀河曲率 (Galaxy) */
@@ -128,10 +128,10 @@ body.theme-sunset {
   --neon-green: #ffb86b;
   --neon-blue: #fb7185;
   --neon-yellow: #fdba74;
-  --dark-bg: #2b0f0a;
-  --panel-bg: #3f1d14;
+  --dark-bg: #fff1e6;
+  --panel-bg: #ffd9c2;
   --border-color: var(--neon-blue);
-  --text-primary: #fff7ed;
+  --text-primary: #4a1f0f;
 }
 
 /* 覆寫主題：薄荷霧境 (Mint) */
@@ -140,10 +140,10 @@ body.theme-mint {
   --neon-green: #2dd4bf;
   --neon-blue: #22d3ee;
   --neon-yellow: #99f6e4;
-  --dark-bg: #0b1a17;
-  --panel-bg: #11312b;
+  --dark-bg: #ecfff9;
+  --panel-bg: #d9fff4;
   --border-color: var(--neon-blue);
-  --text-primary: #ecfeff;
+  --text-primary: #073b35;
 }
 
 /* 覆寫主題：黑銀極簡 (Mono) */
@@ -222,6 +222,36 @@ body .bg-slate-950\/80 {
 body .border-slate-800,
 body .border-slate-900 {
   border-color: var(--border-color) !important;
+}
+
+body.theme-aurora .text-white,
+body.theme-gold .text-white,
+body.theme-emerald .text-white,
+body.theme-thunder .text-white,
+body.theme-sunset .text-white,
+body.theme-mint .text-white,
+body.theme-aurora .text-slate-200,
+body.theme-gold .text-slate-200,
+body.theme-emerald .text-slate-200,
+body.theme-thunder .text-slate-200,
+body.theme-sunset .text-slate-200,
+body.theme-mint .text-slate-200 {
+  color: var(--text-primary) !important;
+}
+
+body.theme-aurora .text-slate-400,
+body.theme-gold .text-slate-400,
+body.theme-emerald .text-slate-400,
+body.theme-thunder .text-slate-400,
+body.theme-sunset .text-slate-400,
+body.theme-mint .text-slate-400,
+body.theme-aurora .text-slate-500,
+body.theme-gold .text-slate-500,
+body.theme-emerald .text-slate-500,
+body.theme-thunder .text-slate-500,
+body.theme-sunset .text-slate-500,
+body.theme-mint .text-slate-500 {
+  color: color-mix(in srgb, var(--text-primary) 70%, #ffffff) !important;
 }
 
 body {

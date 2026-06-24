@@ -179,8 +179,10 @@
         beatPct = 0.0;
       }
       
+      const displayBeatPct = Math.round(beatPct);
+
       if (beatPercentEl) {
-        beatPercentEl.textContent = `${beatPct}%`;
+        beatPercentEl.textContent = `${displayBeatPct}%`;
       }
 
       // 產生分享文字與設定全域變數，供點擊事件使用
@@ -191,7 +193,7 @@
       const pctText = Math.round(accuracy * 100);
       const speedText = avgTime.toFixed(2);
       
-      this._lastShareText = `⚡ Limit 180 心算極速挑戰 ⚡\n特工「${nickname}」成功通關 Mission ${mission} 關卡 ${level}！\n🎯 正確率：${pctText}%\n⚡ 平均作答速度：${speedText} 秒/題\n🏆 在此關卡中擊敗了全台 ${beatPct}% 的特工！\n👾 快來一起超頻大腦，挑戰你的神經元極限！\n網址：https://oshukezu.github.io/limit-180/`;
+      this._lastShareText = `⚡ Limit 180 心算極速挑戰 ⚡\n特工「${nickname}」成功通關 Mission ${mission} 關卡 ${level}！\n🎯 正確率：${pctText}%\n⚡ 平均作答速度：${speedText} 秒/題\n🏆 在此關卡中擊敗了全台 ${displayBeatPct}% 的特工！\n👾 快來一起超頻大腦，挑戰你的神經元極限！\n網址：https://oshukezu.github.io/limit-180/`;
 
       window.showView('view-result');
 
