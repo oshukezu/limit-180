@@ -10,14 +10,13 @@
     <div>今日獎金：<span id="lobby-today-earnings" class="text-yellow-400">0</span> 💰</div>
     <div>已解鎖最高關卡：<span id="lobby-max-level" class="text-cyan-400">Stage 01</span></div>
   </div>
-  <div class="hud-panel p-4 bg-yellow-950/20 border border-yellow-600/50 rounded mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 font-pixel">
-    <div>
-      <div class="text-sm text-yellow-300 font-black">跳級考試</div>
-      <div class="text-[10px] text-slate-400 mt-1">消耗 1 張考試券挑戰 10 題。通過後從最高已解鎖 Mission 再解鎖 5 個 Mission，並獲得 200,000 💰。</div>
-      <div class="text-[10px] text-cyan-300 mt-1">目前持有：<span class="skip-exam-ticket-count text-white font-bold">0</span> 張</div>
+  <div class="hud-panel px-4 py-3 bg-yellow-950/20 border border-yellow-600/50 rounded mb-5 flex items-center justify-between gap-3 font-pixel">
+    <div class="min-w-0">
+      <div class="text-sm text-yellow-300 font-black">跳級考試 <span class="text-[10px] text-cyan-300 font-normal">持有 <span class="skip-exam-ticket-count text-white font-bold">0</span> 張</span></div>
+      <div class="text-[9px] text-slate-400 mt-1 truncate">消耗 1 張挑戰 10 題；通過後最高 Mission +5，獎勵 200,000 💰。</div>
     </div>
-    <button id="start-skip-exam-btn" class="px-4 py-3 rounded-xl bg-yellow-500 text-slate-950 text-xs font-black border border-yellow-200 shadow-[0_0_14px_rgba(250,204,21,0.35)] hover:bg-yellow-300 transition-colors" type="button">
-      使用跳級考試券
+    <button id="start-skip-exam-btn" class="shrink-0 px-3 py-2 rounded-lg bg-yellow-500 text-slate-950 text-[11px] font-black border border-yellow-200 shadow-[0_0_10px_rgba(250,204,21,0.28)] hover:bg-yellow-300 transition-colors" type="button">
+      使用
     </button>
   </div>
   <!-- Mission Categories Filters -->

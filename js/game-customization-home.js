@@ -51,23 +51,31 @@
       equippedBadges.forEach((bId) => {
         const b = h().getBadges?.()[bId];
         if (!b) return;
-        const span = document.createElement('span');
-        span.className = 'text-2xl leading-none cursor-help';
-        span.textContent = b.icon;
+        const span = h().createBadgeFrame
+          ? h().createBadgeFrame(b.icon, 'w-full h-full text-xl leading-none cursor-help')
+          : document.createElement('span');
+        if (!h().createBadgeFrame) {
+          span.className = 'text-2xl leading-none cursor-help';
+          span.textContent = b.icon;
+        }
         span.title = `${b.name}: ${b.desc}`;
         badgesContainer.appendChild(span);
       });
     }
     if (maxStageBadge) {
-      let maxMission = 1, maxLevel = 1, hasAnyRecord = false;
+      let maxMission = 1, maxLevel = 1;
+      const configs = window.MathSprintConfigs?.MISSION_CONFIGS || {};
+      const missionCount = Object.keys(configs).length || 50;
+      for (let m = 1; m <= missionCount; m++) {
+        if (window.MathSprintStorage?.isMissionUnlocked?.(m, profile)) maxMission = m;
+      }
       Object.keys(profile.level_records || {}).forEach((key) => {
         const m = key.match(/mission-(\d+)-level-(\d+)/);
         if (!m || !profile.level_records[key]?.is_passed) return;
-        hasAnyRecord = true;
         const mi = parseInt(m[1], 10), lv = parseInt(m[2], 10);
-        if (mi > maxMission || (mi === maxMission && lv > maxLevel)) { maxMission = mi; maxLevel = lv; }
+        if (mi === maxMission && lv > maxLevel) maxLevel = lv;
       });
-      maxStageBadge.textContent = hasAnyRecord ? `M${maxMission} L${maxLevel}` : 'M1 L1';
+      maxStageBadge.textContent = `M${maxMission}L${maxLevel}`;
     }
   }
 

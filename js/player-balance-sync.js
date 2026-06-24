@@ -18,6 +18,37 @@
     timerId = setTimeout(checkBalance, delay);
   }
 
+  function isStaleCloudBalance(row) {
+    const localChangedAt = Number(localStorage.getItem('limit180_local_balance_changed_at') || 0);
+    if (!localChangedAt) return false;
+    const cloudUpdatedAt = row.updated_at ? new Date(row.updated_at).getTime() : 0;
+    return Number.isFinite(cloudUpdatedAt) && cloudUpdatedAt > 0 && cloudUpdatedAt <= localChangedAt;
+  }
+
+  function isRecentLedger(ledger, row) {
+    if (!ledger?.created_at || !row?.updated_at) return true;
+    const ledgerAt = new Date(ledger.created_at).getTime();
+    const rowAt = new Date(row.updated_at).getTime();
+    return Number.isFinite(ledgerAt) && Number.isFinite(rowAt) && Math.abs(rowAt - ledgerAt) < 15000;
+  }
+
+  function getCoinToast(ledger, delta) {
+    const reason = String(ledger?.reason || '');
+    if (/^admin_award/.test(reason)) {
+      return `收到後台發放金幣 +${delta.toLocaleString('zh-TW')} 💰`;
+    }
+    if (reason === 'daily_login_reward') {
+      return `已同步每日登入獎勵 +${delta.toLocaleString('zh-TW')} 💰`;
+    }
+    if (reason === 'skip_exam_pass_reward') {
+      return `已同步跳級考試獎勵 +${delta.toLocaleString('zh-TW')} 💰`;
+    }
+    if (reason === 'redeem_promo_code' || reason === 'promo_redeem') {
+      return `已同步兌換獎勵 +${delta.toLocaleString('zh-TW')} 💰`;
+    }
+    return '';
+  }
+
   function mergeCloudAssets(profile, row) {
     let changed = false;
     if (Array.isArray(row.purchased_items)) {
@@ -72,12 +103,17 @@
       const cloudCoins = Number(row.coins_balance || 0);
       const assetsChanged = mergeCloudAssets(profile, row);
 
-      if (cloudCoins > localCoins) {
+      if (cloudCoins > localCoins && !isStaleCloudBalance(row)) {
         const delta = cloudCoins - localCoins;
+        const ledger = await window.MathSprintSupabaseService.getLatestCoinLedger?.(
+          identity.grade_class,
+          identity.seat_number
+        );
         profile.total_stars = cloudCoins;
         localStorage.setItem('limit180_last_sync_at', row.updated_at || new Date().toISOString());
         window.MathSprintStorage.saveProfile(profile);
-        window.UIFeedback?.toast?.(`收到後台發放金幣 +${delta.toLocaleString('zh-TW')} 💰`, 'success');
+        const toastText = isRecentLedger(ledger, row) ? getCoinToast(ledger, delta) : '';
+        if (toastText) window.UIFeedback?.toast?.(toastText, 'success');
       } else if (assetsChanged) {
         window.MathSprintStorage.saveProfile(profile);
       }

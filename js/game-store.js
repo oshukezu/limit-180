@@ -212,6 +212,7 @@
           const bd = badges[key];
           if (!this.shouldShowByRarity(bd.price)) return;
           const rarity = this.getRarityByPrice(bd.price);
+          const frameStyle = window.AgentCustomizationHelpers?.getBadgeFrameStyle?.(bd.icon) || '';
           
           // 徽章是否已解鎖 (已購買，或是原本的成就解鎖)
           const isPurchased = unlockedAchievements.includes(bd.id);
@@ -224,7 +225,7 @@
           card.style.boxShadow = isEquipped ? '0 0 8px var(--neon-pink)' : 'none';
 
           card.innerHTML = `
-            <div class="w-10 h-10 rounded bg-slate-950 flex items-center justify-center text-2xl shrink-0 select-none border border-slate-800">
+            <div class="w-10 h-10 rounded-full bg-slate-950 flex items-center justify-center text-2xl shrink-0 select-none border-2" style="${frameStyle}">
               ${bd.icon}
             </div>
             <div class="flex-1 min-w-0">

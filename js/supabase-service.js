@@ -328,6 +328,24 @@
     return data;
   }
 
+  async function getLatestCoinLedger(gradeClass, seatNumber) {
+    const db = getSupabaseClient();
+    if (!db) throw new Error("Supabase 未初始化");
+    const { data, error } = await db
+      .from('coin_ledger')
+      .select('delta_coins,balance_after,reason,metadata,created_at,ledger_event_key')
+      .eq('grade_class', gradeClass)
+      .eq('seat_number', seatNumber)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (error) {
+      console.warn("[SupabaseService] getLatestCoinLedger 錯誤：", error.message);
+      return null;
+    }
+    return data;
+  }
+
   // 掛載到 window 全域命名空間中
   window.MathSprintSupabaseService = {
     initSupabase: getSupabaseClient,
@@ -338,6 +356,7 @@
     getGlobalProfile,
     purchaseSkipExamTicket,
     consumeSkipExamTicket,
-    updatePurchasedMissions
+    updatePurchasedMissions,
+    getLatestCoinLedger
   };
 })();

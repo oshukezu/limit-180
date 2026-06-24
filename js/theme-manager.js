@@ -21,6 +21,7 @@
       this.r = Math.random() * 4 + 3; // 半徑
       this.deg = Math.random() * 360;
       this.spin = Math.random() * 2 - 1; // 旋轉速度
+      this.shape = 'petal';
 
       if (activeTheme === 'lava') {
         // 熔岩深淵：從底部往上升的火星灰燼
@@ -28,24 +29,28 @@
         this.vx = Math.random() * 1.0 - 0.5; 
         this.vy = -(Math.random() * 1.2 + 0.8); // 負數代表向上飄
         this.color = `rgba(${Math.random() > 0.5 ? '255, 68, 0' : '255, 170, 0'}, ${Math.random() * 0.5 + 0.5})`;
+        this.shape = Math.random() > 0.5 ? 'square' : 'triangle';
       } else if (activeTheme === 'aurora') {
         // 極地極光：下落的雪花
         this.y = initY ? (Math.random() * this.canvas.height) : -20;
         this.vx = Math.random() * 1.0 - 0.5; // 風向微弱
         this.vy = Math.random() * 0.8 + 0.5; // 下落較慢
         this.color = `rgba(255, 255, 255, ${Math.random() * 0.6 + 0.4})`;
+        this.shape = Math.random() > 0.55 ? 'hex' : 'diamond';
       } else if (activeTheme === 'gold') {
         // 黃金帝國：旋轉掉落的金幣
         this.y = initY ? (Math.random() * this.canvas.height) : -20;
         this.vx = Math.random() * 0.8 - 0.4;
         this.vy = Math.random() * 1.5 + 1.2; // 下落較快
         this.color = '#ffd700';
+        this.shape = Math.random() > 0.35 ? 'coin' : 'diamond';
       } else {
         // 赤門櫻花 (akaimon) 及其他：粉色櫻花
         this.y = initY ? (Math.random() * this.canvas.height) : -20;
         this.vx = Math.random() * 1.5 - 0.75; 
         this.vy = Math.random() * 1.2 + 0.8; 
         this.color = `rgba(241, 196, 205, ${Math.random() * 0.4 + 0.4})`;
+        this.shape = ['petal', 'diamond', 'square'][Math.floor(Math.random() * 3)];
       }
     }
 
@@ -76,33 +81,47 @@
       ctx.beginPath();
       ctx.fillStyle = this.color;
 
-      if (activeTheme === 'lava') {
-        // 繪製微小、發光的方形或多邊形火星
+      if (this.shape === 'square') {
         ctx.fillRect(-this.r / 2, -this.r / 2, this.r, this.r);
+      } else if (this.shape === 'triangle') {
+        drawPolygon(ctx, this.r, 3);
+      } else if (this.shape === 'hex') {
+        drawPolygon(ctx, this.r, 6);
+      } else if (this.shape === 'diamond') {
+        drawPolygon(ctx, this.r, 4);
+      } else if (this.shape === 'coin') {
+        ctx.ellipse(0, 0, this.r * 1.2, this.r * 0.6, 0, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.strokeStyle = '#b8860b';
+        ctx.lineWidth = 1;
+        ctx.stroke();
       } else if (activeTheme === 'aurora') {
-        // 繪製柔軟、模糊的圓形雪花
         const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, this.r);
         grad.addColorStop(0, this.color);
         grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
         ctx.fillStyle = grad;
         ctx.arc(0, 0, this.r, 0, 2 * Math.PI);
         ctx.fill();
-      } else if (activeTheme === 'gold') {
-        // 繪製橢圓形且有立體感的金幣
-        ctx.ellipse(0, 0, this.r * 1.2, this.r * 0.6, 0, 0, 2 * Math.PI);
-        ctx.fill();
-        // 加上亮金邊框
-        ctx.strokeStyle = '#b8860b';
-        ctx.lineWidth = 1;
-        ctx.stroke();
       } else {
-        // 櫻花：橢圓花瓣形狀
         ctx.ellipse(0, 0, this.r * 1.5, this.r, 0, 0, 2 * Math.PI);
         ctx.fill();
       }
 
       ctx.restore();
     }
+  }
+
+  function drawPolygon(ctx, radius, sides) {
+    ctx.beginPath();
+    for (let i = 0; i < sides; i++) {
+      const angle = (Math.PI * 2 * i) / sides - Math.PI / 2;
+      const x = Math.cos(angle) * radius;
+      const y = Math.sin(angle) * radius;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.fill();
   }
 
   function resizeCanvas() {

@@ -40,6 +40,7 @@
       profile.purchased_missions.push(missionNum);
       profile.coins_spent = (profile.coins_spent || 0) + cost;
       profile.total_stars = Math.max(0, (profile.total_stars || 0) - cost);
+      localStorage.setItem('limit180_local_balance_changed_at', String(Date.now()));
       this.saveProfile(profile);
       window.UIFeedback?.toast?.(`已解鎖 Mission ${missionNum}`, 'success');
       return true;

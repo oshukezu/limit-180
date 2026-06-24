@@ -47,10 +47,38 @@
     }
   }
 
+  function getBadgeFrameStyle(icon) {
+    const map = {
+      '❤️': ['#ef4444', 'rgba(239,68,68,0.25)'],
+      '🧠': ['#f472b6', 'rgba(244,114,182,0.25)'],
+      '🚀': ['#38bdf8', 'rgba(56,189,248,0.25)'],
+      '💎': ['#67e8f9', 'rgba(103,232,249,0.25)'],
+      '💰': ['#facc15', 'rgba(250,204,21,0.25)'],
+      '⚡': ['#fde047', 'rgba(253,224,71,0.25)'],
+      '🎵': ['#a78bfa', 'rgba(167,139,250,0.25)'],
+      '🍀': ['#4ade80', 'rgba(74,222,128,0.25)'],
+      '🍗': ['#fb923c', 'rgba(251,146,60,0.25)'],
+      '🛡️': ['#94a3b8', 'rgba(148,163,184,0.25)'],
+      '🧗': ['#c084fc', 'rgba(192,132,252,0.25)']
+    };
+    const [color, bg] = map[icon] || ['#22d3ee', 'rgba(34,211,238,0.22)'];
+    return `border-color:${color}; box-shadow:0 0 12px ${color}; background:${bg};`;
+  }
+
+  function createBadgeFrame(icon, extraClass = '') {
+    const span = document.createElement('span');
+    span.className = `inline-flex items-center justify-center rounded-full border-2 bg-slate-950 ${extraClass}`;
+    span.style.cssText = getBadgeFrameStyle(icon);
+    span.textContent = icon;
+    return span;
+  }
+
   window.AgentCustomizationHelpers = {
     getAvatars,
     getBorders,
     getBadges,
+    getBadgeFrameStyle,
+    createBadgeFrame,
     applyAvatarBorderVisual
   };
 
@@ -106,10 +134,7 @@
           badges.forEach(bId => {
             const b = getBadges()[bId];
             if (b) {
-              const span = document.createElement('span');
-              span.className = 'text-2xl leading-none';
-              span.textContent = b.icon;
-              avBadges.appendChild(span);
+              avBadges.appendChild(createBadgeFrame(b.icon, 'w-full h-full text-xl leading-none'));
             }
           });
         }
@@ -241,21 +266,13 @@
           const row = document.createElement('div');
           row.className = `p-3 bg-slate-900 border flex justify-between items-center rounded-xl font-pixel text-xs ${isEquipped ? 'border-cyan-500' : 'border-slate-800'}`;
 
-          let btnHtml = '';
-          if (isEquipped) {
-            btnHtml = `<button class="cyber-btn cyber-btn-pink px-4 py-1.5 text-[10px] text-pink-500 rounded" onclick="window.AgentCustomization.unequipBadge('${bId}')">解除</button>`;
-          } else {
-            const canEquip = this.tempProfile.equipped_badges.length < 1;
-            if (canEquip) {
-              btnHtml = `<button class="cyber-btn px-4 py-1.5 text-[10px] text-cyan-400 rounded" onclick="window.AgentCustomization.equipBadge('${bId}')">配戴</button>`;
-            } else {
-              btnHtml = `<span class="text-slate-600 text-[9px]">欄位已滿 (上限1)</span>`;
-            }
-          }
+          const btnHtml = isEquipped
+            ? `<span class="text-cyan-400">已配戴</span>`
+            : `<button class="cyber-btn px-4 py-1.5 text-[10px] text-cyan-400 rounded" onclick="window.AgentCustomization.equipBadge('${bId}')">配戴</button>`;
 
           row.innerHTML = `
             <div class="flex items-center gap-3">
-              <span class="text-2xl">${meta.icon}</span>
+              <span class="inline-flex items-center justify-center w-10 h-10 rounded-full border-2 text-2xl" style="${getBadgeFrameStyle(meta.icon)}">${meta.icon}</span>
               <div>
                 <div class="text-white">${meta.name}</div>
                 <div class="text-[9px] text-slate-500 font-tech">${meta.desc}</div>
@@ -296,12 +313,6 @@
 
     equipBadge(bId) {
       this.tempProfile.equipped_badges = [bId];
-      this.updatePreview();
-      this.renderList();
-    },
-
-    unequipBadge(bId) {
-      this.tempProfile.equipped_badges = this.tempProfile.equipped_badges.filter(id => id !== bId);
       this.updatePreview();
       this.renderList();
     },

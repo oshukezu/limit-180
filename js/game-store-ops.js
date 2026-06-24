@@ -18,6 +18,10 @@
     return '新商品';
   }
 
+  function markLocalBalanceChanged() {
+    localStorage.setItem('limit180_local_balance_changed_at', String(Date.now()));
+  }
+
   async function purchase(itemId, price, type) {
     const name = cleanName(getItemName(itemId, type));
     const agreed = window.UIFeedback
@@ -56,6 +60,7 @@
 
     profile.coins_spent = (profile.coins_spent || 0) + price;
     profile.total_stars = Math.max(0, (profile.total_stars || 0) - price);
+    markLocalBalanceChanged();
     window.MathSprintStorage.saveProfile(profile);
     this.renderStore();
     window.MathSprintAudio?.play?.('success');
@@ -105,6 +110,7 @@
     if (!sold) return;
     profile.coins_spent = Math.max(0, (profile.coins_spent || 0) - refund);
     profile.total_stars = (profile.total_stars || 0) + refund;
+    markLocalBalanceChanged();
     window.MathSprintStorage.saveProfile(profile);
     this.renderStore();
     window.UIFeedback?.toast?.(`已賣出「${name}」，回收 ${refund.toLocaleString('zh-TW')} 💰`, 'success');
@@ -142,6 +148,7 @@
       profile.coins_spent = (profile.coins_spent || 0) + cost;
       profile.total_stars = Number(result?.new_balance ?? profile.total_stars ?? 0);
       profile.skip_exam_tickets = Number(result?.tickets ?? profile.skip_exam_tickets ?? 0);
+      markLocalBalanceChanged();
       window.MathSprintStorage.saveProfile(profile);
       window.GameStore?.renderStore?.();
       window.MathSprintGame?.renderLobby?.();
