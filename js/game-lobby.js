@@ -76,13 +76,17 @@
 
         const card = document.createElement('div');
         card.className = `hud-panel p-5 bg-slate-900/90 flex flex-col justify-between transition-all duration-300 relative w-full ${
-          !isMUnlocked ? 'opacity-40 border-slate-950 pointer-events-none' : 'hover:border-cyan-400'
+          !isMUnlocked ? 'opacity-70 border-slate-950' : 'hover:border-cyan-400'
         }`;
         
         let reqPct = 60;
         if (i >= 41) reqPct = 90;
         else if (i >= 31) reqPct = 80;
         else if (i >= 21) reqPct = 70;
+
+        const unlockCost = window.MathSprintStorage.getMissionUnlockCost
+          ? window.MathSprintStorage.getMissionUnlockCost(i)
+          : 0;
 
         card.innerHTML = `
           <div class="cursor-pointer">
@@ -93,6 +97,14 @@
               <div class="text-xs font-pixel text-yellow-400">${isMUnlocked ? `${avgAccPct}%` : `🔒 前任務達 ${reqPct}%正確`}</div>
             </div>
             <h4 class="text-base font-bold text-white mb-1">${config.desc}</h4>
+            ${!isMUnlocked ? `
+              <div class="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-slate-800 pt-3">
+                <span class="text-[11px] text-slate-300">可用金幣解鎖：<b class="text-green-400">${window.formatCoins(unlockCost, true)}</b> 💰</span>
+                <button class="mission-unlock-btn px-3 py-2 rounded border border-yellow-500 bg-yellow-950/30 text-yellow-300 text-xs font-bold" type="button">
+                  購買解鎖
+                </button>
+              </div>
+            ` : ''}
             
             <!-- Hidden levels select grid -->
             <div class="mission-levels-grid grid grid-cols-3 sm:grid-cols-5 gap-2 mt-4 pt-3 border-t border-slate-800 hidden" id="levels-grid-${i}">
@@ -193,6 +205,17 @@
               });
             }
             subGrid.appendChild(btn);
+          }
+        } else {
+          const unlockBtn = card.querySelector('.mission-unlock-btn');
+          if (unlockBtn) {
+            unlockBtn.addEventListener('click', async (e) => {
+              e.stopPropagation();
+              const ok = await window.MathSprintStorage.purchaseMissionUnlock(i);
+              if (ok && window.MathSprintGame?.renderLobby) {
+                window.MathSprintGame.renderLobby();
+              }
+            });
           }
         }
 

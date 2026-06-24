@@ -32,7 +32,9 @@
     equipped_avatar: 'avatar-default',
     equipped_border: 'border-none',
     equipped_badges: [],
-    unlocked_assets: ['avatar-default', 'border-none']
+    unlocked_assets: ['avatar-default', 'border-none'],
+    purchased_missions: [],
+    coins_spent: 0
   };
 
   const Storage = {
@@ -102,7 +104,7 @@
       for (let key in profile.level_records) {
         totalStars += profile.level_records[key].stars || 0;
       }
-      profile.total_stars = totalStars + (profile.bonus_stars || 0);
+      profile.total_stars = Math.max(0, totalStars + (profile.bonus_stars || 0) - (profile.coins_spent || 0));
     },
 
     saveLevelRecord(missionNum, levelNum, stars, avgTime, maxCombo, minTime, accuracy) {

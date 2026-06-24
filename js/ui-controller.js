@@ -57,7 +57,7 @@
       // 偵測獨立管理員網址 `?admin=true` 或 `?admin`
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.has('admin')) {
-        console.log('[UIController] 偵測到管理員入口參數，正在載入教師管理後台...');
+        console.log('[UIController] 偵測到管理員入口參數，正在載入管理後台...');
         window.addEventListener('limit180ComponentsLoaded', () => {
           setTimeout(() => {
             window.showView('view-admin');

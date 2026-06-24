@@ -7,7 +7,11 @@
   }
 
   function getItemName(itemId, type) {
-    if (type === 'theme') return window.ThemeManager.THEMES[itemId]?.name || '新主題';
+    if (type === 'theme') {
+      const managerThemes = window.ThemeManager?.THEMES || {};
+      const themes = Object.keys(managerThemes).length ? managerThemes : (window.LIMIT180_THEME_DEFS || {});
+      return themes[itemId]?.name || '新主題';
+    }
     if (type === 'avatar') return window.MATH_SPRINT_AVATARS[itemId]?.name || '新頭像';
     if (type === 'border') return window.MATH_SPRINT_BORDERS[itemId]?.name || '新外框';
     if (type === 'badge') return window.MATH_SPRINT_BADGES[itemId]?.name || '新徽章';
@@ -26,13 +30,13 @@
       window.UIFeedback?.toast?.('特工，您的金幣餘額不足！', 'error');
       return;
     }
-    profile.total_stars -= price;
 
     if (type === 'theme') {
+      profile.purchased_themes = Array.isArray(profile.purchased_themes) ? profile.purchased_themes : ['akaimon'];
       if (profile.purchased_themes.includes(itemId)) return;
       profile.purchased_themes.push(itemId);
       profile.equipped_theme = itemId;
-      window.ThemeManager.applyTheme(itemId);
+      window.ThemeManager?.applyTheme?.(itemId);
     } else if (type === 'avatar') {
       profile.unlocked_assets = profile.unlocked_assets || ['avatar-default', 'border-none'];
       if (profile.unlocked_assets.includes(itemId)) return;
@@ -51,6 +55,8 @@
       if (profile.equipped_badges.length < 2) profile.equipped_badges.push(itemId);
     }
 
+    profile.coins_spent = (profile.coins_spent || 0) + price;
+    profile.total_stars = Math.max(0, (profile.total_stars || 0) - price);
     window.MathSprintStorage.saveProfile(profile);
     this.renderStore();
     window.MathSprintAudio?.play?.('success');
@@ -98,6 +104,7 @@
       sold = true;
     }
     if (!sold) return;
+    profile.coins_spent = Math.max(0, (profile.coins_spent || 0) - refund);
     profile.total_stars = (profile.total_stars || 0) + refund;
     window.MathSprintStorage.saveProfile(profile);
     this.renderStore();

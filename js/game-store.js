@@ -22,6 +22,12 @@
       return this.getRarityByPrice(price).key === this.rarityFilter;
     },
 
+    getThemeDefs() {
+      const managerThemes = window.ThemeManager?.THEMES || {};
+      if (Object.keys(managerThemes).length) return managerThemes;
+      return window.LIMIT180_THEME_DEFS || {};
+    },
+
     updateRarityFilterButtons() {
       const defs = [
         { id: 'store-rarity-all', key: 'all' },
@@ -65,13 +71,14 @@
 
       if (this.currentTab === 'theme') {
         // --- 1. 渲染主題配色 ---
-        const themes = window.ThemeManager?.THEMES || window.LIMIT180_THEME_DEFS || {};
+        const themes = this.getThemeDefs();
         if (!Object.keys(themes).length) {
           storeList.innerHTML = `<div class="text-center text-slate-500 text-xs py-6">主題資料尚未載入，請重新整理頁面。</div>`;
           return;
         }
         const equippedTheme = profile.equipped_theme || 'akaimon';
-        const purchasedThemes = Array.from(new Set([...(profile.purchased_themes || []), 'akaimon']));
+        const rawPurchasedThemes = Array.isArray(profile.purchased_themes) ? profile.purchased_themes : [];
+        const purchasedThemes = Array.from(new Set([...rawPurchasedThemes, 'akaimon']));
         profile.purchased_themes = purchasedThemes;
 
         Object.keys(themes).forEach(key => {

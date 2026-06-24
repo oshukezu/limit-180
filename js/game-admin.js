@@ -1,4 +1,4 @@
-// Limit 180 — 教師管理後台邏輯模組
+// Limit 180 — 管理後台邏輯模組
 (function() {
   const Admin = {
     authorized: false,

@@ -75,11 +75,12 @@
       this.gameState.maxCombo = 0;
       
       let initLimit;
-      if (levelNum <= 5) {
+      const levelStage = missionNum >= 11 ? Math.max(2, Math.ceil(levelNum / 5)) : Math.ceil(levelNum / 5);
+      if (levelStage <= 1) {
         initLimit = config.stages[1];
-      } else if (levelNum <= 10) {
+      } else if (levelStage <= 2) {
         initLimit = config.stages[2];
-      } else if (levelNum <= 15) {
+      } else if (levelStage <= 3) {
         initLimit = config.stages[3];
       } else {
         initLimit = config.stages[4];
@@ -90,7 +91,7 @@
       this.gameState.targetSpeed = initLimit;
       this.gameState.correctRateTarget = 0.60;
       
-      this.gameState.isStageTimer = (missionNum <= 30);
+      this.gameState.isStageTimer = (missionNum <= 10);
       if (this.gameState.isStageTimer) {
         const stageTotalTime = initLimit * this.gameState.totalQuestions;
         this.gameState.stageTimeTotal = stageTotalTime;

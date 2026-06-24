@@ -3,10 +3,54 @@
 
 (function() {
   const StorageLocks = {
+    getMissionUnlockCost(missionNum) {
+      if (missionNum <= 1) return 0;
+      if (missionNum >= 48) return 10000000;
+      if (missionNum >= 45) return 5000000;
+      if (missionNum >= 41) return 2000000;
+      if (missionNum >= 36) return 800000;
+      if (missionNum >= 31) return 400000;
+      if (missionNum >= 26) return 200000;
+      if (missionNum >= 21) return 100000;
+      if (missionNum >= 16) return 40000;
+      if (missionNum >= 11) return 20000;
+      if (missionNum >= 6) return 6000;
+      return 4000;
+    },
+
+    async purchaseMissionUnlock(missionNum) {
+      const profile = this.getProfile();
+      profile.purchased_missions = Array.isArray(profile.purchased_missions) ? profile.purchased_missions : [];
+      if (this.isMissionUnlocked(missionNum, profile)) {
+        window.UIFeedback?.toast?.(`Mission ${missionNum} 已經解鎖`, 'info');
+        return false;
+      }
+
+      const cost = this.getMissionUnlockCost(missionNum);
+      const agreed = window.UIFeedback
+        ? await window.UIFeedback.confirm(`確定要花費 ${cost.toLocaleString('zh-TW')} 💰 解鎖 Mission ${missionNum} 嗎？`, '確認解鎖')
+        : confirm(`確定要花費 ${cost.toLocaleString()} 金幣解鎖 Mission ${missionNum} 嗎？`);
+      if (!agreed) return false;
+
+      if ((profile.total_stars || 0) < cost) {
+        window.UIFeedback?.toast?.('金幣不足，暫時無法解鎖這個 Mission。', 'error');
+        return false;
+      }
+
+      profile.purchased_missions.push(missionNum);
+      profile.coins_spent = (profile.coins_spent || 0) + cost;
+      profile.total_stars = Math.max(0, (profile.total_stars || 0) - cost);
+      this.saveProfile(profile);
+      window.UIFeedback?.toast?.(`已解鎖 Mission ${missionNum}`, 'success');
+      return true;
+    },
+
     // 檢查 Mission 是否已解鎖 (M1-M50)
     isMissionUnlocked(missionNum, _profile) {
       if (missionNum === 1) return true;
       const profile = _profile || this.getProfile();
+      const purchased = Array.isArray(profile.purchased_missions) ? profile.purchased_missions : [];
+      if (purchased.includes(missionNum)) return true;
 
       // 彈性跳級：如果解鎖階段達到 3 (極速菁英)，直接解鎖 Mission 21 及以下關卡
       if ((profile.max_unlocked_phase || 1) >= 3 && missionNum <= 21) {
