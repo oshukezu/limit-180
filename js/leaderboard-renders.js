@@ -35,10 +35,14 @@
             nickname: row.nickname || '特工',
             total_stars: 0,
             total_time: 0,
-            mission_count: 0
+            mission_count: 0,
+            max_mission: 0
           };
         }
         personMap[key].total_stars += row.stars || 0;
+        if ((row.stars || 0) > 0) {
+          personMap[key].max_mission = Math.max(personMap[key].max_mission, Number(row.mission_id || 0));
+        }
         if (row.best_avg_time && row.best_avg_time < 999) {
           personMap[key].total_time += row.best_avg_time;
           personMap[key].mission_count += 1;
@@ -51,13 +55,14 @@
           seat_number: p.seat_number,
           nickname: p.nickname,
           total_stars: p.total_stars,
+          max_mission: p.max_mission,
           avg_time: p.mission_count > 0 ? parseFloat((p.total_time / p.mission_count).toFixed(2)) : 99.9
         };
       });
 
       personalList.sort((a, b) => {
-        if (b.total_stars !== a.total_stars) {
-          return b.total_stars - a.total_stars;
+        if (b.max_mission !== a.max_mission) {
+          return b.max_mission - a.max_mission;
         }
         return a.avg_time - b.avg_time;
       });
@@ -77,7 +82,7 @@
               <div class="w-full flex flex-col gap-1">
                 <div>👤 我的名次：第 <span class="text-green-400 font-bold">${myRank + 1}</span> 名</div>
                 <div class="text-slate-400 text-[9px] font-tech mt-0.5 flex flex-wrap gap-x-3 gap-y-1">
-                  <span>成績：<span class="text-green-400 font-bold">${formatLeaderboardCoins(myRec.total_stars)}</span></span>
+                  <span>最高關卡：<span class="text-green-400 font-bold">Mission ${myRec.max_mission || 1}</span></span>
                   <span>均速：<span class="text-white">${myRec.avg_time.toFixed(2)}s</span></span>
                 </div>
               </div>
@@ -99,7 +104,7 @@
             <span>特工資訊</span>
           </div>
           <div class="text-right flex items-center gap-3">
-            <span class="min-w-[70px] text-right">累計獎金</span>
+            <span class="min-w-[70px] text-right">最高關卡</span>
             <span class="min-w-[45px] text-right">平均速度</span>
           </div>
         </div>
@@ -123,7 +128,7 @@
               ${isMe ? '<span class="text-[8px] bg-cyan-500 text-black px-1 font-bold rounded">我</span>' : ''}
             </div>
             <div class="text-right flex items-center gap-3">
-              <span class="text-green-400 font-bold min-w-[70px] text-right">${formatLeaderboardCoins(row.total_stars)}</span>
+              <span class="text-green-400 font-bold min-w-[70px] text-right">Mission ${row.max_mission || 1}</span>
               <span class="text-slate-400 text-[9px] font-tech min-w-[45px] text-right">${row.avg_time.toFixed(2)}s</span>
             </div>
           </div>

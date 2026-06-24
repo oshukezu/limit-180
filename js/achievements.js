@@ -140,7 +140,7 @@
       toast.innerHTML = `
         <div class="text-3xl">${ach.icon}</div>
         <div>
-          <div class="text-[10px] text-pink-500 font-pixel font-bold">// 成就解鎖 ACHIEVEMENT //</div>
+          <div class="text-[10px] text-pink-500 font-pixel font-bold">成就解鎖 ACHIEVEMENT</div>
           <h4 class="text-sm font-pixel text-white">${ach.name}</h4>
           <p class="text-xs text-slate-400 font-tech">${ach.desc}</p>
         </div>

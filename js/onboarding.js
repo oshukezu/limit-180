@@ -87,7 +87,7 @@
     }
     if (editBtn) {
       editBtn.classList.remove('hidden');
-      editBtn.textContent = '修改名字';
+      editBtn.textContent = '個人化設定';
     }
     const grade = profile.grade_class.charAt(0);
     const num = parseInt(profile.grade_class.substring(1));

@@ -280,7 +280,7 @@
 
       const localBadges = Array.isArray(profile.equipped_badges) ? profile.equipped_badges : [];
       const cloudBadges = Array.isArray(globalRow.equipped_badges) ? globalRow.equipped_badges : [];
-      profile.equipped_badges = Array.from(new Set([...localBadges, ...cloudBadges])).slice(0, 2);
+      profile.equipped_badges = Array.from(new Set([...cloudBadges, ...localBadges])).slice(0, 1);
 
       // 裝備優先規則：若本機裝備仍有效就保留，否則採雲端
       const cloudAvatar = globalRow.equipped_avatar || 'avatar-default';

@@ -34,7 +34,7 @@
     }
     if (Array.isArray(row.equipped_badges)) {
       const localBadges = Array.isArray(profile.equipped_badges) ? profile.equipped_badges : [];
-      const merged = Array.from(new Set([...localBadges, ...row.equipped_badges])).slice(0, 2);
+      const merged = Array.from(new Set([...row.equipped_badges, ...localBadges])).slice(0, 1);
       changed = changed || merged.join('|') !== localBadges.join('|');
       profile.equipped_badges = merged;
     }

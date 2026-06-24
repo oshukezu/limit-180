@@ -48,7 +48,6 @@
 
     renderStore() {
       const storeList = document.getElementById('theme-store-list');
-      const coinsDisplay = document.getElementById('store-coins-balance');
       if (!storeList) return;
 
       const profile = window.MathSprintStorage.getProfile();
@@ -57,9 +56,9 @@
       profile.unlocked_assets = profile.unlocked_assets || ['avatar-default', 'border-none'];
       profile.unlocked_achievements = profile.unlocked_achievements || [];
 
-      if (coinsDisplay) {
-        coinsDisplay.textContent = window.formatCoins(currentCoins);
-      }
+      document.querySelectorAll('#store-coins-balance').forEach(el => {
+        el.textContent = window.formatCoins(currentCoins);
+      });
 
       storeList.innerHTML = '';
       this.updateTabButtons();
@@ -322,6 +321,26 @@
     switchRarityFilter(filterKey) {
       this.rarityFilter = filterKey;
       this.renderStore();
+    },
+
+    async syncBalanceNow() {
+      const buttons = document.querySelectorAll('.store-sync-balance-btn');
+      buttons.forEach(btn => {
+        btn.textContent = '同步中';
+        btn.disabled = true;
+      });
+      try {
+        await window.PlayerBalanceSync?.checkNow?.();
+        this.renderStore();
+        window.UIFeedback?.toast?.('已更新目前餘額', 'success');
+      } catch (_) {
+        window.UIFeedback?.toast?.('同步失敗，請稍後再試', 'error');
+      } finally {
+        buttons.forEach(btn => {
+          btn.textContent = '更新';
+          btn.disabled = false;
+        });
+      }
     }
   };
 
@@ -352,6 +371,10 @@
       btn.addEventListener('click', () => {
         window.GameStore.switchRarityFilter(filterMap[id]);
       });
+    });
+
+    document.querySelectorAll('.store-sync-balance-btn').forEach(btn => {
+      btn.addEventListener('click', () => window.GameStore.syncBalanceNow());
     });
   });
 

@@ -226,6 +226,7 @@ body.body-in-game main {
   /* 身份資訊統一單行，避免 Android 內建瀏覽器字寬造成抖動 */
   #home-agent-class-info,
   #home-last-sync-time,
+  #home-login-streak-badge,
   #leaderboard-my-rank-block,
   .leaderboard-row .font-tech {
     white-space: nowrap;
@@ -246,29 +247,21 @@ body.body-in-game main {
     padding: 12px !important;
     gap: 10px !important;
   }
-  #user-profile-bar > .relative.w-20.h-20 {
-    width: 68px !important;
-    height: 68px !important;
+  #home-avatar-tap-area {
+    width: 88px !important;
+    height: 88px !important;
   }
   #home-avatar-img {
-    width: 44px !important;
-    height: 44px !important;
-    font-size: 1.4rem !important;
+    width: 74px !important;
+    height: 74px !important;
+    font-size: 2.35rem !important;
   }
   #home-avatar-border {
     border-width: 3px !important;
   }
   #home-login-streak-badge {
-    min-width: 24px !important;
-    height: 22px !important;
-    font-size: 8px !important;
-    padding-left: 4px !important;
-    padding-right: 4px !important;
-  }
-  #open-custom-btn-main {
-    width: 20px !important;
-    height: 20px !important;
-    font-size: 9px !important;
+    font-size: 13px !important;
+    line-height: 1.2 !important;
   }
   #home-agent-nickname {
     font-size: 0.95rem !important;
@@ -285,7 +278,8 @@ body.body-in-game main {
     gap: 4px !important;
   }
   #home-agent-badges > span {
-    font-size: 11px !important;
+    font-size: 2.25rem !important;
+    line-height: 1 !important;
   }
   #home-max-stage-badge {
     font-size: 1.1rem !important;
@@ -307,8 +301,10 @@ body.body-in-game main {
     line-height: 1.1 !important;
   }
   #edit-profile-btn {
-    font-size: 10px !important;
+    font-size: 12px !important;
     white-space: nowrap !important;
+    padding: 10px 8px !important;
+    border-radius: 12px !important;
   }
 
   /* 排行榜分頁與列表高度微調，避免首屏過長 */
@@ -362,6 +358,10 @@ body.body-in-game main {
   #home-agent-class-info,
   #home-last-sync-time {
     font-size: 7px !important;
+  }
+
+  #home-login-streak-badge {
+    font-size: 12px !important;
   }
 
   #profile-total-stars,

@@ -100,7 +100,7 @@
         avBadges.innerHTML = '';
         const badges = this.tempProfile.equipped_badges || [];
         if (badges.length === 0) {
-          avBadges.innerHTML = `<span class="text-[9px] text-slate-600">// 未配戴徽章 //</span>`;
+          avBadges.innerHTML = `<span class="text-[9px] text-slate-600">未配戴徽章</span>`;
         } else {
           badges.forEach(bId => {
             const b = getBadges()[bId];
@@ -244,11 +244,11 @@
           if (isEquipped) {
             btnHtml = `<button class="cyber-btn cyber-btn-pink px-4 py-1.5 text-[10px] text-pink-500 rounded" onclick="window.AgentCustomization.unequipBadge('${bId}')">解除</button>`;
           } else {
-            const canEquip = this.tempProfile.equipped_badges.length < 2;
+            const canEquip = this.tempProfile.equipped_badges.length < 1;
             if (canEquip) {
               btnHtml = `<button class="cyber-btn px-4 py-1.5 text-[10px] text-cyan-400 rounded" onclick="window.AgentCustomization.equipBadge('${bId}')">配戴</button>`;
             } else {
-              btnHtml = `<span class="text-slate-600 text-[9px]">// 欄位已滿 (上限2) //</span>`;
+              btnHtml = `<span class="text-slate-600 text-[9px]">欄位已滿 (上限1)</span>`;
             }
           }
 
@@ -294,8 +294,7 @@
     },
 
     equipBadge(bId) {
-      if (this.tempProfile.equipped_badges.length >= 2) return;
-      this.tempProfile.equipped_badges.push(bId);
+      this.tempProfile.equipped_badges = [bId];
       this.updatePreview();
       this.renderList();
     },

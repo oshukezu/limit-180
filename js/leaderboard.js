@@ -62,7 +62,7 @@
       const missionSelect = document.getElementById('leaderboard-mission-select');
       if (missionSelect) {
         const count = Object.keys(window.MathSprintConfigs.MISSION_CONFIGS).length;
-        missionSelect.innerHTML = Array.from({ length: count }, (_, i) => `<option value="${i + 1}">Mission ${i + 1}</option>`).join('');
+        missionSelect.innerHTML = Array.from({ length: count }, (_, i) => `<option value="${i + 1}">${i + 1}</option>`).join('');
         missionSelect.addEventListener('change', (e) => {
           this.currentMission = parseInt(e.target.value);
           this.renderLeaderboard().catch(() => {});

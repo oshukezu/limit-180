@@ -51,8 +51,7 @@
       profile.unlocked_achievements = profile.unlocked_achievements || [];
       if (profile.unlocked_achievements.includes(itemId)) return;
       profile.unlocked_achievements.push(itemId);
-      profile.equipped_badges = profile.equipped_badges || [];
-      if (profile.equipped_badges.length < 2) profile.equipped_badges.push(itemId);
+      profile.equipped_badges = [itemId];
     }
 
     profile.coins_spent = (profile.coins_spent || 0) + price;
