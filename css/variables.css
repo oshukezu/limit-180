@@ -148,14 +148,52 @@ body.theme-mint {
 
 /* 覆寫主題：黑銀極簡 (Mono) */
 body.theme-mono {
-  --neon-pink: #d1d5db;
-  --neon-green: #9ca3af;
-  --neon-blue: #6b7280;
-  --neon-yellow: #e5e7eb;
-  --dark-bg: #09090b;
-  --panel-bg: #18181b;
+  --neon-pink: #e5e7eb;
+  --neon-green: #d1d5db;
+  --neon-blue: #f4f4f5;
+  --neon-yellow: #ffffff;
+  --dark-bg: #050505;
+  --panel-bg: #171717;
   --border-color: var(--neon-blue);
   --text-primary: #f4f4f5;
+}
+
+body.theme-mono {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+}
+
+body.theme-mono .text-cyan-300,
+body.theme-mono .text-cyan-400,
+body.theme-mono .text-pink-400,
+body.theme-mono .text-pink-500,
+body.theme-mono .text-green-300,
+body.theme-mono .text-green-400,
+body.theme-mono .text-yellow-300,
+body.theme-mono .text-yellow-400,
+body.theme-mono .text-emerald-300,
+body.theme-mono .text-emerald-400,
+body.theme-mono .text-violet-300 {
+  color: #f4f4f5 !important;
+}
+
+body.theme-mono .border-cyan-500,
+body.theme-mono .border-cyan-700,
+body.theme-mono .border-pink-500,
+body.theme-mono .border-green-700,
+body.theme-mono .border-yellow-500,
+body.theme-mono .border-emerald-700,
+body.theme-mono .border-violet-500 {
+  border-color: #d1d5db !important;
+}
+
+body.theme-mono .bg-cyan-500,
+body.theme-mono .bg-yellow-500,
+body.theme-mono .bg-green-500,
+body.theme-mono .bg-pink-500 {
+  background-color: #e5e7eb !important;
+  color: #050505 !important;
 }
 
 /* Sakura Canvas 背景樣式 */

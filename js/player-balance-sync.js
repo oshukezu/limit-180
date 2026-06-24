@@ -51,21 +51,27 @@
 
   function mergeCloudAssets(profile, row) {
     let changed = false;
+    const soldThemes = JSON.parse(localStorage.getItem('limit180_sold_themes') || '[]');
+    const soldAssets = JSON.parse(localStorage.getItem('limit180_sold_assets') || '[]');
+    const soldBadges = JSON.parse(localStorage.getItem('limit180_sold_badges') || '[]');
     if (Array.isArray(row.purchased_items)) {
       const localThemes = Array.isArray(profile.purchased_themes) ? profile.purchased_themes : ['akaimon'];
-      const merged = Array.from(new Set([...localThemes, ...row.purchased_items, 'akaimon']));
+      const cloudThemes = row.purchased_items.filter(id => !soldThemes.includes(id));
+      const merged = Array.from(new Set([...localThemes, ...cloudThemes, 'akaimon']));
       changed = changed || merged.length !== localThemes.length;
       profile.purchased_themes = merged;
     }
     if (Array.isArray(row.unlocked_assets)) {
       const localAssets = Array.isArray(profile.unlocked_assets) ? profile.unlocked_assets : ['avatar-default', 'border-none'];
-      const merged = Array.from(new Set([...localAssets, ...row.unlocked_assets]));
+      const cloudAssets = row.unlocked_assets.filter(id => !soldAssets.includes(id));
+      const merged = Array.from(new Set([...localAssets, ...cloudAssets]));
       changed = changed || merged.length !== localAssets.length;
       profile.unlocked_assets = merged;
     }
     if (Array.isArray(row.equipped_badges)) {
       const localBadges = Array.isArray(profile.equipped_badges) ? profile.equipped_badges : [];
-      const merged = Array.from(new Set([...row.equipped_badges, ...localBadges])).slice(0, 1);
+      const cloudBadges = row.equipped_badges.filter(id => !soldBadges.includes(id));
+      const merged = Array.from(new Set([...cloudBadges, ...localBadges])).slice(0, 1);
       changed = changed || merged.join('|') !== localBadges.join('|');
       profile.equipped_badges = merged;
     }

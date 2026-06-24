@@ -44,6 +44,36 @@
         this.vy = Math.random() * 1.5 + 1.2; // 下落較快
         this.color = '#ffd700';
         this.shape = Math.random() > 0.35 ? 'coin' : 'diamond';
+      } else if (activeTheme === 'abyss') {
+        this.y = initY ? (Math.random() * this.canvas.height) : -20;
+        this.vx = Math.random() * 0.6 - 0.3;
+        this.vy = Math.random() * 0.7 + 0.4;
+        this.color = `rgba(255,255,255,${Math.random() * 0.35 + 0.45})`;
+        this.shape = 'bubble';
+      } else if (activeTheme === 'emerald') {
+        this.y = initY ? (Math.random() * this.canvas.height) : -20;
+        this.vx = Math.random() * 0.9 - 0.45;
+        this.vy = Math.random() * 1.1 + 0.6;
+        this.color = Math.random() > 0.5 ? '#39ff88' : '#0ea5a0';
+        this.shape = Math.random() > 0.5 ? 'square' : 'diamond';
+      } else if (activeTheme === 'thunder') {
+        this.y = initY ? (Math.random() * this.canvas.height) : -20;
+        this.vx = Math.random() * 1.2 - 0.6;
+        this.vy = Math.random() * 1.4 + 0.8;
+        this.color = Math.random() > 0.5 ? '#facc15' : '#fde047';
+        this.shape = Math.random() > 0.5 ? 'triangle' : 'triangle-down';
+      } else if (activeTheme === 'galaxy') {
+        this.y = initY ? (Math.random() * this.canvas.height) : -20;
+        this.vx = Math.random() * 0.8 - 0.4;
+        this.vy = Math.random() * 0.9 + 0.5;
+        this.color = Math.random() > 0.5 ? '#a78bfa' : '#22d3ee';
+        this.shape = 'wave';
+      } else if (activeTheme === 'mono') {
+        this.y = initY ? (Math.random() * this.canvas.height) : -20;
+        this.vx = Math.random() * 0.7 - 0.35;
+        this.vy = Math.random() * 1.0 + 0.5;
+        this.color = Math.random() > 0.5 ? '#ffffff' : '#9ca3af';
+        this.shape = Math.random() > 0.5 ? 'square' : 'diamond';
       } else {
         // 赤門櫻花 (akaimon) 及其他：粉色櫻花
         this.y = initY ? (Math.random() * this.canvas.height) : -20;
@@ -85,6 +115,9 @@
         ctx.fillRect(-this.r / 2, -this.r / 2, this.r, this.r);
       } else if (this.shape === 'triangle') {
         drawPolygon(ctx, this.r, 3);
+      } else if (this.shape === 'triangle-down') {
+        ctx.rotate(Math.PI);
+        drawPolygon(ctx, this.r, 3);
       } else if (this.shape === 'hex') {
         drawPolygon(ctx, this.r, 6);
       } else if (this.shape === 'diamond') {
@@ -94,6 +127,22 @@
         ctx.fill();
         ctx.strokeStyle = '#b8860b';
         ctx.lineWidth = 1;
+        ctx.stroke();
+      } else if (this.shape === 'bubble') {
+        ctx.strokeStyle = this.color;
+        ctx.lineWidth = 1.5;
+        ctx.arc(0, 0, this.r * 1.3, 0, 2 * Math.PI);
+        ctx.stroke();
+      } else if (this.shape === 'wave') {
+        ctx.strokeStyle = this.color;
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        for (let i = -2; i <= 2; i++) {
+          const x = i * this.r;
+          const y = Math.sin(i * Math.PI / 2) * this.r * 0.45;
+          if (i === -2) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
         ctx.stroke();
       } else if (activeTheme === 'aurora') {
         const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, this.r);
@@ -202,9 +251,9 @@
       const scannerLine = document.querySelector('.scanner-line');
       
       // 特務霓虹：純掃描流光，不啟動背景粒子
-      if (themeId === 'neon') {
+      if (themeId === 'neon' || themeId === 'mono') {
         stopParticleEngine();
-        if (scannerLine) scannerLine.style.opacity = '1';
+        if (scannerLine) scannerLine.style.opacity = themeId === 'mono' ? '0' : '1';
       } else {
         // 啟動粒子引擎（自動依 activeTheme 判定是櫻花、火星、雪景或金幣）
         if (scannerLine) scannerLine.style.opacity = '0';

@@ -346,6 +346,25 @@
     return data;
   }
 
+  async function listGlobalProfiles(limitNum = 1000) {
+    const db = getSupabaseClient();
+    if (!db) throw new Error("Supabase 未初始化");
+    let { data, error } = await db
+      .from('users_global')
+      .select('grade_class,seat_number,nickname,purchased_missions')
+      .limit(limitNum);
+    if (error && /purchased_missions/.test(error.message || '')) {
+      const fallback = await db
+        .from('users_global')
+        .select('grade_class,seat_number,nickname')
+        .limit(limitNum);
+      data = fallback.data;
+      error = fallback.error;
+    }
+    if (error) throw error;
+    return data || [];
+  }
+
   // 掛載到 window 全域命名空間中
   window.MathSprintSupabaseService = {
     initSupabase: getSupabaseClient,
@@ -357,6 +376,7 @@
     purchaseSkipExamTicket,
     consumeSkipExamTicket,
     updatePurchasedMissions,
-    getLatestCoinLedger
+    getLatestCoinLedger,
+    listGlobalProfiles
   };
 })();

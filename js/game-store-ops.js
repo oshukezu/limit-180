@@ -22,6 +22,14 @@
     localStorage.setItem('limit180_local_balance_changed_at', String(Date.now()));
   }
 
+  function updateSoldList(key, itemId, isSold) {
+    const list = JSON.parse(localStorage.getItem(key) || '[]');
+    const next = isSold
+      ? Array.from(new Set([...list, itemId]))
+      : list.filter(id => id !== itemId);
+    localStorage.setItem(key, JSON.stringify(next));
+  }
+
   async function purchase(itemId, price, type) {
     const name = cleanName(getItemName(itemId, type));
     const agreed = window.UIFeedback
@@ -38,22 +46,26 @@
     if (type === 'theme') {
       profile.purchased_themes = Array.isArray(profile.purchased_themes) ? profile.purchased_themes : ['akaimon'];
       if (profile.purchased_themes.includes(itemId)) return;
+      updateSoldList('limit180_sold_themes', itemId, false);
       profile.purchased_themes.push(itemId);
       profile.equipped_theme = itemId;
       window.ThemeManager?.applyTheme?.(itemId);
     } else if (type === 'avatar') {
       profile.unlocked_assets = profile.unlocked_assets || ['avatar-default', 'border-none'];
       if (profile.unlocked_assets.includes(itemId)) return;
+      updateSoldList('limit180_sold_assets', itemId, false);
       profile.unlocked_assets.push(itemId);
       profile.equipped_avatar = itemId;
     } else if (type === 'border') {
       profile.unlocked_assets = profile.unlocked_assets || ['avatar-default', 'border-none'];
       if (profile.unlocked_assets.includes(itemId)) return;
+      updateSoldList('limit180_sold_assets', itemId, false);
       profile.unlocked_assets.push(itemId);
       profile.equipped_border = itemId;
     } else if (type === 'badge') {
       profile.unlocked_achievements = profile.unlocked_achievements || [];
       if (profile.unlocked_achievements.includes(itemId)) return;
+      updateSoldList('limit180_sold_badges', itemId, false);
       profile.unlocked_achievements.push(itemId);
       profile.equipped_badges = [itemId];
     }
@@ -83,6 +95,7 @@
       profile.purchased_themes = profile.purchased_themes || ['akaimon'];
       if (!profile.purchased_themes.includes(itemId) || itemId === 'akaimon') return;
       profile.purchased_themes = profile.purchased_themes.filter(id => id !== itemId);
+      updateSoldList('limit180_sold_themes', itemId, true);
       if (profile.equipped_theme === itemId) {
         profile.equipped_theme = profile.purchased_themes.includes('akaimon') ? 'akaimon' : (profile.purchased_themes[0] || 'akaimon');
         window.ThemeManager?.applyTheme?.(profile.equipped_theme);
@@ -92,18 +105,21 @@
       profile.unlocked_assets = profile.unlocked_assets || ['avatar-default', 'border-none'];
       if (!profile.unlocked_assets.includes(itemId) || itemId === 'avatar-default') return;
       profile.unlocked_assets = profile.unlocked_assets.filter(id => id !== itemId);
+      updateSoldList('limit180_sold_assets', itemId, true);
       if (profile.equipped_avatar === itemId) profile.equipped_avatar = 'avatar-default';
       sold = true;
     } else if (type === 'border') {
       profile.unlocked_assets = profile.unlocked_assets || ['avatar-default', 'border-none'];
       if (!profile.unlocked_assets.includes(itemId) || itemId === 'border-none') return;
       profile.unlocked_assets = profile.unlocked_assets.filter(id => id !== itemId);
+      updateSoldList('limit180_sold_assets', itemId, true);
       if (profile.equipped_border === itemId) profile.equipped_border = 'border-none';
       sold = true;
     } else if (type === 'badge') {
       profile.unlocked_achievements = profile.unlocked_achievements || [];
       if (!profile.unlocked_achievements.includes(itemId)) return;
       profile.unlocked_achievements = profile.unlocked_achievements.filter(id => id !== itemId);
+      updateSoldList('limit180_sold_badges', itemId, true);
       profile.equipped_badges = (profile.equipped_badges || []).filter(id => id !== itemId);
       sold = true;
     }

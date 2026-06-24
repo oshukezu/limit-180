@@ -21,11 +21,15 @@
       const currentUser = profileStr ? JSON.parse(profileStr) : null;
 
       let allRecords = [];
+      let globalRows = [];
       try {
         if (!window.MathSprintSupabaseService) {
           throw new Error("Supabase 服務未加載");
         }
         allRecords = await window.MathSprintSupabaseService.getLeaderboard(1000);
+        if (window.MathSprintSupabaseService.listGlobalProfiles) {
+          globalRows = await window.MathSprintSupabaseService.listGlobalProfiles(1000);
+        }
       } catch (err) {
         console.warn("[Leaderboard] 雲端載入連線失敗：", err.message);
         container.innerHTML = `<div class="text-center text-red-500 font-pixel text-[10px] py-8">⚠️ 排行榜載入失敗，請確認資料庫設定！</div>`;
@@ -36,6 +40,9 @@
       if (!Array.isArray(allRecords)) {
         allRecords = [];
       }
+      if (!Array.isArray(globalRows)) {
+        globalRows = [];
+      }
 
       const Renders = window.MathSprintLeaderboardRenders;
       if (!Renders) {
@@ -45,7 +52,7 @@
 
       try {
         if (this.currentTab === 'personal') {
-          Renders.renderPersonal(container, rankBlock, allRecords, currentUser);
+          Renders.renderPersonal(container, rankBlock, allRecords, currentUser, globalRows);
         } else if (this.currentTab === 'team') {
           Renders.renderTeam(container, rankBlock, allRecords, currentUser);
         } else if (this.currentTab === 'mission') {

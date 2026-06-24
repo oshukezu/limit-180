@@ -52,35 +52,49 @@
 
   const Renders = {
     // 渲染個人總榜
-    renderPersonal(container, rankBlock, allRecords, currentUser) {
+    renderPersonal(container, rankBlock, allRecords, currentUser, globalRows = []) {
       const personMap = {};
-      allRecords.forEach(row => {
-        if (!row || !row.grade_class || !row.seat_number) return;
-        const key = `${row.grade_class}:${row.seat_number}`;
+      const ensurePerson = (gradeClass, seatNumber, nickname) => {
+        const key = `${gradeClass}:${seatNumber}`;
         if (!personMap[key]) {
           personMap[key] = {
-            grade_class: row.grade_class,
-            seat_number: row.seat_number,
-            nickname: row.nickname || '特工',
+            grade_class: gradeClass,
+            seat_number: seatNumber,
+            nickname: nickname || '特工',
             total_stars: 0,
             total_time: 0,
             mission_count: 0,
-            max_mission: 0,
-            max_level: 0
+            max_mission: 1,
+            max_level: 1
           };
         }
-        personMap[key].total_stars += row.stars || 0;
+        return personMap[key];
+      };
+      allRecords.forEach(row => {
+        if (!row || !row.grade_class || !row.seat_number) return;
+        const person = ensurePerson(row.grade_class, row.seat_number, row.nickname);
+        person.total_stars += row.stars || 0;
         const missionId = Number(row.mission_id || 0);
         const estimatedLevel = estimateHighestLevel(missionId, row.stars);
         if (missionId > 0 && estimatedLevel > 0) {
-          if (missionId > personMap[key].max_mission || (missionId === personMap[key].max_mission && estimatedLevel > personMap[key].max_level)) {
-            personMap[key].max_mission = missionId;
-            personMap[key].max_level = estimatedLevel;
+          if (missionId > person.max_mission || (missionId === person.max_mission && estimatedLevel > person.max_level)) {
+            person.max_mission = missionId;
+            person.max_level = estimatedLevel;
           }
         }
         if (row.best_avg_time && row.best_avg_time < 999) {
-          personMap[key].total_time += row.best_avg_time;
-          personMap[key].mission_count += 1;
+          person.total_time += row.best_avg_time;
+          person.mission_count += 1;
+        }
+      });
+      globalRows.forEach(row => {
+        if (!row || !row.grade_class || !row.seat_number) return;
+        const person = ensurePerson(row.grade_class, row.seat_number, row.nickname);
+        const purchased = Array.isArray(row.purchased_missions) ? row.purchased_missions.map(Number).filter(Boolean) : [];
+        const maxPurchased = purchased.length ? Math.max(...purchased) : 0;
+        if (maxPurchased > person.max_mission) {
+          person.max_mission = maxPurchased;
+          person.max_level = 1;
         }
       });
 
