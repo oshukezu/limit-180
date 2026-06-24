@@ -1,5 +1,11 @@
 // Limit 180 Supabase Service - Promo Extensions
 (function() {
+  const DEFAULT_PROMO_CODES = [
+    { code: 'UNLOCK7', coinsReward: 777777, maxTotalRedemptions: 'all' },
+    { code: 'COINS88', coinsReward: 88888, maxTotalRedemptions: 'all' },
+    { code: 'SECRET7', coinsReward: 1800000, maxTotalRedemptions: 'all' }
+  ];
+
   function getDb() {
     const db = window.MathSprintSupabaseService?.initSupabase?.();
     if (!db) throw new Error("Supabase 未初始化");
@@ -106,11 +112,39 @@
     return { code: normalized, coinsReward: promo.coins_reward || 0, expiresAt: promo.expires_at || null };
   }
 
+  async function seedDefaultPromoCodes() {
+    const db = getDb();
+    const { data: existingRows, error: existingErr } = await db
+      .from('promo_codes')
+      .select('code');
+    if (existingErr) throw existingErr;
+
+    const existing = new Set((existingRows || []).map((row) => String(row.code || '').toUpperCase()));
+    const missing = DEFAULT_PROMO_CODES.filter((item) => !existing.has(item.code));
+    if (!missing.length) return [];
+
+    const payload = missing.map((item) => ({
+      code: item.code,
+      coins_reward: item.coinsReward,
+      expires_at: null,
+      max_total_redemptions: null,
+      is_active: true
+    }));
+
+    const { data, error } = await db
+      .from('promo_codes')
+      .insert(payload)
+      .select();
+    if (error) throw error;
+    return data || [];
+  }
+
   Object.assign(window.MathSprintSupabaseService || {}, {
     upsertPromoCode,
     listPromoCodes,
     setPromoCodeActive,
     deletePromoCode,
-    redeemPromoCode
+    redeemPromoCode,
+    seedDefaultPromoCodes
   });
 })();

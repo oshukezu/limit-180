@@ -43,6 +43,13 @@ BEGIN
   END IF;
 END $$;
 
+INSERT INTO promo_codes (code, coins_reward, expires_at, is_active, max_total_redemptions)
+VALUES
+  ('UNLOCK7', 777777, NULL, TRUE, NULL),
+  ('COINS88', 88888, NULL, TRUE, NULL),
+  ('SECRET7', 1800000, NULL, TRUE, NULL)
+ON CONFLICT (code) DO NOTHING;
+
 DO $$
 BEGIN
   IF NOT EXISTS (

@@ -65,7 +65,7 @@
 
       if (this.currentTab === 'theme') {
         // --- 1. 渲染主題配色 ---
-        const themes = window.ThemeManager?.THEMES || {};
+        const themes = window.ThemeManager?.THEMES || window.LIMIT180_THEME_DEFS || {};
         if (!Object.keys(themes).length) {
           storeList.innerHTML = `<div class="text-center text-slate-500 text-xs py-6">主題資料尚未載入，請重新整理頁面。</div>`;
           return;

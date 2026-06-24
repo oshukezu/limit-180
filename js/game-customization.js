@@ -139,7 +139,7 @@
       const profile = window.MathSprintStorage.getProfile();
 
       if (this.currentTab === 'theme') {
-        const themes = window.ThemeManager.THEMES;
+        const themes = window.ThemeManager?.THEMES || window.LIMIT180_THEME_DEFS || {};
         const ownedThemes = this.tempProfile.purchased_themes || ['akaimon'];
 
         Object.keys(themes).forEach(key => {

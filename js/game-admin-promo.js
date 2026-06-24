@@ -118,6 +118,18 @@
     }
   }
 
+  async function seedDefaultPromoCodes() {
+    if (!window.GameAdmin?.authorized) return;
+    if (!window.MathSprintSupabaseService?.seedDefaultPromoCodes) return;
+    try {
+      const rows = await window.MathSprintSupabaseService.seedDefaultPromoCodes();
+      setMsg(rows.length ? `已匯入 ${rows.length} 組內建代碼` : '內建代碼已存在，無需重複匯入');
+      await reloadPromoCodes();
+    } catch (err) {
+      setMsg(`匯入內建代碼失敗：${err.message}`, true);
+    }
+  }
+
   async function createOrUpdatePromoCode() {
     if (!window.GameAdmin?.authorized) return;
     const codeEl = document.getElementById('admin-promo-code');
@@ -188,13 +200,15 @@
   window.addEventListener('limit180ComponentsLoaded', () => {
     const createBtn = document.getElementById('admin-promo-create-btn');
     const genBtn = document.getElementById('admin-promo-generate-btn');
+    const seedBtn = document.getElementById('admin-promo-seed-default-btn');
     const list = document.getElementById('admin-promo-list');
     if (createBtn) createBtn.addEventListener('click', createOrUpdatePromoCode);
     if (genBtn) genBtn.addEventListener('click', generatePromoCode);
+    if (seedBtn) seedBtn.addEventListener('click', seedDefaultPromoCodes);
     if (list) list.addEventListener('click', onPromoTableClick);
   });
 
   window.addEventListener('limit180AdminAuthorized', () => {
-    reloadPromoCodes();
+    seedDefaultPromoCodes();
   });
 })();
