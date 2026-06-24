@@ -41,7 +41,7 @@
     'border-acid': { id: 'border-acid', name: '🥑 酸性熒光', color: '#ccff00', price: 70000 },
     'border-shadow': { id: 'border-shadow', name: '🌫️ 虛空迷霧', color: '#8e8e93', price: 48000 },
     'border-laser': { id: 'border-laser', name: '📡 激光鐳射', color: '#5856d6', price: 120000 },
-    'border-sakura': { id: 'border-sand', name: '🍡 櫻花春爛', color: '#ffb3ba', price: 110000 },
+    'border-sakura': { id: 'border-sakura', name: '🍡 櫻花春爛', color: '#ffb3ba', price: 110000 },
     'border-sand': { id: 'border-sand', name: '🏜️ 狂沙風暴', color: '#c5a059', price: 32000 },
     'border-matrix': { id: 'border-matrix', name: '📟 虛擬矩陣', color: '#39ff14', price: 160000 },
 

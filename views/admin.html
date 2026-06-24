@@ -123,5 +123,43 @@
         </table>
       </div>
     </div>
+
+    <!-- 開團分享碼管理 -->
+    <div class="hud-panel p-5 bg-slate-900/80 border border-slate-800 flex flex-col gap-4 font-pixel">
+      <h4 class="text-xs text-emerald-400 glow-cyan">// 開團分享碼管理 TEAM SHARE CODE //</h4>
+      <p class="text-[9px] text-slate-500 font-tech">開團者使用 5 位英數字分享碼。後台可修正、停用與刪除。</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-6 gap-2">
+        <input type="text" id="admin-team-class" placeholder="班級（例 ST501）"
+          class="bg-slate-950 border border-slate-800 px-3 py-2 text-xs text-cyan-300 rounded focus:outline-none focus:border-cyan-500">
+        <input type="text" id="admin-team-seat" placeholder="座號"
+          class="bg-slate-950 border border-slate-800 px-3 py-2 text-xs text-cyan-300 rounded focus:outline-none focus:border-cyan-500">
+        <input type="text" id="admin-team-name" placeholder="開團者姓名"
+          class="bg-slate-950 border border-slate-800 px-3 py-2 text-xs text-cyan-300 rounded focus:outline-none focus:border-cyan-500">
+        <input type="text" id="admin-team-class-name" placeholder="團名（可選）"
+          class="bg-slate-950 border border-slate-800 px-3 py-2 text-xs text-cyan-300 rounded focus:outline-none focus:border-cyan-500">
+        <button id="admin-team-generate-btn" class="cyber-btn px-3 py-2 text-xs text-emerald-300 rounded">自動產生 5 位碼</button>
+        <button id="admin-team-create-btn" class="cyber-btn cyber-btn-green px-4 py-2 text-xs text-green-400 rounded">新增開團分享碼</button>
+      </div>
+
+      <div id="admin-team-msg" class="text-[10px] text-slate-400 font-tech"></div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs font-tech border-collapse">
+          <thead>
+            <tr class="border-b border-slate-800 text-slate-400 uppercase tracking-wider text-[10px]">
+              <th class="py-2 px-2">分享碼</th>
+              <th class="py-2 px-2">班級</th>
+              <th class="py-2 px-2">座號</th>
+              <th class="py-2 px-2">開團者</th>
+              <th class="py-2 px-2">團名</th>
+              <th class="py-2 px-2 text-center">狀態</th>
+              <th class="py-2 px-2 text-center">操作</th>
+            </tr>
+          </thead>
+          <tbody id="admin-team-list" class="divide-y divide-slate-800/40"></tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </section>

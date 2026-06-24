@@ -36,6 +36,11 @@
   };
 
   const Storage = {
+    isNightRewardBlocked(date = new Date()) {
+      const h = date.getHours();
+      return h >= 22 || h < 8;
+    },
+
     // Get current profile
     getProfile() {
       let data = localStorage.getItem(STORAGE_KEY);
@@ -136,7 +141,11 @@
       }
 
       const isCleared = !!record.is_passed;
+      const isNightBlocked = this.isNightRewardBlocked();
       const oldCoins = record.stars || 0;
+      if (isNightBlocked) {
+        newCoins = 0;
+      }
       const diff = Math.max(0, newCoins - oldCoins);
       if (diff > 0) {
         profile.today_earnings = (profile.today_earnings || 0) + diff;
@@ -151,7 +160,7 @@
       const dd = String(dateObj.getDate()).padStart(2, '0');
       const todayStr = `${yyyy}-${mm}-${dd}`;
 
-      if (stars === 3 && profile.last_win_date !== todayStr) {
+      if (!isNightBlocked && stars === 3 && profile.last_win_date !== todayStr) {
         isDailyFirstWin = true;
         profile.last_win_date = todayStr;
 
@@ -206,6 +215,15 @@
       // 同步新進度到 Supabase 雲端 (單表 users_profile)
       if (window.MathSprintOnboarding && window.MathSprintOnboarding.syncCurrentStatsToCloud) {
         window.MathSprintOnboarding.syncCurrentStatsToCloud(missionNum).catch(() => {});
+      }
+
+      if (isNightBlocked) {
+        window.dispatchEvent(new CustomEvent('mathSprintBonusStarAwarded', {
+          detail: {
+            type: 'night_no_reward',
+            text: '目前為夜間時段（22:00-08:00），本局僅保留練習紀錄，不發放獎勵。'
+          }
+        }));
       }
 
       return profile;

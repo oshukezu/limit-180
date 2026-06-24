@@ -16,7 +16,8 @@ limit-180/
 │   ├── styles.css              # 主控入口檔（透過 @import 載入子元件）
 │   ├── variables.css           # 全域 CSS 變數與多主題配色覆寫
 │   ├── animations.css          # 流光掃描線、CRT微光、抖動等動畫效果
-│   ├── components.css          # 按鈕、面板、時間條、排行榜等 UI 元件樣式（含櫻花風格去霓虹覆寫）
+│   ├── components.css          # 按鈕、面板、時間條、排行榜等 UI 元件樣式
+│   ├── components-accessible.css # 易讀模式（高對比/低動效/字級提升）樣式
 │   └── layouts.css             # 行動裝置適配排版與自適應高度樣式
 ├── js/                         # 前端主要邏輯與核心服務
 │   ├── missions/               # 各關卡 (Mission 1-50) 的題目生成演算法
@@ -38,9 +39,11 @@ limit-180/
 │   ├── game-review.js          # 錯題本管理與錯題消除練習模式
 │   ├── game-scaffold.js        # 比大小關卡中 SVG 輔助圖形動態繪製
 │   ├── game-store-assets.js    # 特工頭像、頭貼框與成就徽章之資產定義檔 [NEW]
-│   ├── game-store.js           # 主題配色商店預覽、金幣購買與交易流程
+│   ├── game-store.js           # 商店主渲染與分頁/篩選控制
+│   ├── game-store-ops.js       # 商店購買/賣出交易流程拆分
 │   ├── game-store-redeem.js    # 兌換代碼與作弊測試代碼實現 [NEW]
-│   ├── game-customization.js   # 特工外觀與個人裝備配戴管理 [NEW]
+│   ├── game-customization.js   # 客製化主流程（分頁、預覽、儲存）
+│   ├── game-customization-home.js # 首頁身份卡/頭像資訊視窗渲染與事件
 │   ├── game-core.js            # 核心遊戲狀態宣告與事件註冊
 │   ├── game-lifecycle.js       # 挑戰開始、結束與定級測試等主生命週期控制 [NEW]
 │   ├── game-helper.js          # SPA 頁面切換、背景霓虹流光控制與 Session 驗證等輔助功能
@@ -51,13 +54,16 @@ limit-180/
 │   ├── loader.js               # SPA 頁面視圖 (Views) 動態載入器
 │   ├── onboarding-validator.js # 註冊表單格式校驗與敏感詞過濾器 [NEW]
 │   ├── onboarding-sync.js      # 玩家首玩合流與雲端進度同步模組
-│   ├── onboarding.js           # 玩家註冊 UI 互動與身份綁定
+│   ├── onboarding.js           # Onboarding 核心 UI 與狀態管理
+│   ├── onboarding-actions.js   # Onboarding 提交/登入/每日獎勵/同步動作
 │   ├── placement-modal.js      # 新用戶大腦段位定級測驗引導邏輯與通過結算
 │   ├── storage-locks.js        # 關卡解鎖與 Mission 開放判定 [NEW]
 │   ├── storage-wrong.js        # 本地錯題本寫入與消除計數 [NEW]
 │   ├── storage-milestones.js   # 關卡集滿獎勵、連續上線與答對累計等成就判定
 │   ├── storage.js              # 本地 LocalStorage 存檔主邏輯與資料夾讀寫
-│   ├── supabase-service.js     # Supabase API 串接與前端防改 Integrity 雜湊
+│   ├── supabase-service.js     # Supabase 核心 API（紀錄、全域狀態、交易）
+│   ├── supabase-service-promo.js # 兌換碼管理 API 擴充模組
+│   ├── supabase-service-team.js # 團隊分享碼與 class_members API 擴充模組
 │   ├── theme-manager.js        # 主題管理器（控制 CSS 變數覆寫與櫻花 Canvas 動畫）
 │   └── ui-controller.js        # 全域 UI 切換與防死鎖快速關閉控制器
 ├── supabase/                   # Supabase 雲端資料庫配置與遷移

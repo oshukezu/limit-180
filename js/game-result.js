@@ -56,6 +56,7 @@
         const mId = this.gameState.currentMission;
         const lId = this.gameState.currentLevel;
 
+        const isNightBlocked = window.MathSprintStorage?.isNightRewardBlocked?.() || false;
         let earnedCoins = 0;
         let maxCoins = 0;
         if (mId === 50) {
@@ -71,6 +72,10 @@
           else if (starsEarned === 1) earnedCoins = Math.floor(base * lId * 1 / 3);
         }
 
+        if (isNightBlocked) {
+          earnedCoins = 0;
+        }
+
         if (starsEl) {
           starsEl.textContent = `+${earnedCoins.toLocaleString('zh-TW')} 💰`;
           starsEl.className = `flex justify-center gap-4 text-3xl font-bold font-pixel my-2 ${
@@ -78,7 +83,10 @@
           }`;
         }
 
-        if (starsEarned === 3) {
+        if (isNightBlocked) {
+          motivationBox.textContent = '目前為夜間時段（22:00-08:00），本局僅保留練習紀錄，不發放獎勵。';
+          motivationBox.className = "p-3 bg-slate-900/60 border border-orange-800 text-xs font-tech rounded text-orange-300 text-center";
+        } else if (starsEarned === 3) {
           motivationBox.textContent = `表現絕佳！您已獲得該關卡最大獎金 ${maxCoins.toLocaleString('zh-TW')} 💰！`;
           motivationBox.className = "p-3 bg-slate-900/60 border border-green-800 text-xs font-tech rounded text-green-300 text-center";
         } else if (starsEarned === 2) {

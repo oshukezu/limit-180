@@ -4,9 +4,23 @@
   // ============================================================
   // 1. 特工個人外觀定義 (直接讀取全域定義，防止加載順序 Bug)
   // ============================================================
-  const AVATARS = window.MATH_SPRINT_AVATARS || {};
-  const BORDERS = window.MATH_SPRINT_BORDERS || {};
-  const BADGES = window.MATH_SPRINT_BADGES || {};
+  function getAvatars() {
+    return window.MATH_SPRINT_AVATARS || {};
+  }
+  function getBorders() {
+    return window.MATH_SPRINT_BORDERS || {};
+  }
+  function getBadges() {
+    return window.MATH_SPRINT_BADGES || {};
+  }
+  function normalizeOwnedAssets(profile) {
+    const unlocked = Array.isArray(profile.unlocked_assets) ? profile.unlocked_assets : [];
+    const purchased = Array.isArray(profile.purchased_items) ? profile.purchased_items : [];
+    return Array.from(new Set(['avatar-default', 'border-none', ...unlocked, ...purchased]));
+  }
+  function isOwnedAsset(profile, assetId) {
+    return normalizeOwnedAssets(profile).includes(assetId);
+  }
   const BORDER_EFFECT_CLASSES = [
     'border-effect-pulse-rose',
     'border-effect-pulse-ice',
@@ -33,134 +47,12 @@
     }
   }
 
-  function renderHomeIdentityCard() {
-    const profile = window.MathSprintStorage.getProfile();
-    const avImg = document.getElementById('home-avatar-img');
-    const avBorder = document.getElementById('home-avatar-border');
-    const loginBadge = document.getElementById('home-login-streak-badge');
-    const agentName = document.getElementById('home-agent-nickname');
-    const classInfo = document.getElementById('home-agent-class-info');
-    const lastSyncEl = document.getElementById('home-last-sync-time');
-    const badgesContainer = document.getElementById('home-agent-badges');
-    const maxStageBadge = document.getElementById('home-max-stage-badge');
-
-    const avObj = AVATARS[profile.equipped_avatar] || AVATARS['avatar-default'] || { icon: '🛡️' };
-    const borObj = BORDERS[profile.equipped_border] || BORDERS['border-none'] || { color: 'transparent', id: 'border-none' };
-
-    if (avImg) avImg.textContent = avObj.icon;
-    if (avBorder) applyAvatarBorderVisual(avBorder, borObj);
-
-    let identity = null;
-    try {
-      identity = JSON.parse(localStorage.getItem('limit180_user_profile') || 'null');
-    } catch (_) {
-      identity = null;
-    }
-    const nickname = identity?.nickname || '訪客特工';
-    if (agentName) agentName.textContent = nickname;
-
-    if (classInfo) {
-      if (identity?.grade_class && identity?.seat_number && identity.grade_class !== '訪客') {
-        classInfo.textContent = `${identity.grade_class} 班 座號 ${identity.seat_number} 號`;
-      } else {
-        classInfo.textContent = '訪客狀態・建議先登入';
-      }
-    }
-
-    if (lastSyncEl) {
-      const raw = localStorage.getItem('limit180_last_sync_at');
-      if (raw) {
-        const d = new Date(raw);
-        lastSyncEl.textContent = Number.isNaN(d.getTime())
-          ? '最後同步：--'
-          : `最後同步：${d.toLocaleString('zh-TW')}`;
-      } else {
-        lastSyncEl.textContent = '最後同步：--';
-      }
-    }
-
-    if (loginBadge) {
-      const day = Math.max(0, Number(localStorage.getItem('limit180_login_reward_streak') || 0));
-      loginBadge.textContent = `D${day}`;
-      loginBadge.title = `連續登入 Day ${day}`;
-    }
-
-    if (badgesContainer) {
-      badgesContainer.innerHTML = '';
-      const equippedBadges = profile.equipped_badges || [];
-      if (equippedBadges.length === 0) {
-        badgesContainer.innerHTML = `<span class="text-[9px] text-slate-500">尚未配戴徽章</span>`;
-      } else {
-        equippedBadges.forEach((bId) => {
-          const b = window.MATH_SPRINT_BADGES[bId];
-          if (!b) return;
-          const span = document.createElement('span');
-          span.className = 'text-sm cursor-help';
-          span.textContent = b.icon;
-          span.title = `${b.name}: ${b.desc}`;
-          badgesContainer.appendChild(span);
-        });
-      }
-    }
-
-    if (maxStageBadge) {
-      let maxMission = 1;
-      let maxLevel = 1;
-      let hasAnyRecord = false;
-      if (profile.level_records) {
-        Object.keys(profile.level_records).forEach((key) => {
-          const match = key.match(/mission-(\d+)-level-(\d+)/);
-          if (match && profile.level_records[key]?.is_passed) {
-            hasAnyRecord = true;
-            const m = parseInt(match[1], 10);
-            const l = parseInt(match[2], 10);
-            if (m > maxMission || (m === maxMission && l > maxLevel)) {
-              maxMission = m;
-              maxLevel = l;
-            }
-          }
-        });
-      }
-      maxStageBadge.textContent = hasAnyRecord ? `M${maxMission} L${maxLevel}` : 'M1 L1';
-    }
-  }
-
-  function renderAvatarInfoModal() {
-    const profile = window.MathSprintStorage.getProfile();
-    const identity = JSON.parse(localStorage.getItem('limit180_user_profile') || 'null');
-    const av = AVATARS[profile.equipped_avatar] || AVATARS['avatar-default'] || { icon: '🛡️', name: '實習特工' };
-    const bor = BORDERS[profile.equipped_border] || BORDERS['border-none'] || { name: '無外框' };
-    const badgeNames = (profile.equipped_badges || [])
-      .map((id) => BADGES[id]?.name)
-      .filter(Boolean)
-      .join('、') || '無';
-
-    const iconEl = document.getElementById('avatar-info-icon');
-    const nameEl = document.getElementById('avatar-info-name');
-    const classEl = document.getElementById('avatar-info-class-seat');
-    const borderEl = document.getElementById('avatar-info-border');
-    const badgesEl = document.getElementById('avatar-info-badges');
-    const streakEl = document.getElementById('avatar-info-streak');
-    const syncEl = document.getElementById('avatar-info-sync');
-
-    if (iconEl) iconEl.textContent = av.icon || '🛡️';
-    if (nameEl) nameEl.textContent = identity?.nickname || '訪客特工';
-    if (classEl) classEl.textContent = identity?.grade_class ? `${identity.grade_class} 班 ${identity?.seat_number || '--'} 號` : '訪客狀態';
-    if (borderEl) borderEl.textContent = bor.name || '無外框';
-    if (badgesEl) badgesEl.textContent = badgeNames;
-    if (streakEl) streakEl.textContent = `Day ${Math.max(0, Number(localStorage.getItem('limit180_login_reward_streak') || 0))}`;
-    if (syncEl) {
-      const raw = localStorage.getItem('limit180_last_sync_at');
-      const d = raw ? new Date(raw) : null;
-      syncEl.textContent = d && !Number.isNaN(d.getTime()) ? d.toLocaleString('zh-TW') : '--';
-    }
-  }
-
-  function openAvatarInfoModal() {
-    renderAvatarInfoModal();
-    const modal = document.getElementById('avatar-info-modal');
-    if (modal) modal.classList.remove('hidden');
-  }
+  window.AgentCustomizationHelpers = {
+    getAvatars,
+    getBorders,
+    getBadges,
+    applyAvatarBorderVisual
+  };
 
   const Customization = {
     currentTab: 'theme', // theme, avatar, border, badge
@@ -211,7 +103,7 @@
           avBadges.innerHTML = `<span class="text-[9px] text-slate-600">// 未配戴徽章 //</span>`;
         } else {
           badges.forEach(bId => {
-            const b = window.MATH_SPRINT_BADGES[bId];
+            const b = getBadges()[bId];
             if (b) {
               const span = document.createElement('span');
               span.className = 'text-base';
@@ -280,7 +172,7 @@
       } else if (this.currentTab === 'avatar') {
         Object.keys(AVATARS).forEach(key => {
           const av = AVATARS[key];
-          const isUnlocked = this.tempProfile.unlocked_assets.includes(av.id);
+          const isUnlocked = isOwnedAsset(this.tempProfile, av.id);
           if (!isUnlocked) return;
 
           const isSelected = this.tempProfile.equipped_avatar === av.id;
@@ -304,7 +196,7 @@
       } else if (this.currentTab === 'border') {
         Object.keys(BORDERS).forEach(key => {
           const bor = BORDERS[key];
-          const isUnlocked = this.tempProfile.unlocked_assets.includes(bor.id);
+          const isUnlocked = isOwnedAsset(this.tempProfile, bor.id);
           if (!isUnlocked) return;
 
           const isSelected = this.tempProfile.equipped_border === bor.id;
@@ -329,7 +221,7 @@
 
       } else if (this.currentTab === 'badge') {
         const unlockedAchievements = profile.unlocked_achievements || [];
-        const badgeMeta = window.MATH_SPRINT_BADGES;
+        const badgeMeta = getBadges();
 
         let hasBadges = false;
         Object.keys(badgeMeta).forEach(bId => {
@@ -414,10 +306,13 @@
 
     saveAndApply() {
       const profile = window.MathSprintStorage.getProfile();
+      const AVATARS = getAvatars();
+      const BORDERS = getBorders();
       profile.equipped_theme = this.tempProfile.equipped_theme || profile.equipped_theme || 'akaimon';
       profile.purchased_themes = Array.from(new Set(this.tempProfile.purchased_themes || profile.purchased_themes || ['akaimon']));
-      profile.equipped_avatar = this.tempProfile.equipped_avatar;
-      profile.equipped_border = this.tempProfile.equipped_border;
+      profile.unlocked_assets = normalizeOwnedAssets(this.tempProfile);
+      profile.equipped_avatar = AVATARS[this.tempProfile.equipped_avatar] ? this.tempProfile.equipped_avatar : 'avatar-default';
+      profile.equipped_border = BORDERS[this.tempProfile.equipped_border] ? this.tempProfile.equipped_border : 'border-none';
       profile.equipped_badges = this.tempProfile.equipped_badges;
       
       window.MathSprintStorage.saveProfile(profile);
@@ -457,68 +352,7 @@
       }
     });
 
-    // 實時裝備框線與檔案名牌渲染至首頁大卡片
-    window.addEventListener('mathSprintProfileUpdated', () => {
-      renderHomeIdentityCard();
-    });
-
-    // 首次載入即渲染，避免首頁長時間顯示「特工載入中...」
-    renderHomeIdentityCard();
-
-    const avatarTap = document.getElementById('home-avatar-tap-area');
-    if (avatarTap) {
-      avatarTap.addEventListener('click', (e) => {
-        if (e.target && e.target.closest && e.target.closest('#open-custom-btn-main')) return;
-        openAvatarInfoModal();
-      });
-    }
-    const infoClose = document.getElementById('avatar-info-close-btn');
-    if (infoClose) infoClose.addEventListener('click', () => {
-      const modal = document.getElementById('avatar-info-modal');
-      if (modal) modal.classList.add('hidden');
-    });
-    const infoModal = document.getElementById('avatar-info-modal');
-    if (infoModal) {
-      infoModal.addEventListener('click', (e) => {
-        if (e.target === infoModal) infoModal.classList.add('hidden');
-      });
-    }
-    const openCustomBtn = document.getElementById('avatar-info-open-custom-btn');
-    if (openCustomBtn) {
-      openCustomBtn.addEventListener('click', () => {
-        const modal = document.getElementById('avatar-info-modal');
-        if (modal) modal.classList.add('hidden');
-        Customization.openModal();
-      });
-    }
-    const copyIdentityBtn = document.getElementById('avatar-info-copy-btn');
-    if (copyIdentityBtn) {
-      copyIdentityBtn.addEventListener('click', async () => {
-        let identity = null;
-        try {
-          identity = JSON.parse(localStorage.getItem('limit180_user_profile') || 'null');
-        } catch (_) {
-          identity = null;
-        }
-        const payload = identity
-          ? `班級：${identity.grade_class || '--'}\n座號：${identity.seat_number || '--'}\n暱稱：${identity.nickname || '--'}`
-          : '班級：--\n座號：--\n暱稱：訪客特工';
-        try {
-          await navigator.clipboard.writeText(payload);
-          if (window.UIFeedback) {
-            window.UIFeedback.toast('已複製身分資訊', 'success');
-          } else {
-            alert('已複製身分資訊');
-          }
-        } catch (err) {
-          if (window.UIFeedback) {
-            window.UIFeedback.toast('複製失敗，請手動複製', 'error');
-          } else {
-            alert('複製失敗，請手動複製');
-          }
-        }
-      });
-    }
+    window.AgentCustomizationHome?.bind?.(Customization);
   });
 
 })();

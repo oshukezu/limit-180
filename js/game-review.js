@@ -3,6 +3,16 @@
   const Review = {
     // --- REVIEW MODE METHODS ---
     startReviewMode() {
+      const until = Number(localStorage.getItem('limit180_rest_lock_until') || 0);
+      if (Number.isFinite(until) && until > Date.now()) {
+        const sec = Math.ceil((until - Date.now()) / 1000);
+        if (window.UIFeedback) {
+          window.UIFeedback.toast(`休息中，約 ${sec} 秒後可進入錯題消除。`, 'error');
+        } else {
+          alert(`休息中，約 ${sec} 秒後可進入錯題消除。`);
+        }
+        return;
+      }
       const profile = window.MathSprintStorage.getProfile();
       this.gameState.isReviewMode = true;
       

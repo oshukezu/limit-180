@@ -99,12 +99,28 @@
           .filter(Boolean);
         if (wrappers.length === 0) return;
 
+        const renderOnOpen = (id) => {
+          if (id === 'home-achievements-wrapper' && window.MathSprintAchievements?.renderAchievements) {
+            const mission = window.MathSprintGame?.gameState?.currentMission || 1;
+            const select = document.getElementById('achievements-mission-select');
+            if (select) select.value = mission;
+            window.MathSprintAchievements.renderAchievements(mission);
+          }
+          if (id === 'home-store-wrapper' && window.GameStore?.renderStore) {
+            window.GameStore.renderStore();
+          }
+          if (id === 'home-dashboard-wrapper' && window.MathSprintDashboard?.renderCharts) {
+            window.MathSprintDashboard.renderCharts();
+          }
+        };
+
         wrappers.forEach((current) => {
           current.addEventListener('toggle', () => {
             if (!current.open) return;
             wrappers.forEach((other) => {
               if (other !== current) other.open = false;
             });
+            renderOnOpen(current.id);
           });
         });
       });

@@ -1,9 +1,5 @@
 // Limit 180 — 教師管理後台邏輯模組
 (function() {
-  
-  // ============================================================
-  // 1. 教師/管理員主控台邏輯 (Admin Module)
-  // ============================================================
   const Admin = {
     authorized: false,
     allGlobalData: [],
@@ -48,18 +44,14 @@
       if (!db) return;
 
       try {
-        // 從 users_global 取得所有學生的餘額與名字
         const { data: globalData, error: gError } = await db.from('users_global').select('*');
         if (gError) throw gError;
-
-        // 從 users_profile 取得所有關卡紀錄
         const { data: profileData, error: pError } = await db.from('users_profile').select('*');
         if (pError) throw pError;
 
         this.allGlobalData = globalData || [];
         this.allProfileData = profileData || [];
 
-        // 提取所有班級列表並填充至下拉選單
         const classSelect = document.getElementById('admin-class-select');
         if (classSelect) {
           classSelect.innerHTML = '';
@@ -74,7 +66,6 @@
               opt.textContent = cls + ' 班';
               classSelect.appendChild(opt);
             });
-            // 預設載入第一個班級的資料
             this.renderClassStudents(classes[0]);
           }
         }
@@ -99,7 +90,6 @@
         const tr = document.createElement('tr');
         tr.className = "border-b border-slate-800/40 hover:bg-slate-900/20";
         
-        // 統計該學生的關卡通過數
         const studentRecords = this.allProfileData.filter(r => r.grade_class === student.grade_class && r.seat_number === student.seat_number);
         const passCount = studentRecords.filter(r => r.stars > 0).length;
 
@@ -128,7 +118,6 @@
       });
     },
 
-    // 單人派發金幣
     async singleAward(gradeClass, seatNumber, nickname) {
       const amountStr = prompt(`請輸入要發送給 ${gradeClass}班 ${seatNumber}號 ${nickname} 的金幣數量：`, "10000");
       if (amountStr === null) return;
@@ -177,7 +166,6 @@
       }
     },
 
-    // 單人清除錯題
     async singleResetWrong(gradeClass, seatNumber, nickname) {
       if (!confirm(`⚠️ 確定要一鍵清空 ${gradeClass}班 ${seatNumber}號 ${nickname} 的所有錯題資料庫嗎？`)) return;
 
@@ -205,7 +193,6 @@
       }
     },
 
-    // 修正班級
     async singleUpdateClass(gradeClass, seatNumber, nickname) {
       const newClass = prompt(`請輸入 ${gradeClass}班 ${seatNumber}號 ${nickname} 的新班級代號 (例如：ST501)：`, gradeClass);
       if (newClass === null) return;
@@ -219,7 +206,6 @@
         const db = window.MathSprintSupabaseService.initSupabase();
         if (!db) throw new Error("Supabase 未初始化");
 
-        // 1. 更新 users_global 中的班級
         const { error: gError } = await db
           .from('users_global')
           .update({ grade_class: formattedClass })
@@ -227,7 +213,6 @@
 
         if (gError) throw gError;
 
-        // 2. 更新 users_profile 中對應的關卡成績班級
         const { error: pError } = await db
           .from('users_profile')
           .update({ grade_class: formattedClass })
@@ -376,9 +361,6 @@
     }
   };
 
-  // ============================================================
-  // 2. 全域掛載與事件綁定
-  // ============================================================
   window.GameAdmin = Admin;
 
   window.addEventListener('limit180ComponentsLoaded', () => {

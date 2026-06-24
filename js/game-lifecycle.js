@@ -2,8 +2,53 @@
 // Manages startGame, startPlacementTest, stopGame, interruptGame, and endGame core lifecycle methods.
 
 (function() {
+  const REST_LOCK_KEY = 'limit180_rest_lock_until';
+  const PLAY_ACC_KEY = 'limit180_play_acc_seconds';
+
   const LifecycleGame = {
+    _isRestLocked() {
+      const until = Number(localStorage.getItem(REST_LOCK_KEY) || 0);
+      return Number.isFinite(until) && until > Date.now();
+    },
+
+    _remainingRestSeconds() {
+      const until = Number(localStorage.getItem(REST_LOCK_KEY) || 0);
+      return Math.max(0, Math.ceil((until - Date.now()) / 1000));
+    },
+
+    _beginFocusSession() {
+      this._focusSessionStartedAt = Date.now();
+    },
+
+    _finalizeFocusSession() {
+      if (!this._focusSessionStartedAt) return;
+      const elapsedSec = Math.max(0, Math.floor((Date.now() - this._focusSessionStartedAt) / 1000));
+      this._focusSessionStartedAt = null;
+      if (elapsedSec <= 0) return;
+
+      const acc = Number(localStorage.getItem(PLAY_ACC_KEY) || 0);
+      const nextAcc = acc + elapsedSec;
+      if (nextAcc >= 25 * 60) {
+        localStorage.setItem(PLAY_ACC_KEY, '0');
+        localStorage.setItem(REST_LOCK_KEY, String(Date.now() + 5 * 60 * 1000));
+        if (window.UIFeedback) {
+          window.UIFeedback.toast('已連續遊玩 25 分鐘，進入 5 分鐘休息。', 'info');
+        }
+      } else {
+        localStorage.setItem(PLAY_ACC_KEY, String(nextAcc));
+      }
+    },
+
     startGame(missionNum, levelNum) {
+      if (this._isRestLocked()) {
+        const sec = this._remainingRestSeconds();
+        if (window.UIFeedback) {
+          window.UIFeedback.toast(`休息中，約 ${sec} 秒後可繼續挑戰。`, 'error');
+        } else {
+          alert(`休息中，約 ${sec} 秒後可繼續挑戰。`);
+        }
+        return;
+      }
       this.stopGame();
 
       if (window.MathSprintGenerator && window.MathSprintGenerator.resetLastAnswer) {
@@ -71,6 +116,7 @@
       this.updatePauseBtnUI();
 
       showView('view-game');
+      this._beginFocusSession();
       this.nextQuestion();
     },
 
@@ -122,6 +168,7 @@
     stopGame() {
       clearInterval(this.timerInterval);
       this.timerInterval = null;
+      this._finalizeFocusSession();
       const scaffoldCanvas = document.getElementById('scaffold-canvas-container');
       if (scaffoldCanvas) scaffoldCanvas.innerHTML = '';
     },
@@ -204,7 +251,8 @@
 
       // 檢查 200 Combo 跨關獎勵發放
       let comboBonusAwarded = 0;
-      if (isPass && this.gameState.combo200RewardPending) {
+      const isNightBlocked = window.MathSprintStorage?.isNightRewardBlocked?.() || false;
+      if (isPass && this.gameState.combo200RewardPending && !isNightBlocked) {
         comboBonusAwarded = 10000;
         this.gameState.combo200RewardPending = false;
         localStorage.setItem('math_sprint_combo_200_pending', 'false');
