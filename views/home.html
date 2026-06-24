@@ -22,10 +22,10 @@
     <!-- 中間：特工暱稱、班級座號與配戴徽章 -->
     <div class="flex-grow min-w-0">
       <div class="flex items-center gap-2">
-        <h3 id="home-agent-nickname" class="text-lg font-bold text-white truncate leading-tight">特工載入中...</h3>
+        <h3 id="home-agent-nickname" class="text-base sm:text-lg font-bold text-white truncate leading-tight">特工載入中...</h3>
       </div>
-      <div id="home-agent-class-info" class="text-[10px] text-slate-400 mt-0.5">--- 班 --- 號</div>
-      <div id="home-last-sync-time" class="text-[9px] text-slate-500 mt-0.5">最後同步：--</div>
+      <div id="home-agent-class-info" class="text-[9px] sm:text-[10px] text-slate-400 mt-0.5 truncate whitespace-nowrap">--- 班 --- 號</div>
+      <div id="home-last-sync-time" class="text-[9px] text-slate-500 mt-0.5 truncate whitespace-nowrap">最後同步：--</div>
       <div id="home-agent-badges" class="flex gap-1.5 mt-2">
         <!-- 動態注入配戴的徽章 -->
       </div>
@@ -55,24 +55,18 @@
     </div>
   </div>
 
-  <!-- (1) 標題區塊：標題字體縮小，減少視覺干擾 -->
-  <div class="text-center mb-6">
-    <p class="text-[10px] font-pixel text-slate-500 tracking-widest mb-1">MIND RETENTION LAB.</p>
-    <h2 class="text-3xl font-pixel text-white tracking-widest uppercase">Limit 180</h2>
-  </div>
-
   <!-- 核心入口按鈕垂直置中堆疊：字體極大、直覺好點 -->
   <div class="flex flex-col space-y-6 w-full font-pixel mb-8">
     <!-- 速算挑戰模式按鈕 -->
     <div class="w-full">
-      <button id="start-levels-btn" class="neon-green-btn w-full py-8 text-3xl font-black rounded-3xl tracking-widest">
+      <button id="start-levels-btn" class="neon-green-btn w-full py-8 text-3xl font-black rounded-3xl tracking-wide whitespace-nowrap">
         速算挑戰模式
       </button>
     </div>
 
     <!-- 錯題消除訓練按鈕 -->
     <div class="w-full">
-      <button id="start-review-btn" class="neon-green-btn w-full py-8 text-3xl font-black rounded-3xl tracking-widest" style="background: #db2777; color: white; box-shadow: 0 0 15px rgba(219,39,119,0.4); border-color: #db2777;">
+      <button id="start-review-btn" class="neon-green-btn w-full py-8 text-3xl font-black rounded-3xl tracking-wide whitespace-nowrap" style="background: #db2777; color: white; box-shadow: 0 0 15px rgba(219,39,119,0.4); border-color: #db2777;">
         錯題消除訓練
       </button>
     </div>

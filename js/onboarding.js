@@ -505,7 +505,7 @@
     const editBtn = document.getElementById('edit-profile-btn');
     if (profile.grade_class === '訪客') {
       if (nameEl) nameEl.textContent = profile.nickname || '訪客特工';
-      infoEl.textContent = `訪客特工・通關首局後綁定成績`;
+      infoEl.textContent = `訪客狀態・建議先登入`;
       if (editBtn) {
         editBtn.classList.remove('hidden');
         editBtn.textContent = '會員登入';

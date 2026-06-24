@@ -31,6 +31,15 @@
     <button id="store-tab-badge" class="flex-1 text-center py-3 text-slate-400 hover:text-white border-b border-slate-800 focus:outline-none cursor-pointer">成就徽章</button>
   </div>
 
+  <!-- 稀有度篩選 -->
+  <div id="store-rarity-filter" class="flex items-center gap-2 mb-4 font-pixel text-[10px]">
+    <span class="text-slate-500 shrink-0">稀有度：</span>
+    <button id="store-rarity-all" class="px-2 py-1 rounded border border-cyan-500 text-cyan-300 bg-cyan-950/20">全部</button>
+    <button id="store-rarity-common" class="px-2 py-1 rounded border border-slate-800 text-slate-400 hover:text-white">一般</button>
+    <button id="store-rarity-rare" class="px-2 py-1 rounded border border-slate-800 text-slate-400 hover:text-white">稀有</button>
+    <button id="store-rarity-legendary" class="px-2 py-1 rounded border border-slate-800 text-slate-400 hover:text-white">傳說</button>
+  </div>
+
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="theme-store-list">
     <!-- 商品卡片將由 JavaScript 動態生成 -->
   </div>

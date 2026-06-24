@@ -76,3 +76,32 @@
   from { opacity: 0; transform: scale(0.95) translateY(-10px); }
   to   { opacity: 1; transform: scale(1) translateY(0); }
 }
+
+/* Avatar Border FX: Slow pulse x8 + Neon x5 */
+@keyframes borderPulseSoft {
+  0%, 100% { opacity: 1; filter: brightness(1); transform: scale(1); }
+  50% { opacity: 0.78; filter: brightness(1.2); transform: scale(1.02); }
+}
+
+@keyframes borderNeonFlicker {
+  0%, 100% { filter: brightness(1); }
+  25% { filter: brightness(1.35); }
+  40% { filter: brightness(0.9); }
+  60% { filter: brightness(1.5); }
+  75% { filter: brightness(1.05); }
+}
+
+.border-effect-pulse-rose { animation: borderPulseSoft 3.6s ease-in-out infinite; }
+.border-effect-pulse-ice { animation: borderPulseSoft 4.2s ease-in-out infinite; }
+.border-effect-pulse-lime { animation: borderPulseSoft 3.9s ease-in-out infinite; }
+.border-effect-pulse-violet { animation: borderPulseSoft 4.6s ease-in-out infinite; }
+.border-effect-pulse-amber { animation: borderPulseSoft 3.7s ease-in-out infinite; }
+.border-effect-pulse-mint { animation: borderPulseSoft 4.4s ease-in-out infinite; }
+.border-effect-pulse-coral { animation: borderPulseSoft 4.0s ease-in-out infinite; }
+.border-effect-pulse-silver { animation: borderPulseSoft 4.8s ease-in-out infinite; }
+
+.border-effect-neon-cyan { animation: borderNeonFlicker 1.9s steps(6, end) infinite; box-shadow: 0 0 8px #00f0ff, 0 0 18px #00f0ff !important; }
+.border-effect-neon-magenta { animation: borderNeonFlicker 1.7s steps(6, end) infinite; box-shadow: 0 0 8px #ff1fa8, 0 0 18px #ff1fa8 !important; }
+.border-effect-neon-lime { animation: borderNeonFlicker 2.1s steps(6, end) infinite; box-shadow: 0 0 8px #39ff14, 0 0 18px #39ff14 !important; }
+.border-effect-neon-violet { animation: borderNeonFlicker 1.8s steps(6, end) infinite; box-shadow: 0 0 8px #9d4edd, 0 0 18px #9d4edd !important; }
+.border-effect-neon-gold { animation: borderNeonFlicker 2.0s steps(6, end) infinite; box-shadow: 0 0 8px #ffd700, 0 0 18px #ffd700 !important; }

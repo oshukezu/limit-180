@@ -4,6 +4,41 @@
 (function() {
   const Store = {
     currentTab: 'theme', // theme, avatar, border, badge
+    rarityFilter: 'all', // all, common, rare, legendary
+
+    getRarityByPrice(price) {
+      const p = Number(price || 0);
+      if (p >= 150000) {
+        return { key: 'legendary', label: '傳說', className: 'text-yellow-300 border-yellow-500/60 bg-yellow-950/30' };
+      }
+      if (p >= 50000) {
+        return { key: 'rare', label: '稀有', className: 'text-violet-300 border-violet-500/60 bg-violet-950/30' };
+      }
+      return { key: 'common', label: '一般', className: 'text-cyan-300 border-cyan-500/60 bg-cyan-950/30' };
+    },
+
+    shouldShowByRarity(price) {
+      if (this.rarityFilter === 'all') return true;
+      return this.getRarityByPrice(price).key === this.rarityFilter;
+    },
+
+    updateRarityFilterButtons() {
+      const defs = [
+        { id: 'store-rarity-all', key: 'all' },
+        { id: 'store-rarity-common', key: 'common' },
+        { id: 'store-rarity-rare', key: 'rare' },
+        { id: 'store-rarity-legendary', key: 'legendary' }
+      ];
+      defs.forEach(({ id, key }) => {
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        if (this.rarityFilter === key) {
+          btn.className = 'px-2 py-1 rounded border border-cyan-500 text-cyan-300 bg-cyan-950/20';
+        } else {
+          btn.className = 'px-2 py-1 rounded border border-slate-800 text-slate-400 hover:text-white';
+        }
+      });
+    },
 
     renderStore() {
       const storeList = document.getElementById('theme-store-list');
@@ -22,6 +57,11 @@
 
       storeList.innerHTML = '';
       this.updateTabButtons();
+      this.updateRarityFilterButtons();
+      const rarityWrap = document.getElementById('store-rarity-filter');
+      if (rarityWrap) {
+        rarityWrap.classList.toggle('hidden', this.currentTab === 'theme');
+      }
 
       if (this.currentTab === 'theme') {
         // --- 1. 渲染主題配色 ---
@@ -70,8 +110,10 @@
 
         Object.keys(avatars).forEach(key => {
           const av = avatars[key];
+          if (!this.shouldShowByRarity(av.price)) return;
           const isPurchased = unlockedAvatars.includes(av.id);
           const isEquipped = equippedAvatar === av.id;
+          const rarity = this.getRarityByPrice(av.price);
 
           let buttonHtml = this.generateButtonHtml(av.id, av.price, isPurchased, isEquipped, currentCoins, 'avatar');
 
@@ -86,6 +128,7 @@
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2">
                 <span class="text-xs font-pixel text-white truncate">${av.name}</span>
+                <span class="text-[7px] font-pixel border px-1 py-0.5 rounded shrink-0 ${rarity.className}">${rarity.label}</span>
                 ${isEquipped ? '<span class="text-[7px] font-pixel text-pink-400 border border-pink-500/50 px-1 py-0.5 rounded animate-pulse shrink-0">EQUIPPED</span>' : ''}
               </div>
               <span class="text-[10px] text-slate-500 font-pixel">
@@ -107,8 +150,10 @@
 
         Object.keys(borders).forEach(key => {
           const bor = borders[key];
+          if (!this.shouldShowByRarity(bor.price)) return;
           const isPurchased = unlockedBorders.includes(bor.id);
           const isEquipped = equippedBorder === bor.id;
+          const rarity = this.getRarityByPrice(bor.price);
 
           let buttonHtml = this.generateButtonHtml(bor.id, bor.price, isPurchased, isEquipped, currentCoins, 'border');
 
@@ -129,6 +174,7 @@
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2">
                 <span class="text-xs font-pixel text-white truncate">${bor.name}</span>
+                <span class="text-[7px] font-pixel border px-1 py-0.5 rounded shrink-0 ${rarity.className}">${rarity.label}</span>
                 ${isEquipped ? '<span class="text-[7px] font-pixel text-pink-400 border border-pink-500/50 px-1 py-0.5 rounded animate-pulse shrink-0">EQUIPPED</span>' : ''}
               </div>
               <span class="text-[10px] text-slate-500 font-pixel">
@@ -150,6 +196,8 @@
 
         Object.keys(badges).forEach(key => {
           const bd = badges[key];
+          if (!this.shouldShowByRarity(bd.price)) return;
+          const rarity = this.getRarityByPrice(bd.price);
           
           // 徽章是否已解鎖 (已購買，或是原本的成就解鎖)
           const isPurchased = unlockedAchievements.includes(bd.id);
@@ -168,6 +216,7 @@
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-1">
                 <span class="text-xs font-pixel text-white truncate">${bd.name}</span>
+                <span class="text-[7px] font-pixel border px-1 py-0.5 rounded shrink-0 ${rarity.className}">${rarity.label}</span>
                 ${isEquipped ? '<span class="text-[7px] font-pixel text-pink-400 border border-pink-500/50 px-1 py-0.5 rounded animate-pulse shrink-0">EQUIPPED</span>' : ''}
               </div>
               <div class="text-[8px] text-slate-500 font-tech truncate">${bd.desc}</div>
@@ -186,34 +235,45 @@
 
     // 產生按鈕的 HTML (商店只負責購買)
     generateButtonHtml(itemId, price, isPurchased, isEquipped, currentCoins, type) {
-      if (isEquipped || isPurchased) {
+      if (isPurchased || isEquipped) {
+        // 已擁有商品：顯示狀態 + 賣出（免費商品不可賣）
+        if (price > 0) {
+          const sellPrice = Math.floor(Number(price || 0) / 2);
+          return `
+            <div class="flex flex-col items-end gap-1">
+              <span class="text-slate-500 text-[10px] font-pixel">已解鎖</span>
+              <button class="px-3 py-1 text-[10px] font-pixel rounded bg-red-950/40 text-red-300 border border-red-500/60 hover:bg-red-500 hover:text-black transition-all duration-200" onclick="window.GameStore.sell('${itemId}', ${price}, '${type}')">
+                賣出 +${sellPrice.toLocaleString('zh-TW')}
+              </button>
+            </div>
+          `;
+        }
         return `
-          <span class="text-slate-500 text-xs font-pixel">// 已解鎖 //</span>
+          <span class="text-slate-500 text-xs font-pixel">已解鎖</span>
         `;
-      } else {
-        const canAfford = currentCoins >= price;
-        if (price === 0 && type === 'badge') {
-          // 免費且未解鎖的徽章 (代表需通過成就解鎖)
-          return `
-            <button class="px-4 py-2 text-xs font-pixel rounded bg-slate-800 text-slate-600 border border-slate-700 cursor-not-allowed opacity-50" disabled>
-              需解鎖成就
-            </button>
-          `;
-        }
-        if (canAfford) {
-          return `
-            <button class="px-4 py-2 text-xs font-pixel rounded bg-yellow-950/40 text-yellow-400 border border-yellow-500 hover:bg-yellow-500 hover:text-black transition-all duration-200" onclick="window.GameStore.purchase('${itemId}', ${price}, '${type}')">
-              購買
-            </button>
-          `;
-        } else {
-          return `
-            <button class="px-4 py-2 text-xs font-pixel rounded bg-slate-800 text-slate-600 border border-slate-700 cursor-not-allowed opacity-50" disabled>
-              餘額不足
-            </button>
-          `;
-        }
       }
+
+      const canAfford = currentCoins >= price;
+      if (price === 0 && type === 'badge') {
+        // 免費且未解鎖的徽章 (代表需通過成就解鎖)
+        return `
+          <button class="px-4 py-2 text-xs font-pixel rounded bg-slate-800 text-slate-600 border border-slate-700 cursor-not-allowed opacity-50" disabled>
+            需解鎖成就
+          </button>
+        `;
+      }
+      if (canAfford) {
+        return `
+          <button class="px-4 py-2 text-xs font-pixel rounded bg-yellow-950/40 text-yellow-400 border border-yellow-500 hover:bg-yellow-500 hover:text-black transition-all duration-200" onclick="window.GameStore.purchase('${itemId}', ${price}, '${type}')">
+            購買
+          </button>
+        `;
+      }
+      return `
+        <button class="px-4 py-2 text-xs font-pixel rounded bg-slate-800 text-slate-600 border border-slate-700 cursor-not-allowed opacity-50" disabled>
+          餘額不足
+        </button>
+      `;
     },
 
     // 購買商品
@@ -295,6 +355,77 @@
       }
     },
 
+    // 賣出商品（回收價 = 原價 1/2）
+    async sell(itemId, price, type) {
+      const originPrice = Number(price || 0);
+      if (!Number.isFinite(originPrice) || originPrice <= 0) {
+        if (window.UIFeedback) window.UIFeedback.toast('此商品不可賣出', 'error');
+        return;
+      }
+      const refund = Math.floor(originPrice / 2);
+      const profile = window.MathSprintStorage.getProfile();
+      let name = '商品';
+      let sold = false;
+
+      if (type === 'theme') {
+        name = window.ThemeManager.THEMES[itemId]?.name || '主題';
+      } else if (type === 'avatar') {
+        name = window.MATH_SPRINT_AVATARS[itemId]?.name || '頭像';
+      } else if (type === 'border') {
+        name = window.MATH_SPRINT_BORDERS[itemId]?.name || '外框';
+      } else if (type === 'badge') {
+        name = window.MATH_SPRINT_BADGES[itemId]?.name || '徽章';
+      }
+      name = name.replace(/[🛡️🐱🕶️👑🥷✨🦊🐉🐯🐰🐨🐼🦁🦄👽🤖👻🔥💧🌱⚡🌸🔮🔋☄️◽🖤🌈💎👙🥑🌫️📡🍡🏜️📟⭐🧗🏦🎰❤️🧠🎖️🎵💀]/g, '').trim();
+
+      const agreed = window.UIFeedback
+        ? await window.UIFeedback.confirm(`確定要賣出「${name}」嗎？可回收 ${refund.toLocaleString('zh-TW')} 💰`, '確認賣出')
+        : confirm(`確定要賣出「${name}」嗎？可回收 💰${refund.toLocaleString()}`);
+      if (!agreed) return;
+
+      if (type === 'theme') {
+        profile.purchased_themes = profile.purchased_themes || ['akaimon'];
+        if (!profile.purchased_themes.includes(itemId) || itemId === 'akaimon') return;
+        profile.purchased_themes = profile.purchased_themes.filter(id => id !== itemId);
+        if (profile.equipped_theme === itemId) {
+          profile.equipped_theme = profile.purchased_themes.includes('akaimon')
+            ? 'akaimon'
+            : (profile.purchased_themes[0] || 'akaimon');
+          window.ThemeManager?.applyTheme?.(profile.equipped_theme);
+        }
+        sold = true;
+      } else if (type === 'avatar') {
+        profile.unlocked_assets = profile.unlocked_assets || ['avatar-default', 'border-none'];
+        if (!profile.unlocked_assets.includes(itemId) || itemId === 'avatar-default') return;
+        profile.unlocked_assets = profile.unlocked_assets.filter(id => id !== itemId);
+        if (profile.equipped_avatar === itemId) profile.equipped_avatar = 'avatar-default';
+        sold = true;
+      } else if (type === 'border') {
+        profile.unlocked_assets = profile.unlocked_assets || ['avatar-default', 'border-none'];
+        if (!profile.unlocked_assets.includes(itemId) || itemId === 'border-none') return;
+        profile.unlocked_assets = profile.unlocked_assets.filter(id => id !== itemId);
+        if (profile.equipped_border === itemId) profile.equipped_border = 'border-none';
+        sold = true;
+      } else if (type === 'badge') {
+        profile.unlocked_achievements = profile.unlocked_achievements || [];
+        if (!profile.unlocked_achievements.includes(itemId)) return;
+        profile.unlocked_achievements = profile.unlocked_achievements.filter(id => id !== itemId);
+        profile.equipped_badges = (profile.equipped_badges || []).filter(id => id !== itemId);
+        sold = true;
+      }
+
+      if (!sold) return;
+      profile.total_stars = (profile.total_stars || 0) + refund;
+      window.MathSprintStorage.saveProfile(profile);
+      this.renderStore();
+
+      if (window.UIFeedback) {
+        window.UIFeedback.toast(`已賣出「${name}」，回收 ${refund.toLocaleString('zh-TW')} 💰`, 'success');
+      } else {
+        alert(`已賣出「${name}」，回收 💰${refund.toLocaleString()}`);
+      }
+    },
+
     // 更新 Tab 按鈕的 CSS 狀態
     updateTabButtons() {
       const tabs = ['theme', 'avatar', 'border', 'badge'];
@@ -314,6 +445,11 @@
     switchTab(tabType) {
       this.currentTab = tabType;
       this.renderStore();
+    },
+
+    switchRarityFilter(filterKey) {
+      this.rarityFilter = filterKey;
+      this.renderStore();
     }
   };
 
@@ -330,6 +466,20 @@
           window.GameStore.switchTab(tab);
         });
       }
+    });
+
+    const filterMap = {
+      'store-rarity-all': 'all',
+      'store-rarity-common': 'common',
+      'store-rarity-rare': 'rare',
+      'store-rarity-legendary': 'legendary'
+    };
+    Object.keys(filterMap).forEach((id) => {
+      const btn = document.getElementById(id);
+      if (!btn) return;
+      btn.addEventListener('click', () => {
+        window.GameStore.switchRarityFilter(filterMap[id]);
+      });
     });
   });
 

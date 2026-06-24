@@ -43,7 +43,24 @@
     'border-laser': { id: 'border-laser', name: '📡 激光鐳射', color: '#5856d6', price: 120000 },
     'border-sakura': { id: 'border-sand', name: '🍡 櫻花春爛', color: '#ffb3ba', price: 110000 },
     'border-sand': { id: 'border-sand', name: '🏜️ 狂沙風暴', color: '#c5a059', price: 32000 },
-    'border-matrix': { id: 'border-matrix', name: '📟 虛擬矩陣', color: '#39ff14', price: 160000 }
+    'border-matrix': { id: 'border-matrix', name: '📟 虛擬矩陣', color: '#39ff14', price: 160000 },
+
+    /* 8 種慢慢閃爍外框（隨機價位混入） */
+    'border-pulse-rose': { id: 'border-pulse-rose', name: '🌹 脈衝玫瑰', color: '#ff8fab', price: 68000, effectClass: 'border-effect-pulse-rose' },
+    'border-pulse-ice': { id: 'border-pulse-ice', name: '❄️ 冰脈微閃', color: '#7dd3fc', price: 54000, effectClass: 'border-effect-pulse-ice' },
+    'border-pulse-lime': { id: 'border-pulse-lime', name: '🍋 萊姆慢閃', color: '#bef264', price: 72000, effectClass: 'border-effect-pulse-lime' },
+    'border-pulse-violet': { id: 'border-pulse-violet', name: '🪻 紫霧波動', color: '#c4b5fd', price: 83000, effectClass: 'border-effect-pulse-violet' },
+    'border-pulse-amber': { id: 'border-pulse-amber', name: '🧡 琥珀呼吸', color: '#fbbf24', price: 60000, effectClass: 'border-effect-pulse-amber' },
+    'border-pulse-mint': { id: 'border-pulse-mint', name: '🌿 薄荷閃頻', color: '#5eead4', price: 78000, effectClass: 'border-effect-pulse-mint' },
+    'border-pulse-coral': { id: 'border-pulse-coral', name: '🪸 珊瑚暖閃', color: '#fb7185', price: 69000, effectClass: 'border-effect-pulse-coral' },
+    'border-pulse-silver': { id: 'border-pulse-silver', name: '🩶 銀輝慢閃', color: '#d1d5db', price: 92000, effectClass: 'border-effect-pulse-silver' },
+
+    /* 5 種霓虹特效外框（隨機價位混入） */
+    'border-neon-cyan': { id: 'border-neon-cyan', name: '⚡ 霓虹電青', color: '#00f0ff', price: 150000, effectClass: 'border-effect-neon-cyan' },
+    'border-neon-magenta': { id: 'border-neon-magenta', name: '💖 霓虹洋紅', color: '#ff1fa8', price: 168000, effectClass: 'border-effect-neon-magenta' },
+    'border-neon-lime': { id: 'border-neon-lime', name: '🟢 霓虹毒綠', color: '#39ff14', price: 142000, effectClass: 'border-effect-neon-lime' },
+    'border-neon-violet': { id: 'border-neon-violet', name: '🟣 霓虹紫電', color: '#9d4edd', price: 176000, effectClass: 'border-effect-neon-violet' },
+    'border-neon-gold': { id: 'border-neon-gold', name: '✨ 霓虹鎏金', color: '#ffd700', price: 188000, effectClass: 'border-effect-neon-gold' }
   };
 
   const BADGES = {

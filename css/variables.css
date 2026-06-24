@@ -62,6 +62,102 @@ body.theme-gold {
   --text-primary: #FFF5F6;
 }
 
+/* 覆寫主題：深海深淵 (Abyss) */
+body.theme-abyss {
+  --neon-pink: #00d4ff;
+  --neon-green: #38bdf8;
+  --neon-blue: #0077b6;
+  --neon-yellow: #7dd3fc;
+  --dark-bg: #021220;
+  --panel-bg: #062033;
+  --border-color: var(--neon-blue);
+  --text-primary: #e0f2fe;
+}
+
+/* 覆寫主題：夜櫻月影 (Sakura Night) */
+body.theme-sakura-night {
+  --neon-pink: #ff9ec4;
+  --neon-green: #c084fc;
+  --neon-blue: #8b5cf6;
+  --neon-yellow: #f9a8d4;
+  --dark-bg: #170d1a;
+  --panel-bg: #2a1531;
+  --border-color: var(--neon-blue);
+  --text-primary: #fdf2f8;
+}
+
+/* 覆寫主題：翡翠矩陣 (Emerald) */
+body.theme-emerald {
+  --neon-pink: #39ff88;
+  --neon-green: #10b981;
+  --neon-blue: #0ea5a0;
+  --neon-yellow: #86efac;
+  --dark-bg: #03150f;
+  --panel-bg: #0a241b;
+  --border-color: var(--neon-blue);
+  --text-primary: #ecfdf5;
+}
+
+/* 覆寫主題：雷暴核心 (Thunder) */
+body.theme-thunder {
+  --neon-pink: #f5d000;
+  --neon-green: #facc15;
+  --neon-blue: #60a5fa;
+  --neon-yellow: #fde047;
+  --dark-bg: #111827;
+  --panel-bg: #1f2937;
+  --border-color: var(--neon-blue);
+  --text-primary: #f9fafb;
+}
+
+/* 覆寫主題：銀河曲率 (Galaxy) */
+body.theme-galaxy {
+  --neon-pink: #a78bfa;
+  --neon-green: #c4b5fd;
+  --neon-blue: #22d3ee;
+  --neon-yellow: #ddd6fe;
+  --dark-bg: #0b1026;
+  --panel-bg: #151b3d;
+  --border-color: var(--neon-blue);
+  --text-primary: #eef2ff;
+}
+
+/* 覆寫主題：暮光餘燼 (Sunset) */
+body.theme-sunset {
+  --neon-pink: #ff7a59;
+  --neon-green: #ffb86b;
+  --neon-blue: #fb7185;
+  --neon-yellow: #fdba74;
+  --dark-bg: #2b0f0a;
+  --panel-bg: #3f1d14;
+  --border-color: var(--neon-blue);
+  --text-primary: #fff7ed;
+}
+
+/* 覆寫主題：薄荷霧境 (Mint) */
+body.theme-mint {
+  --neon-pink: #7ef9d8;
+  --neon-green: #2dd4bf;
+  --neon-blue: #22d3ee;
+  --neon-yellow: #99f6e4;
+  --dark-bg: #0b1a17;
+  --panel-bg: #11312b;
+  --border-color: var(--neon-blue);
+  --text-primary: #ecfeff;
+}
+
+/* 覆寫主題：黑銀極簡 (Mono) */
+body.theme-mono {
+  --neon-pink: #d1d5db;
+  --neon-green: #9ca3af;
+  --neon-blue: #6b7280;
+  --neon-yellow: #e5e7eb;
+  --dark-bg: #09090b;
+  --panel-bg: #18181b;
+  --border-color: var(--neon-blue);
+  --text-primary: #f4f4f5;
+}
+
 /* Sakura Canvas 背景樣式 */
 #sakura-canvas {
   position: fixed;

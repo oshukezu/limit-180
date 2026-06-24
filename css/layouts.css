@@ -180,3 +180,204 @@ body.body-in-game main {
     border-radius: 8px;
   }
 }
+
+/* ============================================================ */
+/* 全站一致化（手機優先）：縮小瀏覽器與 Android 版面穩定化              */
+/* ============================================================ */
+@media (max-width: 430px) {
+  /* 主要頁面統一左右留白，降低各頁視覺落差 */
+  #view-home,
+  #view-lobby,
+  #view-store,
+  #view-result,
+  #view-review,
+  #view-game {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  /* 全站常見卡片在小螢幕保持一致內距 */
+  .hud-panel {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  /* 手機上按鈕高度與字級一致，降低「每頁一種風格」的斷裂感 */
+  .cyber-btn,
+  .neon-green-btn,
+  .nav-btn {
+    min-height: 44px;
+    font-size: 12px !important;
+    line-height: 1.2;
+  }
+
+  /* 導覽/分頁型按鈕統一單行顯示，避免小寬度斷行 */
+  #view-home .font-pixel button,
+  #view-lobby button[data-min],
+  #view-store .flex.border-b button,
+  #view-home #tab-leaderboard-personal,
+  #view-home #tab-leaderboard-team,
+  #view-home #tab-leaderboard-mission {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* 身份資訊統一單行，避免 Android 內建瀏覽器字寬造成抖動 */
+  #home-agent-class-info,
+  #home-last-sync-time,
+  #leaderboard-my-rank-block,
+  .leaderboard-row .font-tech {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* 主頁面兩大入口按鈕在小螢幕不放大到擠壓版面 */
+  #start-levels-btn,
+  #start-review-btn {
+    font-size: 2rem !important;
+    padding-top: 1.25rem !important;
+    padding-bottom: 1.25rem !important;
+  }
+
+  /* 首頁身份卡：固定三區比例，減少 Android 字寬差造成的抖動 */
+  #user-profile-bar {
+    padding: 12px !important;
+    gap: 10px !important;
+  }
+  #user-profile-bar > .relative.w-20.h-20 {
+    width: 68px !important;
+    height: 68px !important;
+  }
+  #home-avatar-img {
+    width: 44px !important;
+    height: 44px !important;
+    font-size: 1.4rem !important;
+  }
+  #home-avatar-border {
+    border-width: 3px !important;
+  }
+  #home-login-streak-badge {
+    min-width: 24px !important;
+    height: 22px !important;
+    font-size: 8px !important;
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+  }
+  #open-custom-btn-main {
+    width: 20px !important;
+    height: 20px !important;
+    font-size: 9px !important;
+  }
+  #home-agent-nickname {
+    font-size: 0.95rem !important;
+    line-height: 1.2 !important;
+    max-width: 100% !important;
+  }
+  #home-agent-class-info,
+  #home-last-sync-time {
+    font-size: 8px !important;
+    line-height: 1.2 !important;
+  }
+  #home-agent-badges {
+    margin-top: 4px !important;
+    gap: 4px !important;
+  }
+  #home-agent-badges > span {
+    font-size: 11px !important;
+  }
+  #home-max-stage-badge {
+    font-size: 1.1rem !important;
+    line-height: 1.1 !important;
+  }
+  #user-profile-bar .shrink-0.flex.flex-col.items-center.justify-center {
+    min-width: 62px !important;
+    padding: 8px 6px !important;
+  }
+
+  /* 獎金三欄：壓縮字級與內距，確保不換行 */
+  #view-home .w-full.flex.justify-between.items-center.bg-slate-950\/80 {
+    padding: 10px !important;
+    margin-bottom: 14px !important;
+  }
+  #profile-total-stars,
+  #profile-today-earnings {
+    font-size: 1.5rem !important;
+    line-height: 1.1 !important;
+  }
+  #edit-profile-btn {
+    font-size: 10px !important;
+    white-space: nowrap !important;
+  }
+
+  /* 排行榜分頁與列表高度微調，避免首屏過長 */
+  #view-home #tab-leaderboard-personal,
+  #view-home #tab-leaderboard-team,
+  #view-home #tab-leaderboard-mission {
+    font-size: 9px !important;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+  }
+  #leaderboard-list {
+    max-height: 220px !important;
+  }
+  #leaderboard-my-rank-block {
+    padding: 8px !important;
+    font-size: 9px !important;
+  }
+
+  /* 首頁主要按鈕縮短高度，避免第一屏過於壅擠 */
+  #view-home .flex.flex-col.space-y-6.w-full.font-pixel.mb-8 {
+    gap: 14px !important;
+    margin-bottom: 16px !important;
+  }
+  #start-levels-btn,
+  #start-review-btn {
+    border-radius: 18px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  /* 320~360 小螢幕再收斂一階，優先保持單行 */
+  #view-home,
+  #view-lobby,
+  #view-store,
+  #view-result,
+  #view-review,
+  #view-game {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+
+  #start-levels-btn,
+  #start-review-btn {
+    font-size: 1.7rem !important;
+  }
+
+  #home-agent-nickname {
+    font-size: 0.95rem !important;
+  }
+
+  #home-agent-class-info,
+  #home-last-sync-time {
+    font-size: 7px !important;
+  }
+
+  #profile-total-stars,
+  #profile-today-earnings {
+    font-size: 1.3rem !important;
+  }
+
+  #leaderboard-list {
+    max-height: 190px !important;
+  }
+
+  #view-home #tab-leaderboard-personal,
+  #view-home #tab-leaderboard-team,
+  #view-home #tab-leaderboard-mission {
+    font-size: 9px !important;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+  }
+}

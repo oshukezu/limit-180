@@ -7,6 +7,31 @@
   const AVATARS = window.MATH_SPRINT_AVATARS || {};
   const BORDERS = window.MATH_SPRINT_BORDERS || {};
   const BADGES = window.MATH_SPRINT_BADGES || {};
+  const BORDER_EFFECT_CLASSES = [
+    'border-effect-pulse-rose',
+    'border-effect-pulse-ice',
+    'border-effect-pulse-lime',
+    'border-effect-pulse-violet',
+    'border-effect-pulse-amber',
+    'border-effect-pulse-mint',
+    'border-effect-pulse-coral',
+    'border-effect-pulse-silver',
+    'border-effect-neon-cyan',
+    'border-effect-neon-magenta',
+    'border-effect-neon-lime',
+    'border-effect-neon-violet',
+    'border-effect-neon-gold'
+  ];
+
+  function applyAvatarBorderVisual(targetEl, borderDef) {
+    if (!targetEl || !borderDef) return;
+    BORDER_EFFECT_CLASSES.forEach((cls) => targetEl.classList.remove(cls));
+    targetEl.style.borderColor = borderDef.color || 'transparent';
+    targetEl.style.boxShadow = borderDef.id !== 'border-none' ? `0 0 10px ${borderDef.color || '#ffffff'}` : 'none';
+    if (borderDef.effectClass) {
+      targetEl.classList.add(borderDef.effectClass);
+    }
+  }
 
   function renderHomeIdentityCard() {
     const profile = window.MathSprintStorage.getProfile();
@@ -23,10 +48,7 @@
     const borObj = BORDERS[profile.equipped_border] || BORDERS['border-none'] || { color: 'transparent', id: 'border-none' };
 
     if (avImg) avImg.textContent = avObj.icon;
-    if (avBorder) {
-      avBorder.style.borderColor = borObj.color;
-      avBorder.style.boxShadow = borObj.id !== 'border-none' ? `0 0 10px ${borObj.color}` : 'none';
-    }
+    if (avBorder) applyAvatarBorderVisual(avBorder, borObj);
 
     let identity = null;
     try {
@@ -41,7 +63,7 @@
       if (identity?.grade_class && identity?.seat_number && identity.grade_class !== '訪客') {
         classInfo.textContent = `${identity.grade_class} 班 座號 ${identity.seat_number} 號`;
       } else {
-        classInfo.textContent = '訪客狀態・通關後建議綁定身份';
+        classInfo.textContent = '訪客狀態・建議先登入';
       }
     }
 
@@ -67,7 +89,7 @@
       badgesContainer.innerHTML = '';
       const equippedBadges = profile.equipped_badges || [];
       if (equippedBadges.length === 0) {
-        badgesContainer.innerHTML = `<span class="text-[9px] text-slate-500">// 尚未配戴徽章 //</span>`;
+        badgesContainer.innerHTML = `<span class="text-[9px] text-slate-500">尚未配戴徽章</span>`;
       } else {
         equippedBadges.forEach((bId) => {
           const b = window.MATH_SPRINT_BADGES[bId];
@@ -138,14 +160,7 @@
 
       // 更新頭像框
       const borObj = BORDERS[this.tempProfile.equipped_border] || BORDERS['border-none'];
-      if (avBorder && borObj) {
-        avBorder.style.borderColor = borObj.color;
-        if (borObj.id !== 'border-none') {
-          avBorder.style.boxShadow = `0 0 10px ${borObj.color}`;
-        } else {
-          avBorder.style.boxShadow = 'none';
-        }
-      }
+      if (avBorder && borObj) applyAvatarBorderVisual(avBorder, borObj);
 
       // 更新暱稱
       const uProfile = JSON.parse(localStorage.getItem('limit180_user_profile') || '{}');
