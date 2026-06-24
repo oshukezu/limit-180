@@ -118,7 +118,7 @@
           <div class="leaderboard-row ${isTop3 ? 'leaderboard-row-top' : ''} ${meBorderClass} flex justify-between items-center py-2 px-3 text-xs font-pixel">
             <div class="flex items-center gap-2">
               <span class="leaderboard-rank w-6 text-center ${rankClass}">${icon}</span>
-              <span class="text-slate-400 text-[9px] font-tech">[${row.grade_class}班 ${row.seat_number}號]</span>
+              <span class="text-slate-400 text-[9px] font-tech">${row.grade_class}班 ${row.seat_number}號</span>
               <span class="text-white text-[11px] font-bold">${escapeHtml(row.nickname)}</span>
               ${isMe ? '<span class="text-[8px] bg-cyan-500 text-black px-1 font-bold rounded">我</span>' : ''}
             </div>

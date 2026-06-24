@@ -11,10 +11,12 @@
           🛡️
         </div>
       </div>
-      <!-- 編輯筆按鈕 (點選可打開個人化彈窗) -->
-      <button id="open-custom-btn-main" class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 flex items-center justify-center text-[10px] font-bold border-2 border-slate-950 shadow focus:outline-none" onclick="window.AgentCustomization?.openModal()">
+      <!-- 編輯筆按鈕 (改至右上，避免與登入徽章重疊) -->
+      <button id="open-custom-btn-main" class="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 flex items-center justify-center text-[10px] font-bold border-2 border-slate-950 shadow focus:outline-none" onclick="window.AgentCustomization?.openModal()">
         ✏️
       </button>
+      <!-- 連續登入徽章：固定頭像右下角 -->
+      <span id="home-login-streak-badge" class="absolute -bottom-1 -right-1 min-w-[26px] h-6 px-1 rounded-full bg-yellow-400 text-slate-950 text-[9px] font-black flex items-center justify-center border-2 border-slate-950 shadow">D0</span>
     </div>
 
     <!-- 中間：特工暱稱、班級座號與配戴徽章 -->
@@ -24,7 +26,6 @@
       </div>
       <div id="home-agent-class-info" class="text-[10px] text-slate-400 mt-0.5">--- 班 --- 號</div>
       <div id="home-last-sync-time" class="text-[9px] text-slate-500 mt-0.5">最後同步：--</div>
-      <div id="home-login-streak" class="text-[9px] text-cyan-300 mt-0.5">連續登入：Day 0</div>
       <div id="home-agent-badges" class="flex gap-1.5 mt-2">
         <!-- 動態注入配戴的徽章 -->
       </div>

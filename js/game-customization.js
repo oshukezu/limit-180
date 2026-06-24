@@ -12,10 +12,10 @@
     const profile = window.MathSprintStorage.getProfile();
     const avImg = document.getElementById('home-avatar-img');
     const avBorder = document.getElementById('home-avatar-border');
+    const loginBadge = document.getElementById('home-login-streak-badge');
     const agentName = document.getElementById('home-agent-nickname');
     const classInfo = document.getElementById('home-agent-class-info');
     const lastSyncEl = document.getElementById('home-last-sync-time');
-    const loginStreakEl = document.getElementById('home-login-streak');
     const badgesContainer = document.getElementById('home-agent-badges');
     const maxStageBadge = document.getElementById('home-max-stage-badge');
 
@@ -57,9 +57,10 @@
       }
     }
 
-    if (loginStreakEl) {
+    if (loginBadge) {
       const day = Math.max(0, Number(localStorage.getItem('limit180_login_reward_streak') || 0));
-      loginStreakEl.textContent = `連續登入：Day ${day}`;
+      loginBadge.textContent = `D${day}`;
+      loginBadge.title = `連續登入 Day ${day}`;
     }
 
     if (badgesContainer) {
@@ -361,11 +362,16 @@
 
     saveAndApply() {
       const profile = window.MathSprintStorage.getProfile();
+      profile.equipped_theme = this.tempProfile.equipped_theme || profile.equipped_theme || 'akaimon';
+      profile.purchased_themes = Array.from(new Set(this.tempProfile.purchased_themes || profile.purchased_themes || ['akaimon']));
       profile.equipped_avatar = this.tempProfile.equipped_avatar;
       profile.equipped_border = this.tempProfile.equipped_border;
       profile.equipped_badges = this.tempProfile.equipped_badges;
       
       window.MathSprintStorage.saveProfile(profile);
+      if (window.ThemeManager && typeof window.ThemeManager.applyTheme === 'function') {
+        window.ThemeManager.applyTheme(profile.equipped_theme);
+      }
       document.getElementById('customization-modal').classList.add('hidden');
       if (window.UIFeedback) {
         window.UIFeedback.toast('特工外觀已套用，資料同步中', 'success');

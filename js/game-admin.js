@@ -130,7 +130,7 @@
 
     // 單人派發金幣
     async singleAward(gradeClass, seatNumber, nickname) {
-      const amountStr = prompt(`請輸入要發送給 [${gradeClass}班 ${seatNumber}號 ${nickname}] 的金幣數量：`, "10000");
+      const amountStr = prompt(`請輸入要發送給 ${gradeClass}班 ${seatNumber}號 ${nickname} 的金幣數量：`, "10000");
       if (amountStr === null) return;
       const amount = parseInt(amountStr);
       if (isNaN(amount) || amount <= 0) {
@@ -179,7 +179,7 @@
 
     // 單人清除錯題
     async singleResetWrong(gradeClass, seatNumber, nickname) {
-      if (!confirm(`⚠️ 確定要一鍵清空 [${gradeClass}班 ${seatNumber}號 ${nickname}] 的所有錯題資料庫嗎？`)) return;
+      if (!confirm(`⚠️ 確定要一鍵清空 ${gradeClass}班 ${seatNumber}號 ${nickname} 的所有錯題資料庫嗎？`)) return;
 
       try {
         const student = this.allGlobalData.find(s => s.grade_class === gradeClass && s.seat_number === seatNumber);
@@ -198,7 +198,7 @@
             student.unlocked_assets || ['avatar-default', 'border-none']
           );
         }
-        alert(`✓ 特工 [${nickname}] 錯題重設成功！`);
+        alert(`✓ 特工 ${nickname} 錯題重設成功！`);
         this.fetchData();
       } catch (err) {
         alert('重設失敗：' + err.message);
@@ -207,7 +207,7 @@
 
     // 修正班級
     async singleUpdateClass(gradeClass, seatNumber, nickname) {
-      const newClass = prompt(`請輸入 [${gradeClass}班 ${seatNumber}號 ${nickname}] 的新班級代號 (例如：ST501)：`, gradeClass);
+      const newClass = prompt(`請輸入 ${gradeClass}班 ${seatNumber}號 ${nickname} 的新班級代號 (例如：ST501)：`, gradeClass);
       if (newClass === null) return;
       const formattedClass = newClass.trim().toUpperCase();
       if (!formattedClass) {
@@ -244,7 +244,7 @@
 
     // 修正座號
     async singleUpdateSeat(gradeClass, seatNumber, nickname) {
-      const newSeat = prompt(`請輸入 [${gradeClass}班 ${seatNumber}號 ${nickname}] 的新座號 (請輸入正整數)：`, seatNumber);
+      const newSeat = prompt(`請輸入 ${gradeClass}班 ${seatNumber}號 ${nickname} 的新座號 (請輸入正整數)：`, seatNumber);
       if (newSeat === null) return;
       const formattedSeat = newSeat.trim();
       if (!formattedSeat || isNaN(formattedSeat) || parseInt(formattedSeat) <= 0) {
@@ -281,7 +281,7 @@
 
     // 刪除會員
     async singleDeleteMember(gradeClass, seatNumber, nickname) {
-      if (!confirm(`⚠️ 確定要【永久刪除】特工 [${gradeClass}班 ${seatNumber}號 ${nickname}] 的所有帳號資料與通關記錄嗎？此動作不可逆！`)) return;
+      if (!confirm(`⚠️ 確定要【永久刪除】特工 ${gradeClass}班 ${seatNumber}號 ${nickname} 的所有帳號資料與通關記錄嗎？此動作不可逆！`)) return;
 
       try {
         const db = window.MathSprintSupabaseService.initSupabase();
@@ -303,7 +303,7 @@
 
         if (pError) throw pError;
 
-        alert(`✓ 特工 [${nickname}] 帳號與戰績已完全刪除！`);
+        alert(`✓ 特工 ${nickname} 帳號與戰績已完全刪除！`);
         this.fetchData();
       } catch (err) {
         alert('刪除失敗：' + err.message);
@@ -325,7 +325,7 @@
         return;
       }
 
-      if (!confirm(`確定要為 [${className}班] 的「所有註冊學生」加發 💰${amount.toLocaleString()} 金幣嗎？`)) return;
+      if (!confirm(`確定要為 ${className}班 的所有註冊學生加發 💰${amount.toLocaleString()} 金幣嗎？`)) return;
 
       const students = this.allGlobalData.filter(s => s.grade_class === className);
       try {
@@ -370,7 +370,7 @@
       const className = classSelect.value;
       if (!className) return;
 
-      if (!confirm(`⚠️ 確定要一鍵將 [${className}班] 所有學生的錯題本全部清空嗎？此動作不可逆！`)) return;
+      if (!confirm(`⚠️ 確定要一鍵將 ${className}班 所有學生的錯題本全部清空嗎？此動作不可逆！`)) return;
 
       alert(`✓ 已向 ${className}班 發送全班錯題歸零指令！`);
     }
