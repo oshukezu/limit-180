@@ -1,9 +1,45 @@
-// Limit 180 — 定級測試 UI 控制器
+// Limit 180 — 跳級考試 UI 控制器
 (function() {
   let placementModal = null;
   let choicePanel = null;
   let confirmPanel = null;
   let resultPanel = null;
+
+  function getIdentity() {
+    try {
+      return JSON.parse(localStorage.getItem('limit180_user_profile') || 'null');
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function getHighestUnlockedMission(profile) {
+    const configs = window.MathSprintConfigs?.MISSION_CONFIGS || {};
+    const count = Object.keys(configs).length || 50;
+    let max = 1;
+    for (let m = 1; m <= count; m++) {
+      if (window.MathSprintStorage.isMissionUnlocked(m, profile)) max = m;
+    }
+    return max;
+  }
+
+  function renderTicketCount() {
+    const profile = window.MathSprintStorage.getProfile();
+    document.querySelectorAll('.skip-exam-ticket-count').forEach(el => {
+      el.textContent = Number(profile.skip_exam_tickets || 0).toLocaleString('zh-TW');
+    });
+    const modalCount = document.getElementById('placement-ticket-count');
+    if (modalCount) modalCount.textContent = Number(profile.skip_exam_tickets || 0).toLocaleString('zh-TW');
+  }
+
+  function openChoicePanel() {
+    if (!placementModal) return;
+    renderTicketCount();
+    choicePanel.classList.remove('hidden');
+    confirmPanel.classList.add('hidden');
+    resultPanel.classList.add('hidden');
+    placementModal.classList.remove('hidden');
+  }
 
   window.addEventListener('limit180ComponentsLoaded', () => {
     placementModal = document.getElementById('placement-modal');
@@ -11,15 +47,13 @@
     confirmPanel = document.getElementById('placement-confirm-panel');
     resultPanel = document.getElementById('placement-result-panel');
 
-    // 基礎鍛鍊班選擇
     const btnJunior = document.getElementById('placement-btn-junior');
     if (btnJunior) {
       btnJunior.addEventListener('click', () => {
-        applyJuniorProfile();
+        if (placementModal) placementModal.classList.add('hidden');
       });
     }
 
-    // 前往極速菁英確認警告
     const btnElite = document.getElementById('placement-btn-elite');
     if (btnElite) {
       btnElite.addEventListener('click', () => {
@@ -28,18 +62,11 @@
       });
     }
 
-    // 啟動定級測驗
     const btnConfirmStart = document.getElementById('placement-confirm-start-btn');
     if (btnConfirmStart) {
-      btnConfirmStart.addEventListener('click', () => {
-        if (placementModal) placementModal.classList.add('hidden');
-        if (window.MathSprintGame && typeof window.MathSprintGame.startPlacementTest === 'function') {
-          window.MathSprintGame.startPlacementTest();
-        }
-      });
+      btnConfirmStart.addEventListener('click', startSkipExam);
     }
 
-    // 確認頁返回
     const btnConfirmBack = document.getElementById('placement-confirm-back-btn');
     if (btnConfirmBack) {
       btnConfirmBack.addEventListener('click', () => {
@@ -48,7 +75,6 @@
       });
     }
 
-    // 結果頁關閉
     const btnResultClose = document.getElementById('placement-result-close-btn');
     if (btnResultClose) {
       btnResultClose.addEventListener('click', () => {
@@ -62,44 +88,55 @@
     }
   });
 
-  // 套用基礎鍛鍊班設定
-  function applyJuniorProfile() {
-    const profile = window.MathSprintStorage.getProfile();
-    profile.placement_status = 'JUNIOR';
-    profile.placement_score = 0;
-    profile.max_unlocked_phase = 1; // 基礎第一階
-
-    window.MathSprintStorage.saveProfile(profile);
-    
-    if (placementModal) placementModal.classList.add('hidden');
-    
-    // 渲染大廳並進入
-    if (window.MathSprintGame && typeof window.MathSprintGame.renderLobby === 'function') {
-      window.MathSprintGame.renderLobby();
+  async function startSkipExam() {
+    const identity = getIdentity();
+    if (!identity?.grade_class || identity.grade_class === '訪客') {
+      window.UIFeedback?.toast?.('請先登入會員，再使用跳級考試券。', 'error');
+      return;
     }
-    window.showView('view-lobby');
+    const profile = window.MathSprintStorage.getProfile();
+    if (Number(profile.skip_exam_tickets || 0) <= 0) {
+      window.UIFeedback?.toast?.('沒有可使用的跳級考試券，請先到商店購買。', 'error');
+      return;
+    }
+
+    try {
+      const result = await window.MathSprintSupabaseService.consumeSkipExamTicket(
+        identity.grade_class,
+        identity.seat_number,
+        identity.nickname
+      );
+      profile.skip_exam_tickets = Number(result?.tickets ?? Math.max(0, (profile.skip_exam_tickets || 0) - 1));
+      window.MathSprintStorage.saveProfile(profile);
+      localStorage.setItem('limit180_skip_exam_attempt_id', result?.attempt_id || `${identity.grade_class}:${identity.seat_number}:${Date.now()}`);
+      renderTicketCount();
+      if (placementModal) placementModal.classList.add('hidden');
+      window.MathSprintGame?.startPlacementTest?.();
+    } catch (err) {
+      window.UIFeedback?.toast?.(`無法啟動跳級考試：${err.message || '請確認資料庫已執行升級 SQL'}`, 'error');
+    }
   }
 
-  // 暴露至全域
   window.MathSprintPlacementModal = {
-    // 檢查是否已做過測驗，未做過則跳出 Modal
     checkAndShow() {
-      const profile = window.MathSprintStorage.getProfile();
-      if (!profile.placement_status || profile.placement_status === 'NOT_TESTED') {
-        if (placementModal) {
-          // 初始化面板顯示狀態
-          choicePanel.classList.remove('hidden');
-          confirmPanel.classList.add('hidden');
-          resultPanel.classList.add('hidden');
-          placementModal.classList.remove('hidden');
-        }
-        return true;
-      }
       return false;
     },
 
-    // 顯示定級測驗判定結果
-    showResult(passed, score) {
+    openSkipExam() {
+      const identity = getIdentity();
+      if (!identity?.grade_class || identity.grade_class === '訪客') {
+        window.UIFeedback?.toast?.('請先登入會員，再使用跳級考試券。', 'error');
+        return;
+      }
+      const profile = window.MathSprintStorage.getProfile();
+      if (Number(profile.skip_exam_tickets || 0) <= 0) {
+        window.UIFeedback?.toast?.('沒有跳級考試券，請先到商店購買。', 'error');
+        return;
+      }
+      openChoicePanel();
+    },
+
+    async showResult(passed, score) {
       if (!placementModal || !resultPanel) return;
 
       choicePanel.classList.add('hidden');
@@ -113,26 +150,30 @@
 
       const profile = window.MathSprintStorage.getProfile();
       profile.placement_score = score;
+      profile.placement_status = 'JUNIOR';
 
       if (passed) {
-        // 晉級菁英班
-        profile.placement_status = 'ELITE';
-        profile.max_unlocked_phase = 3; // 解鎖至第三階段起點 M21
-        
-        // 菁英跳級星等與金幣補貼 (依比例補足跳級關卡的基本星數補貼 120,000 金幣)
-        // 並將起點重設為 Mission 21
-        profile.total_stars = (profile.total_stars || 0) + 120000;
-        profile.today_earnings = (profile.today_earnings || 0) + 120000;
-        window.MathSprintStorage.recalculateTotalStars(profile);
+        const before = getHighestUnlockedMission(profile);
+        const target = Math.min(50, before + 5);
+        const unlocked = [];
+        profile.purchased_missions = Array.isArray(profile.purchased_missions) ? profile.purchased_missions : [];
+        for (let m = before + 1; m <= target; m++) {
+          if (!profile.purchased_missions.includes(m)) {
+            profile.purchased_missions.push(m);
+            unlocked.push(m);
+          }
+        }
+        const reward = 200000;
+        profile.bonus_stars = (profile.bonus_stars || 0) + reward;
+        profile.today_earnings = (profile.today_earnings || 0) + reward;
+        profile.total_stars = (profile.total_stars || 0) + reward;
         window.MathSprintStorage.saveProfile(profile);
-
-        // 串接 Supabase 同步進度與補貼
-        syncPlacementResultToCloud('ELITE', score, 3, 120000);
+        await syncSkipExamPass(score, profile);
 
         // UI 渲染
         resultPanel.className = "hud-panel p-6 bg-slate-950 border-2 border-green-500 max-w-md w-full relative";
         if (resultTitle) {
-          resultTitle.textContent = "🚀 菁英班晉級成功！";
+          resultTitle.textContent = "跳級考試通過！";
           resultTitle.className = "text-base font-pixel text-green-400 glow-green";
         }
         if (resultTag) {
@@ -141,24 +182,19 @@
         }
         if (resultDesc) {
           resultDesc.className = "text-xs font-pixel text-green-300 leading-relaxed bg-green-950/20 border border-green-800 p-4 rounded text-left mb-6";
-          resultDesc.innerHTML = `恭喜特工！您在 10 題極速測驗中成功答對了 <span class="text-yellow-400 font-bold">${score} 題</span>，達成高年級菁英超頻門檻！<br><br>系統已自動將您跳級解鎖至 <span class="text-yellow-400 font-bold">Mission 21</span>，並補貼發放開局菁英獎金 <span class="text-yellow-400 font-bold">120,000 💰 金幣</span>！`;
+          const rangeText = unlocked.length ? `Mission ${unlocked[0]} - Mission ${unlocked[unlocked.length - 1]}` : '已達最高 Mission';
+          resultDesc.innerHTML = `你在 10 題跳級考試中答對 <span class="text-yellow-400 font-bold">${score} 題</span>，已通過門檻。<br><br>本次解鎖：<span class="text-yellow-400 font-bold">${rangeText}</span><br>額外獎勵：<span class="text-yellow-400 font-bold">200,000 💰</span>`;
         }
         if (resultCloseBtn) {
           resultCloseBtn.className = "cyber-btn cyber-btn-green px-8 py-3 font-pixel text-xs text-green-400";
         }
       } else {
-        // 分流基礎班 (尊嚴保護機制)
-        profile.placement_status = 'JUNIOR';
-        profile.max_unlocked_phase = 1;
         window.MathSprintStorage.saveProfile(profile);
-
-        // 串接 Supabase 同步進度
-        syncPlacementResultToCloud('JUNIOR', score, 1, 0);
 
         // UI 渲染
         resultPanel.className = "hud-panel p-6 bg-slate-950 border-2 border-cyan-500 max-w-md w-full relative";
         if (resultTitle) {
-          resultTitle.textContent = "🌱 段位判定完成";
+          resultTitle.textContent = "跳級考試未通過";
           resultTitle.className = "text-base font-pixel text-cyan-400 glow-blue";
         }
         if (resultTag) {
@@ -167,7 +203,7 @@
         }
         if (resultDesc) {
           resultDesc.className = "text-xs font-pixel text-cyan-300 leading-relaxed bg-cyan-950/10 border border-cyan-800 p-4 rounded text-left mb-6";
-          resultDesc.innerHTML = `測試完成！大腦神經元已成功活化。<br><br>系統偵測到您目前的反射神經適合由基礎區提取 <span class="text-yellow-400 font-bold">60%</span> 的加速紅利，一邊累積金幣、一邊穩健衝刺！`;
+          resultDesc.innerHTML = `本次答對 <span class="text-yellow-400 font-bold">${score} 題</span>，未達 8 題通過門檻。<br><br>考試券已在開始時消耗，不會退回。可以先回一般關卡累積金幣與速度，再購買新券挑戰。`;
         }
         if (resultCloseBtn) {
           resultCloseBtn.className = "cyber-btn px-8 py-3 font-pixel text-xs text-cyan-400 border border-cyan-800";
@@ -178,63 +214,33 @@
     }
   };
 
-  // 雲端同步輔助
-  async function syncPlacementResultToCloud(status, score, maxPhase, coinsReward) {
+  async function syncSkipExamPass(score, profile) {
     const profileStr = localStorage.getItem('limit180_user_profile');
     if (!profileStr) return;
     const u = JSON.parse(profileStr);
-
-    if (window.MathSprintSupabaseService) {
-      try {
-        const db = window.MathSprintSupabaseService.initSupabase();
-        if (!db) return;
-
-        // 更新 users_profile 的 placement 欄位 (如果資料表支援)
-        // 由於我們使用的是單一資料表且無 placement_status 欄位（如果在 supabase_init.sql 中尚未實體執行），
-        // 這裡會安全地先同步在本地，如果 Supabase 支援就進行更新。
-        // 為保證資料安全性，我們利用 saveGlobalProfile 自動傳輸 coins_balance。
-        if (window.MathSprintStorage) {
-          const localProfile = window.MathSprintStorage.getProfile();
-          const placementEventKey = `${u.grade_class}:${u.seat_number}:placement_elite_reward`;
-          if (status === 'ELITE' && window.MathSprintSupabaseService.applyCoinTransaction) {
-            await window.MathSprintSupabaseService.applyCoinTransaction(
-              u.grade_class,
-              u.seat_number,
-              u.nickname,
-              120000,
-              'placement_elite_reward',
-              { score, maxPhase, coinsReward },
-              placementEventKey
-            ).catch((txErr) => {
-              console.warn("[PlacementSync] 發放菁英補貼 ledger 失敗：", txErr.message || txErr);
-            });
-          }
-          if (window.MathSprintSupabaseService.saveGlobalProfile) {
-            await window.MathSprintSupabaseService.saveGlobalProfile(
-              u.grade_class,
-              u.seat_number,
-              u.nickname,
-              localProfile.total_stars || 0,
-              localProfile.purchased_items || []
-            );
-          }
-
-          // 另外，如果是菁英特工，我們為他寫入一筆 M21 關卡的空記錄，用來讓雲端排行榜知道他已經跳級了！
-          if (status === 'ELITE') {
-            await window.MathSprintSupabaseService.saveRecord(
-              u.grade_class,
-              u.seat_number,
-              u.nickname,
-              21, // Mission 21
-              0,  // 0 星 (起始)
-              99.9,
-              99.9
-            );
-          }
-        }
-      } catch (err) {
-        console.warn("[PlacementSync] 雲端同步定級失敗：", err.message || err);
+    const attemptId = localStorage.getItem('limit180_skip_exam_attempt_id') || `${u.grade_class}:${u.seat_number}:${Date.now()}`;
+    try {
+      await window.MathSprintSupabaseService?.updatePurchasedMissions?.(
+        u.grade_class,
+        u.seat_number,
+        u.nickname,
+        profile.purchased_missions || []
+      );
+      const tx = await window.MathSprintSupabaseService?.applyCoinTransaction?.(
+        u.grade_class,
+        u.seat_number,
+        u.nickname,
+        200000,
+        'skip_exam_pass_reward',
+        { score, purchased_missions: profile.purchased_missions || [] },
+        `${u.grade_class}:${u.seat_number}:skip_exam_pass:${attemptId}`
+      );
+      if (tx?.newBalance >= 0) {
+        profile.total_stars = tx.newBalance;
+        window.MathSprintStorage.saveProfile(profile);
       }
+    } catch (err) {
+      console.warn("[SkipExamSync] 雲端同步跳級結果失敗：", err.message || err);
     }
   }
 })();

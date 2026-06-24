@@ -59,6 +59,9 @@
       document.querySelectorAll('#store-coins-balance').forEach(el => {
         el.textContent = window.formatCoins(currentCoins);
       });
+      document.querySelectorAll('.skip-exam-ticket-count').forEach(el => {
+        el.textContent = Number(profile.skip_exam_tickets || 0).toLocaleString('zh-TW');
+      });
 
       storeList.innerHTML = '';
       this.updateTabButtons();
@@ -292,6 +295,10 @@
       return window.GameStoreOps?.purchase?.call(this, itemId, price, type);
     },
 
+    async purchaseSkipExamTicket(quantity = 1) {
+      return window.GameStoreOps?.purchaseSkipExamTicket?.call(this, quantity);
+    },
+
     // 賣出商品（回收價 = 原價 1/2）
     async sell(itemId, price, type) {
       return window.GameStoreOps?.sell?.call(this, itemId, price, type);
@@ -375,6 +382,9 @@
 
     document.querySelectorAll('.store-sync-balance-btn').forEach(btn => {
       btn.addEventListener('click', () => window.GameStore.syncBalanceNow());
+    });
+    document.querySelectorAll('.skip-exam-ticket-buy-btn').forEach(btn => {
+      btn.addEventListener('click', () => window.GameStore.purchaseSkipExamTicket(1));
     });
   });
 

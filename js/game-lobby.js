@@ -27,6 +27,9 @@
       
       if (starsEl) starsEl.textContent = window.formatCoins(profile.total_stars || 0, true);
       if (todayEl) todayEl.textContent = window.formatCoins(profile.today_earnings || 0, true);
+      document.querySelectorAll('.skip-exam-ticket-count').forEach(el => {
+        el.textContent = Number(profile.skip_exam_tickets || 0).toLocaleString('zh-TW');
+      });
 
       const MISSION_CONFIGS = window.MathSprintConfigs.MISSION_CONFIGS;
 
@@ -254,6 +257,12 @@
             Lobby.renderLobby();
           }
         });
+      });
+    }
+    const skipExamBtn = document.getElementById('start-skip-exam-btn');
+    if (skipExamBtn) {
+      skipExamBtn.addEventListener('click', () => {
+        window.MathSprintPlacementModal?.openSkipExam?.();
       });
     }
   });

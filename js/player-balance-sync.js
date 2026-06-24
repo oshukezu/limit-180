@@ -38,6 +38,17 @@
       changed = changed || merged.join('|') !== localBadges.join('|');
       profile.equipped_badges = merged;
     }
+    if (Array.isArray(row.purchased_missions)) {
+      const localMissions = Array.isArray(profile.purchased_missions) ? profile.purchased_missions : [];
+      const merged = Array.from(new Set([...localMissions, ...row.purchased_missions.map(Number)])).filter(Boolean);
+      changed = changed || merged.join('|') !== localMissions.join('|');
+      profile.purchased_missions = merged;
+    }
+    if (Number.isFinite(Number(row.skip_exam_tickets))) {
+      const tickets = Math.max(0, Number(row.skip_exam_tickets || 0));
+      changed = changed || Number(profile.skip_exam_tickets || 0) !== tickets;
+      profile.skip_exam_tickets = tickets;
+    }
     return changed;
   }
 

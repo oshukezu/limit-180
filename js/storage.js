@@ -26,7 +26,7 @@
     history_log: [], // Play history logs for Parent Dashboard
     equipped_theme: 'akaimon', // 目前裝備的主題 (akaimon / neon / lava / aurora / gold)
     purchased_themes: ['akaimon'], // 已購買的主題清單
-    placement_status: 'NOT_TESTED', // 狀態：NOT_TESTED, JUNIOR (基礎), ELITE (菁英)
+    placement_status: 'JUNIOR', // 狀態：JUNIOR (基礎), ELITE (舊版菁英相容)
     placement_score: 0,            // 測試答對題數 (0-10)
     max_unlocked_phase: 1,          // 解鎖最大階段 (1:第一階段, 2:第二階段, 3:第三階段菁英起點)
     equipped_avatar: 'avatar-default',
@@ -34,6 +34,7 @@
     equipped_badges: [],
     unlocked_assets: ['avatar-default', 'border-none'],
     purchased_missions: [],
+    skip_exam_tickets: 0,
     coins_spent: 0
   };
 

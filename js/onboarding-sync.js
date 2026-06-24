@@ -278,6 +278,13 @@
       const cloudThemes = Array.isArray(globalRow.purchased_items) ? globalRow.purchased_items : [];
       profile.purchased_themes = Array.from(new Set([...localThemes, ...cloudThemes, 'akaimon']));
 
+      const localPurchasedMissions = Array.isArray(profile.purchased_missions) ? profile.purchased_missions : [];
+      const cloudPurchasedMissions = Array.isArray(globalRow.purchased_missions) ? globalRow.purchased_missions.map(Number) : [];
+      profile.purchased_missions = Array.from(new Set([...localPurchasedMissions, ...cloudPurchasedMissions])).filter(Boolean);
+      if (Number.isFinite(Number(globalRow.skip_exam_tickets))) {
+        profile.skip_exam_tickets = Math.max(Number(profile.skip_exam_tickets || 0), Number(globalRow.skip_exam_tickets || 0));
+      }
+
       const localBadges = Array.isArray(profile.equipped_badges) ? profile.equipped_badges : [];
       const cloudBadges = Array.isArray(globalRow.equipped_badges) ? globalRow.equipped_badges : [];
       profile.equipped_badges = Array.from(new Set([...cloudBadges, ...localBadges])).slice(0, 1);

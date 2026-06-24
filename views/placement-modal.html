@@ -1,29 +1,26 @@
 <div id="placement-modal"
   class="hidden fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-50 p-4">
   
-  <!-- 階段一：分流選擇面板 (🌱基礎鍛鍊 vs 🚀極速菁英) -->
+  <!-- 階段一：跳級考試確認面板 -->
   <div id="placement-choice-panel" class="hud-panel p-6 bg-slate-950 border-2 border-cyan-500 max-w-md w-full relative">
     <div class="text-center mb-6">
-      <span class="text-xs font-pixel text-pink-500 glow-pink block mb-1">BRAIN OVERCLOCKING TEST</span>
-      <h3 class="text-base font-pixel text-cyan-400 glow-blue">大腦段位判定</h3>
+      <span class="text-xs font-pixel text-pink-500 glow-pink block mb-1">SKIP EXAM TICKET</span>
+      <h3 class="text-base font-pixel text-cyan-400 glow-blue">跳級考試</h3>
       <p class="text-[11px] font-tech text-slate-400 mt-3 leading-relaxed">
-        新特工！系統偵測到您尚未進行段位定級。請選擇您的起跑線，迅速解鎖與您算力相配的極限關卡。
+        消耗 1 張跳級考試券，挑戰 10 題階梯式心算。開始後即扣券，失敗不退券。
       </p>
+      <div class="mt-3 text-[10px] text-yellow-300 font-pixel">目前持有：<span id="placement-ticket-count">0</span> 張</div>
     </div>
 
     <div class="flex flex-col gap-4 mt-6">
-      <!-- 基礎鍛鍊 (跳過測試，直接 M1) -->
-      <button type="button" id="placement-btn-junior"
-        class="cyber-btn py-4 font-pixel text-xs text-green-400 flex flex-col items-center justify-center gap-1">
-        <span class="text-sm font-bold">🌱 基礎鍛鍊班</span>
-        <span class="text-[8px] text-slate-500 font-tech">跳過測驗，從 Mission 1 開始按部就班修練</span>
-      </button>
-
-      <!-- 極速菁英 (觸發10題測驗) -->
       <button type="button" id="placement-btn-elite"
         class="cyber-btn cyber-btn-pink py-4 font-pixel text-xs text-pink-500 flex flex-col items-center justify-center gap-1">
-        <span class="text-sm font-bold">🚀 極速菁英班 (五/六年級挑戰)</span>
-        <span class="text-[8px] text-slate-500 font-tech">挑戰 10 題階梯式定級測試，直升 Mission 21</span>
+        <span class="text-sm font-bold">開始跳級考試</span>
+        <span class="text-[8px] text-slate-500 font-tech">通過後最高已解鎖 Mission +5，並獲得 200,000 💰</span>
+      </button>
+      <button type="button" id="placement-btn-junior"
+        class="cyber-btn py-3 font-pixel text-xs text-slate-400 border border-slate-800 rounded">
+        取消
       </button>
     </div>
   </div>
@@ -31,21 +28,21 @@
   <!-- 階段二：菁英確認警告面板 -->
   <div id="placement-confirm-panel" class="hud-panel p-6 bg-slate-950 border-2 border-pink-500 max-w-md w-full relative hidden">
     <div class="text-center mb-6">
-      <span class="text-xs font-pixel text-red-500 glow-pink block mb-1">OVERCLOCKING WARNING</span>
-      <h3 class="text-base font-pixel text-red-400 glow-pink">大腦超頻判定警告</h3>
+      <span class="text-xs font-pixel text-red-500 glow-pink block mb-1">CONFIRM TICKET USE</span>
+      <h3 class="text-base font-pixel text-red-400 glow-pink">確認消耗考試券</h3>
       <p class="text-xs font-pixel text-slate-300 mt-4 leading-relaxed bg-red-950/30 border border-red-500/20 p-3 rounded text-left">
-        本測驗包含 10 題極速心算，每題獨立倒數。若錯誤達 3 題，系統將判定超頻失敗並引導至基礎班。<br><br>你準備好展現真正實力了嗎？
+        按下開始後會立刻扣除 1 張跳級考試券。若中途離開、答錯達 3 題或沒有通過，考試券都不會退回。<br><br>確定要開始嗎？
       </p>
     </div>
 
     <div class="flex gap-4 mt-6">
       <button type="button" id="placement-confirm-start-btn"
         class="flex-1 cyber-btn cyber-btn-pink py-3.5 font-pixel text-xs text-pink-500">
-        啟動大腦超頻測試
+        扣券並開始
       </button>
       <button type="button" id="placement-confirm-back-btn"
         class="flex-1 cyber-btn py-3.5 font-pixel text-xs text-slate-400 border border-slate-800 hover:bg-slate-900 rounded">
-        返回基礎鍛鍊班
+        返回
       </button>
     </div>
   </div>

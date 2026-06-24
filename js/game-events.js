@@ -101,13 +101,6 @@
       // Lobby navigation
       const lobbyBtnHandler = () => {
         this.exitCurrentContext();
-        
-        // 段位定級檢查邏輯
-        if (window.MathSprintPlacementModal && typeof window.MathSprintPlacementModal.checkAndShow === 'function') {
-          const shown = window.MathSprintPlacementModal.checkAndShow();
-          if (shown) return; // 如果跳出了測驗 Modal，則攔截大廳的切換，等待玩家做選擇
-        }
-        
         this.renderLobby();
         window.showView('view-lobby');
       };

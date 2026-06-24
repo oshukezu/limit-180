@@ -261,15 +261,70 @@
     if (!db) throw new Error("Supabase 未初始化");
     let query = db
       .from('users_global')
-      .select('coins_balance,purchased_items,equipped_avatar,equipped_border,equipped_badges,unlocked_assets,updated_at')
+      .select('coins_balance,purchased_items,equipped_avatar,equipped_border,equipped_badges,unlocked_assets,purchased_missions,skip_exam_tickets,updated_at')
       .eq('grade_class', gradeClass)
       .eq('seat_number', seatNumber);
     if (nickname) query = query.eq('nickname', nickname);
-    const { data, error } = await query.maybeSingle();
+    let { data, error } = await query.maybeSingle();
+    if (error && /purchased_missions|skip_exam_tickets/.test(error.message || '')) {
+      query = db
+        .from('users_global')
+        .select('coins_balance,purchased_items,equipped_avatar,equipped_border,equipped_badges,unlocked_assets,updated_at')
+        .eq('grade_class', gradeClass)
+        .eq('seat_number', seatNumber);
+      if (nickname) query = query.eq('nickname', nickname);
+      const fallback = await query.maybeSingle();
+      data = fallback.data;
+      error = fallback.error;
+    }
     if (error) {
       console.error("[SupabaseService] getGlobalProfile 錯誤：", error.message);
       throw error;
     }
+    return data;
+  }
+
+  async function purchaseSkipExamTicket(gradeClass, seatNumber, nickname, quantity = 1) {
+    const db = getSupabaseClient();
+    if (!db) throw new Error("Supabase 未初始化");
+    const { data, error } = await db.rpc('purchase_skip_exam_ticket', {
+      p_grade_class: gradeClass,
+      p_seat_number: seatNumber,
+      p_nickname: nickname,
+      p_quantity: Math.max(1, Math.trunc(Number(quantity || 1)))
+    });
+    if (error) throw error;
+    return Array.isArray(data) ? data[0] : data;
+  }
+
+  async function consumeSkipExamTicket(gradeClass, seatNumber, nickname) {
+    const db = getSupabaseClient();
+    if (!db) throw new Error("Supabase 未初始化");
+    const { data, error } = await db.rpc('consume_skip_exam_ticket', {
+      p_grade_class: gradeClass,
+      p_seat_number: seatNumber,
+      p_nickname: nickname
+    });
+    if (error) throw error;
+    return Array.isArray(data) ? data[0] : data;
+  }
+
+  async function updatePurchasedMissions(gradeClass, seatNumber, nickname, purchasedMissions) {
+    const db = getSupabaseClient();
+    if (!db) throw new Error("Supabase 未初始化");
+    const missions = Array.isArray(purchasedMissions) ? purchasedMissions.map(Number).filter(Boolean) : [];
+    const { data, error } = await db
+      .from('users_global')
+      .update({
+        nickname,
+        purchased_missions: missions,
+        updated_at: new Date().toISOString()
+      })
+      .eq('grade_class', gradeClass)
+      .eq('seat_number', seatNumber)
+      .select('purchased_missions')
+      .maybeSingle();
+    if (error) throw error;
     return data;
   }
 
@@ -280,6 +335,9 @@
     getLeaderboard,
     saveGlobalProfile,
     applyCoinTransaction,
-    getGlobalProfile
+    getGlobalProfile,
+    purchaseSkipExamTicket,
+    consumeSkipExamTicket,
+    updatePurchasedMissions
   };
 })();

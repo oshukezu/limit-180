@@ -110,5 +110,46 @@
     window.UIFeedback?.toast?.(`已賣出「${name}」，回收 ${refund.toLocaleString('zh-TW')} 💰`, 'success');
   }
 
-  window.GameStoreOps = { purchase, sell };
+  function getIdentity() {
+    try {
+      return JSON.parse(localStorage.getItem('limit180_user_profile') || 'null');
+    } catch (_) {
+      return null;
+    }
+  }
+
+  async function purchaseSkipExamTicket(quantity = 1) {
+    const identity = getIdentity();
+    if (!identity?.grade_class || identity.grade_class === '訪客') {
+      window.UIFeedback?.toast?.('請先登入會員，再購買跳級考試券。', 'error');
+      return;
+    }
+    const qty = Math.max(1, Math.trunc(Number(quantity || 1)));
+    const cost = qty * 500000;
+    const agreed = window.UIFeedback
+      ? await window.UIFeedback.confirm(`確定要花費 ${cost.toLocaleString('zh-TW')} 💰 購買 ${qty} 張跳級考試券嗎？`, '確認購買')
+      : confirm(`確定要花費 ${cost.toLocaleString()} 金幣購買 ${qty} 張跳級考試券嗎？`);
+    if (!agreed) return;
+
+    try {
+      const result = await window.MathSprintSupabaseService.purchaseSkipExamTicket(
+        identity.grade_class,
+        identity.seat_number,
+        identity.nickname,
+        qty
+      );
+      const profile = window.MathSprintStorage.getProfile();
+      profile.coins_spent = (profile.coins_spent || 0) + cost;
+      profile.total_stars = Number(result?.new_balance ?? profile.total_stars ?? 0);
+      profile.skip_exam_tickets = Number(result?.tickets ?? profile.skip_exam_tickets ?? 0);
+      window.MathSprintStorage.saveProfile(profile);
+      window.GameStore?.renderStore?.();
+      window.MathSprintGame?.renderLobby?.();
+      window.UIFeedback?.toast?.(`已購買 ${qty} 張跳級考試券`, 'success');
+    } catch (err) {
+      window.UIFeedback?.toast?.(`購買失敗：${err.message || '請確認資料庫已執行升級 SQL'}`, 'error');
+    }
+  }
+
+  window.GameStoreOps = { purchase, sell, purchaseSkipExamTicket };
 })();
