@@ -144,6 +144,10 @@
     getEl('profile-close-btn')?.addEventListener('click', () => modal?.classList.add('hidden'));
     getEl('profile-skip-btn')?.addEventListener('click', () => modal?.classList.add('hidden'));
     getEl('profile-cloud-login-btn')?.addEventListener('click', () => window.MathSprintOnboardingActions?.handleCloudLogin?.());
+    getEl('profile-open-customization-btn')?.addEventListener('click', () => {
+      modal?.classList.add('hidden');
+      window.AgentCustomization?.openModal?.();
+    });
 
     checkUserOnboarding().catch((err) => console.warn('[Onboarding] 初始化失敗：', err?.message || err));
   });

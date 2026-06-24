@@ -307,17 +307,40 @@ for select using (class_id is not null and is_class_owner(class_id));
 
 drop policy if exists class_share_codes_select_owner on class_share_codes;
 create policy class_share_codes_select_owner on class_share_codes
-for select using (owner_nickname = auth.jwt() ->> 'nickname');
+for select using (true);
 
 drop policy if exists class_share_codes_insert_owner on class_share_codes;
 create policy class_share_codes_insert_owner on class_share_codes
-for insert with check (owner_nickname = auth.jwt() ->> 'nickname');
+for insert with check (true);
 
 drop policy if exists class_share_codes_update_owner on class_share_codes;
 create policy class_share_codes_update_owner on class_share_codes
-for update using (owner_nickname = auth.jwt() ->> 'nickname')
-with check (owner_nickname = auth.jwt() ->> 'nickname');
+for update using (true)
+with check (true);
 
 drop policy if exists class_share_codes_delete_owner on class_share_codes;
 create policy class_share_codes_delete_owner on class_share_codes
-for delete using (owner_nickname = auth.jwt() ->> 'nickname');
+for delete using (true);
+
+-- 目前遊戲採班級/座號/姓名登入，未導入 Supabase Auth；
+-- 以下 public MVP policy 讓分享碼入團流程可運作。
+drop policy if exists classes_public_select_mvp on classes;
+create policy classes_public_select_mvp on classes
+for select using (true);
+
+drop policy if exists classes_public_insert_mvp on classes;
+create policy classes_public_insert_mvp on classes
+for insert with check (true);
+
+drop policy if exists class_members_public_select_mvp on class_members;
+create policy class_members_public_select_mvp on class_members
+for select using (true);
+
+drop policy if exists class_members_public_insert_mvp on class_members;
+create policy class_members_public_insert_mvp on class_members
+for insert with check (true);
+
+drop policy if exists class_members_public_update_mvp on class_members;
+create policy class_members_public_update_mvp on class_members
+for update using (true)
+with check (true);

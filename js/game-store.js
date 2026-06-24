@@ -65,9 +65,14 @@
 
       if (this.currentTab === 'theme') {
         // --- 1. 渲染主題配色 ---
-        const themes = window.ThemeManager.THEMES;
+        const themes = window.ThemeManager?.THEMES || {};
+        if (!Object.keys(themes).length) {
+          storeList.innerHTML = `<div class="text-center text-slate-500 text-xs py-6">主題資料尚未載入，請重新整理頁面。</div>`;
+          return;
+        }
         const equippedTheme = profile.equipped_theme || 'akaimon';
-        const purchasedThemes = profile.purchased_themes || ['akaimon'];
+        const purchasedThemes = Array.from(new Set([...(profile.purchased_themes || []), 'akaimon']));
+        profile.purchased_themes = purchasedThemes;
 
         Object.keys(themes).forEach(key => {
           const theme = themes[key];

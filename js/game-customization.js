@@ -83,11 +83,11 @@
       const avName = document.getElementById('preview-agent-name');
       const avBadges = document.getElementById('preview-agent-badges');
 
-      // 更新頭像
+      const AVATARS = getAvatars();
+      const BORDERS = getBorders();
       const avObj = AVATARS[this.tempProfile.equipped_avatar] || AVATARS['avatar-default'];
       if (avImg) avImg.textContent = avObj ? avObj.icon : '🛡️';
 
-      // 更新頭像框
       const borObj = BORDERS[this.tempProfile.equipped_border] || BORDERS['border-none'];
       if (avBorder && borObj) applyAvatarBorderVisual(avBorder, borObj);
 
@@ -170,6 +170,7 @@
         });
 
       } else if (this.currentTab === 'avatar') {
+        const AVATARS = getAvatars();
         Object.keys(AVATARS).forEach(key => {
           const av = AVATARS[key];
           const isUnlocked = isOwnedAsset(this.tempProfile, av.id);
@@ -194,6 +195,7 @@
         });
 
       } else if (this.currentTab === 'border') {
+        const BORDERS = getBorders();
         Object.keys(BORDERS).forEach(key => {
           const bor = BORDERS[key];
           const isUnlocked = isOwnedAsset(this.tempProfile, bor.id);
