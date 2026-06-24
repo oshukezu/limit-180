@@ -256,12 +256,30 @@
     };
   }
 
+  async function getGlobalProfile(gradeClass, seatNumber, nickname) {
+    const db = getSupabaseClient();
+    if (!db) throw new Error("Supabase 未初始化");
+    let query = db
+      .from('users_global')
+      .select('coins_balance,purchased_items,equipped_avatar,equipped_border,equipped_badges,unlocked_assets,updated_at')
+      .eq('grade_class', gradeClass)
+      .eq('seat_number', seatNumber);
+    if (nickname) query = query.eq('nickname', nickname);
+    const { data, error } = await query.maybeSingle();
+    if (error) {
+      console.error("[SupabaseService] getGlobalProfile 錯誤：", error.message);
+      throw error;
+    }
+    return data;
+  }
+
   // 掛載到 window 全域命名空間中
   window.MathSprintSupabaseService = {
     initSupabase: getSupabaseClient,
     saveRecord,
     getLeaderboard,
     saveGlobalProfile,
-    applyCoinTransaction
+    applyCoinTransaction,
+    getGlobalProfile
   };
 })();

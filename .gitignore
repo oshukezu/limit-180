@@ -3,6 +3,7 @@
 agents.md
 agent.md
 /agents
+/supabase
 
 # 本地環境變數與金鑰
 .env
