@@ -10,20 +10,20 @@
 
     <!-- 特工預覽看板 -->
     <div class="flex flex-col items-center gap-3 bg-slate-900/60 border border-slate-800 p-4 rounded-2xl mb-6 text-center">
-      <div class="relative w-20 h-20 flex items-center justify-center">
+      <div class="relative w-24 h-24 flex items-center justify-center">
         <!-- 當前頭貼框 -->
         <div id="preview-avatar-border" class="absolute inset-0 rounded-full border-4 border-transparent flex items-center justify-center">
           <!-- 當前頭像 -->
-          <div id="preview-avatar-img" class="w-16 h-16 rounded-full bg-slate-950 flex items-center justify-center text-3xl select-none">
+          <div id="preview-avatar-img" class="w-20 h-20 rounded-full bg-slate-950 flex items-center justify-center text-5xl select-none">
             🛡️
           </div>
+        </div>
+        <div id="preview-agent-badges" class="absolute -bottom-1 -right-1 min-w-[34px] h-[34px] rounded-full bg-slate-950 border-2 border-slate-950 flex justify-center items-center shadow">
+          <!-- 配戴的徽章 -->
         </div>
       </div>
       <div>
         <div id="preview-agent-name" class="font-pixel text-sm text-white">---</div>
-        <div id="preview-agent-badges" class="flex gap-2 justify-center mt-1.5">
-          <!-- 配戴的徽章 -->
-        </div>
       </div>
     </div>
 

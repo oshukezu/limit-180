@@ -43,11 +43,14 @@
     if (badgesContainer) {
       badgesContainer.innerHTML = '';
       const equippedBadges = (profile.equipped_badges || []).slice(0, 1);
-      badgesContainer.classList.toggle('hidden', equippedBadges.length === 0);
-      else equippedBadges.forEach((bId) => {
+      if (equippedBadges.length === 0) {
+        badgesContainer.classList.add('hidden');
+      } else {
+        badgesContainer.classList.remove('hidden');
+      }
+      equippedBadges.forEach((bId) => {
         const b = h().getBadges?.()[bId];
         if (!b) return;
-        badgesContainer.classList.remove('hidden');
         const span = document.createElement('span');
         span.className = 'text-2xl leading-none cursor-help';
         span.textContent = b.icon;

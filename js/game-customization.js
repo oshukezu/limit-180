@@ -98,15 +98,16 @@
       // 更新配戴徽章
       if (avBadges) {
         avBadges.innerHTML = '';
-        const badges = this.tempProfile.equipped_badges || [];
+        const badges = (this.tempProfile.equipped_badges || []).slice(0, 1);
         if (badges.length === 0) {
-          avBadges.innerHTML = `<span class="text-[9px] text-slate-600">未配戴徽章</span>`;
+          avBadges.classList.add('hidden');
         } else {
+          avBadges.classList.remove('hidden');
           badges.forEach(bId => {
             const b = getBadges()[bId];
             if (b) {
               const span = document.createElement('span');
-              span.className = 'text-base';
+              span.className = 'text-2xl leading-none';
               span.textContent = b.icon;
               avBadges.appendChild(span);
             }
@@ -320,6 +321,8 @@
       if (window.ThemeManager && typeof window.ThemeManager.applyTheme === 'function') {
         window.ThemeManager.applyTheme(profile.equipped_theme);
       }
+      window.AgentCustomizationHome?.renderHomeIdentityCard?.();
+      window.MathSprintGame?.renderHome?.();
       document.getElementById('customization-modal').classList.add('hidden');
       if (window.UIFeedback) {
         window.UIFeedback.toast('特工外觀已套用，資料同步中', 'success');
