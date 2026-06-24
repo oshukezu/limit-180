@@ -37,18 +37,19 @@
     }
     if (loginBadge) {
       const day = Math.max(0, Number(localStorage.getItem('limit180_login_reward_streak') || 0));
-      loginBadge.textContent = `連續登入 Day ${day}`;
-      loginBadge.title = `連續登入 Day ${day}`;
+      loginBadge.textContent = `連續登入 ${day} 天`;
+      loginBadge.title = `連續登入 ${day} 天`;
     }
     if (badgesContainer) {
       badgesContainer.innerHTML = '';
       const equippedBadges = (profile.equipped_badges || []).slice(0, 1);
-      if (equippedBadges.length === 0) badgesContainer.innerHTML = `<span class="text-[9px] text-slate-500">尚未配戴徽章</span>`;
+      badgesContainer.classList.toggle('hidden', equippedBadges.length === 0);
       else equippedBadges.forEach((bId) => {
         const b = h().getBadges?.()[bId];
         if (!b) return;
+        badgesContainer.classList.remove('hidden');
         const span = document.createElement('span');
-        span.className = 'text-4xl leading-none cursor-help';
+        span.className = 'text-2xl leading-none cursor-help';
         span.textContent = b.icon;
         span.title = `${b.name}: ${b.desc}`;
         badgesContainer.appendChild(span);

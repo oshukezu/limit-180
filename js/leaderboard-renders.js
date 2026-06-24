@@ -21,6 +21,35 @@
     }
   }
 
+  function getBaseCoin(m) {
+    if (m >= 1 && m <= 5) return 200;
+    if (m >= 6 && m <= 10) return 300;
+    if (m >= 11 && m <= 15) return 1000;
+    if (m >= 16 && m <= 20) return 2000;
+    if (m >= 21 && m <= 25) return 5000;
+    if (m >= 26 && m <= 30) return 10000;
+    if (m >= 31 && m <= 35) return 20000;
+    if (m >= 36 && m <= 40) return 40000;
+    if (m >= 41 && m <= 44) return 100000;
+    if (m >= 45 && m <= 47) return 250000;
+    if (m >= 48 && m <= 49) return 500000;
+    return 0;
+  }
+
+  function estimateHighestLevel(mission, stars) {
+    const total = Math.max(0, Number(stars || 0));
+    if (total <= 0) return 0;
+    let acc = 0;
+    for (let level = 1; level <= 20; level++) {
+      const oneStar = mission === 50
+        ? 500000 * level
+        : Math.floor(getBaseCoin(mission) * level / 3);
+      acc += Math.max(1, oneStar);
+      if (total < acc) return Math.max(1, level - 1);
+    }
+    return 20;
+  }
+
   const Renders = {
     // 渲染個人總榜
     renderPersonal(container, rankBlock, allRecords, currentUser) {
@@ -36,12 +65,18 @@
             total_stars: 0,
             total_time: 0,
             mission_count: 0,
-            max_mission: 0
+            max_mission: 0,
+            max_level: 0
           };
         }
         personMap[key].total_stars += row.stars || 0;
-        if ((row.stars || 0) > 0) {
-          personMap[key].max_mission = Math.max(personMap[key].max_mission, Number(row.mission_id || 0));
+        const missionId = Number(row.mission_id || 0);
+        const estimatedLevel = estimateHighestLevel(missionId, row.stars);
+        if (missionId > 0 && estimatedLevel > 0) {
+          if (missionId > personMap[key].max_mission || (missionId === personMap[key].max_mission && estimatedLevel > personMap[key].max_level)) {
+            personMap[key].max_mission = missionId;
+            personMap[key].max_level = estimatedLevel;
+          }
         }
         if (row.best_avg_time && row.best_avg_time < 999) {
           personMap[key].total_time += row.best_avg_time;
@@ -56,6 +91,7 @@
           nickname: p.nickname,
           total_stars: p.total_stars,
           max_mission: p.max_mission,
+          max_level: p.max_level,
           avg_time: p.mission_count > 0 ? parseFloat((p.total_time / p.mission_count).toFixed(2)) : 99.9
         };
       });
@@ -63,6 +99,9 @@
       personalList.sort((a, b) => {
         if (b.max_mission !== a.max_mission) {
           return b.max_mission - a.max_mission;
+        }
+        if (b.max_level !== a.max_level) {
+          return b.max_level - a.max_level;
         }
         return a.avg_time - b.avg_time;
       });
@@ -82,7 +121,7 @@
               <div class="w-full flex flex-col gap-1">
                 <div>👤 我的名次：第 <span class="text-green-400 font-bold">${myRank + 1}</span> 名</div>
                 <div class="text-slate-400 text-[9px] font-tech mt-0.5 flex flex-wrap gap-x-3 gap-y-1">
-                  <span>最高關卡：<span class="text-green-400 font-bold">Mission ${myRec.max_mission || 1}</span></span>
+                  <span>最高關卡：<span class="text-green-400 font-bold">M${myRec.max_mission || 1}L${myRec.max_level || 1}</span></span>
                   <span>均速：<span class="text-white">${myRec.avg_time.toFixed(2)}s</span></span>
                 </div>
               </div>
@@ -128,7 +167,7 @@
               ${isMe ? '<span class="text-[8px] bg-cyan-500 text-black px-1 font-bold rounded">我</span>' : ''}
             </div>
             <div class="text-right flex items-center gap-3">
-              <span class="text-green-400 font-bold min-w-[70px] text-right">Mission ${row.max_mission || 1}</span>
+              <span class="text-green-400 font-bold min-w-[70px] text-right">M${row.max_mission || 1}L${row.max_level || 1}</span>
               <span class="text-slate-400 text-[9px] font-tech min-w-[45px] text-right">${row.avg_time.toFixed(2)}s</span>
             </div>
           </div>

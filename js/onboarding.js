@@ -21,10 +21,18 @@
     const inputClass = document.getElementById('profile-class');
     const inputSeat = document.getElementById('profile-seat');
     const inputNickname = document.getElementById('profile-nickname');
+    const classGroup = document.getElementById('profile-class-group');
+    const seatGroup = document.getElementById('profile-seat-group');
+    const cloudLoginBtn = document.getElementById('profile-cloud-login-btn');
+    const customBtn = document.getElementById('profile-open-customization-btn');
     if (errorMsg) errorMsg.classList.add('hidden');
     const skipBtn = document.getElementById('profile-skip-btn');
     if (isEditMode) {
       if (skipBtn) skipBtn.classList.add('hidden');
+      if (cloudLoginBtn) cloudLoginBtn.classList.add('hidden');
+      if (classGroup) classGroup.classList.add('hidden');
+      if (seatGroup) seatGroup.classList.add('hidden');
+      if (customBtn) customBtn.classList.remove('hidden');
       const profile = JSON.parse(localStorage.getItem('limit180_user_profile') || '{}');
       if (inputClass) {
         inputClass.value = profile.grade_class || '';
@@ -41,6 +49,10 @@
       }
     } else {
       if (skipBtn) skipBtn.classList.remove('hidden');
+      if (cloudLoginBtn) cloudLoginBtn.classList.remove('hidden');
+      if (classGroup) classGroup.classList.remove('hidden');
+      if (seatGroup) seatGroup.classList.remove('hidden');
+      if (customBtn) customBtn.classList.add('hidden');
       if (inputClass) {
         inputClass.value = '';
         inputClass.readOnly = false;
