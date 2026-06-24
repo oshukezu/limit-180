@@ -66,12 +66,18 @@
       if (navAchievements) {
         navAchievements.addEventListener('click', () => {
           this.exitCurrentContext();
+          window.showView('view-home');
           if (window.MathSprintAchievements) {
             const select = document.getElementById('achievements-mission-select');
             if (select) select.value = this.gameState.currentMission;
             window.MathSprintAchievements.renderAchievements(this.gameState.currentMission);
           }
-          window.showView('view-achievements');
+          setTimeout(() => {
+            const wrapper = document.getElementById('home-achievements-wrapper');
+            if (wrapper) wrapper.open = true;
+            const target = document.getElementById('home-achievements-section');
+            if (target) target.scrollIntoView({ behavior: 'smooth' });
+          }, 100);
         });
       }
 
@@ -79,7 +85,16 @@
       if (navStoreBtn) {
         navStoreBtn.addEventListener('click', () => {
           this.exitCurrentContext();
-          window.showView('view-store');
+          window.showView('view-home');
+          if (window.GameStore && typeof window.GameStore.renderStore === 'function') {
+            window.GameStore.renderStore();
+          }
+          setTimeout(() => {
+            const wrapper = document.getElementById('home-store-wrapper');
+            if (wrapper) wrapper.open = true;
+            const target = document.getElementById('home-store-section');
+            if (target) target.scrollIntoView({ behavior: 'smooth' });
+          }, 100);
         });
       }
 

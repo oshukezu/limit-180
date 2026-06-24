@@ -485,7 +485,7 @@
 
   // 監聽存檔變更以自動重新渲染（例如玩家在大廳賺取金幣回到商店時）
   window.addEventListener('mathSprintProfileUpdated', () => {
-    if (window.currentView === 'view-store') {
+    if (window.currentView === 'view-store' || window.currentView === 'view-home') {
       window.GameStore.renderStore();
     }
   });

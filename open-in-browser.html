@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>請改用外部瀏覽器開啟</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #0b1026;
+      color: #e2e8f0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .card {
+      width: min(560px, 100%);
+      background: #111827;
+      border: 1px solid #334155;
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    }
+    h1 {
+      margin: 0 0 10px;
+      font-size: 22px;
+      color: #f8fafc;
+    }
+    p {
+      line-height: 1.65;
+      margin: 10px 0;
+      font-size: 14px;
+      color: #cbd5e1;
+    }
+    .tip {
+      margin-top: 12px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 13px;
+      color: #93c5fd;
+      white-space: pre-line;
+    }
+    .url {
+      margin-top: 12px;
+      background: #020617;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 10px;
+      word-break: break-all;
+      font-size: 12px;
+      color: #86efac;
+    }
+    .actions {
+      margin-top: 14px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    button, a {
+      border: 1px solid #475569;
+      background: #0f172a;
+      color: #e2e8f0;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 13px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .primary {
+      border-color: #38bdf8;
+      color: #67e8f9;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>請改用外部瀏覽器開啟</h1>
+    <p>偵測到你目前可能在 LINE / Facebook / Instagram 內建瀏覽器。這些環境常導致版面跑版、鍵盤與音效異常。</p>
+    <div id="device-tip" class="tip"></div>
+    <div id="target-url" class="url"></div>
+    <div class="actions">
+      <button id="copy-url-btn" class="primary">複製遊戲網址</button>
+      <a id="open-target-link" class="primary" href="#">嘗試直接開啟</a>
+      <button id="open-chrome-btn" style="display:none;">Android 嘗試開啟 Chrome</button>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const qp = new URLSearchParams(window.location.search);
+      const target = qp.get('target') || 'https://oshukezu.github.io/limit-180/';
+      const safeTarget = decodeURIComponent(target);
+      const ua = navigator.userAgent || '';
+      const isIOS = /iPhone|iPad|iPod/i.test(ua);
+      const isAndroid = /Android/i.test(ua);
+
+      const tip = document.getElementById('device-tip');
+      const targetEl = document.getElementById('target-url');
+      const copyBtn = document.getElementById('copy-url-btn');
+      const linkBtn = document.getElementById('open-target-link');
+      const chromeBtn = document.getElementById('open-chrome-btn');
+
+      targetEl.textContent = safeTarget;
+      linkBtn.href = safeTarget;
+
+      if (isIOS) {
+        tip.textContent = 'iPhone/iPad：請點右上角 ... 或 分享按鈕，選擇「在 Safari 開啟」。';
+      } else if (isAndroid) {
+        tip.textContent = 'Android：請點右上角 ... 選單，選「在 Chrome 開啟」。';
+        chromeBtn.style.display = 'inline-block';
+      } else {
+        tip.textContent = '請改用系統外部瀏覽器（Chrome / Safari）開啟網址。';
+      }
+
+      copyBtn.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(safeTarget);
+          alert('已複製網址，請貼到 Chrome 或 Safari 開啟。');
+        } catch (_) {
+          alert('複製失敗，請手動長按網址複製。');
+        }
+      });
+
+      chromeBtn.addEventListener('click', () => {
+        try {
+          const u = new URL(safeTarget);
+          const intentUrl = `intent://${u.host}${u.pathname}${u.search}${u.hash}#Intent;scheme=${u.protocol.replace(':', '')};package=com.android.chrome;end`;
+          window.location.href = intentUrl;
+        } catch (_) {
+          window.location.href = safeTarget;
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

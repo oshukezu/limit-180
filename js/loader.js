@@ -8,9 +8,7 @@
     { id: 'view-lobby', path: 'views/lobby.html', parent: 'main' },
     { id: 'view-game', path: 'views/game.html', parent: 'main' },
     { id: 'view-result', path: 'views/result.html', parent: 'main' },
-    { id: 'view-achievements', path: 'views/achievements.html', parent: 'main' },
     { id: 'view-review', path: 'views/review.html', parent: 'main' },
-    { id: 'view-store', path: 'views/store.html', parent: 'main' },
     { id: 'view-admin', path: 'views/admin.html', parent: 'main' },
     { id: 'customization-modal', path: 'views/customization-modal.html', parent: 'body' },
     { id: 'demote-modal', path: 'views/demote-modal.html', parent: 'body' },
@@ -22,7 +20,7 @@
   // 加上時間戳以避免瀏覽器或 CDN 快取舊版 HTML 元件
   const CACHE_BUSTER = `?v=${Date.now()}`;
 
-  // 偵測是否為手機 In-App 內建瀏覽器 (如 Line, FB, WeChat)，並強制外部瀏覽器開啟
+  // 偵測是否為手機 In-App 內建瀏覽器 (如 Line, FB, WeChat, IG)
   function checkMobileInAppBrowser() {
     const ua = navigator.userAgent || navigator.vendor || window.opera;
     const isLine = ua.indexOf('LINE') > -1;
@@ -30,47 +28,7 @@
     const isWeChat = ua.indexOf('MicroMessenger') > -1;
     const isInstagram = ua.indexOf('Instagram') > -1;
 
-    if (isLine || isFb || isWeChat || isInstagram) {
-      showExternalBrowserGuide();
-      return true;
-    }
-    return false;
-  }
-
-  function showExternalBrowserGuide() {
-    const guideOverlay = document.createElement('div');
-    guideOverlay.style.cssText = `
-      position: fixed;
-      inset: 0;
-      background: #0a0a12;
-      color: #ff007f;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 999999;
-      font-family: 'Share Tech Mono', 'Microsoft JhengHei', sans-serif;
-      padding: 24px;
-      text-align: center;
-      border: 4px solid #ff007f;
-      box-shadow: 0 0 25px #ff007f;
-    `;
-    guideOverlay.innerHTML = `
-      <h2 style="font-size: 1.8rem; margin-bottom: 20px; text-shadow: 0 0 10px #ff007f; font-weight: 900;">⚠️ 偵測到內建瀏覽器 ⚠️</h2>
-      <p style="max-width: 500px; line-height: 1.6; color: #cbd5e1; font-size: 1rem; margin-bottom: 30px;">
-        為確保遊戲的鍵盤輸入、音效與本地成績存檔能正常運作，請勿在手機通訊軟體 (如 LINE、FB) 內直接開啟。<br><br>
-        <strong>請點擊右上角選單「...」，選擇「在外部瀏覽器開啟」(如 Chrome 或 Safari) 進行操作。</strong>
-      </p>
-      <div style="background: #121224; border: 1px solid #1f2937; padding: 15px; border-radius: 8px; color: #39ff14; font-size: 0.9rem; word-break: break-all; width: 100%; max-width: 400px; margin-bottom: 20px;">
-        網址：<br>
-        <strong>${window.location.href}</strong>
-      </div>
-      <button onclick="navigator.clipboard.writeText('${window.location.href}'); alert('網址已複製！請至 Chrome / Safari 開啟！');" 
-        style="background: #ff007f; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: transform 0.2s;">
-        📋 複製網址
-      </button>
-    `;
-    document.body.appendChild(guideOverlay);
+    return isLine || isFb || isWeChat || isInstagram;
   }
 
   async function loadComponent(view) {
@@ -83,8 +41,10 @@
   }
 
   async function init() {
-    // 若為手機 app 內置瀏覽器則中斷載入並顯示強導頁面
+    // 若為手機 app 內置瀏覽器，導向外部瀏覽器引導頁
     if (checkMobileInAppBrowser()) {
+      const target = encodeURIComponent(window.location.href);
+      window.location.replace(`open-in-browser.html?target=${target}`);
       return;
     }
     try {

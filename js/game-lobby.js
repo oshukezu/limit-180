@@ -178,10 +178,10 @@
               if (grade) {
                 // 已過關：只顯示等級評級，移除數字與霓虹效果，S級用黃色，其餘等級用白色
                 const colorClass = (grade === 'S') ? 'text-yellow-400 font-bold' : 'text-white font-bold';
-                btn.innerHTML = `<span class="text-xs font-pixel ${colorClass}">${grade}</span>`;
+                btn.innerHTML = `<span class="text-[1.9rem] leading-none font-pixel ${colorClass}">${grade}</span>`;
               } else {
                 // 未過關（但已解鎖）：顯示關卡數字
-                btn.innerHTML = `<span class="text-[9px] font-pixel text-slate-300">${L}</span>`;
+                btn.innerHTML = `<span class="text-[1.2rem] leading-none font-pixel text-slate-300">${L}</span>`;
               }
               btn.addEventListener('click', (e) => {
                 e.stopPropagation();

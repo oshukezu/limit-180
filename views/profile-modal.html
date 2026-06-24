@@ -1,63 +1,63 @@
 <div id="profile-modal"
   class="hidden fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-50 p-4">
-  <div class="hud-panel p-6 bg-slate-950 border-2 border-cyan-500 max-w-md w-full relative">
+  <div class="hud-panel p-6 bg-slate-950 border-2 border-cyan-500 max-w-lg w-full relative">
     <!-- 關閉按鈕 -->
     <button type="button" id="profile-close-btn"
       class="absolute top-4 right-4 text-slate-500 hover:text-white font-pixel text-sm transition-colors duration-200 focus:outline-none">✕</button>
     <div class="text-center mb-6">
-      <span class="text-xs font-pixel text-pink-500 glow-pink block mb-1">IDENTITY INITIALIZATION</span>
-      <h3 class="text-base font-pixel text-cyan-400 glow-blue">建立特工身份</h3>
+      <span class="text-sm font-pixel text-pink-500 glow-pink block mb-1">IDENTITY INITIALIZATION</span>
+      <h3 class="text-xl font-pixel text-cyan-400 glow-blue">建立特工身份</h3>
       <div id="profile-modal-promo"
-        class="hidden text-[10px] font-pixel text-yellow-400 mt-3 leading-relaxed bg-yellow-950/40 border border-yellow-500/30 p-2.5 rounded text-center">
+        class="hidden text-sm font-pixel text-yellow-400 mt-3 leading-relaxed bg-yellow-950/40 border border-yellow-500/30 p-2.5 rounded text-center">
       </div>
     </div>
 
     <form id="profile-form" class="space-y-4" onsubmit="return false;">
       <!-- 班級 -->
       <div>
-        <label for="profile-class" class="block text-[10px] font-pixel text-slate-400 mb-1">年級班別:</label>
-        <div class="text-[8px] font-pixel text-slate-500 mb-1.5 leading-normal">
+        <label for="profile-class" class="block text-sm font-pixel text-slate-300 mb-1">年級班別:</label>
+        <div class="text-xs font-pixel text-slate-500 mb-1.5 leading-normal">
           班級一律以英文字母 2 位 + 數字 3 位做定義（例如：ST501、DD602）。
         </div>
         <input type="text" id="profile-class" name="grade_class" required pattern="^[a-zA-Z]{2}[0-9]{3}$" maxlength="5"
-          class="w-full bg-slate-900 border-2 border-slate-800 p-2.5 font-pixel text-[11px] text-cyan-400 focus:outline-none focus:border-cyan-500 rounded"
+          class="w-full bg-slate-900 border-2 border-slate-800 p-3 font-pixel text-base text-cyan-400 focus:outline-none focus:border-cyan-500 rounded"
           placeholder="例如: ST501">
       </div>
 
       <!-- 座號 -->
       <div>
-        <label for="profile-seat" class="block text-[10px] font-pixel text-slate-400 mb-1.5">座號 (1-50 號):</label>
+        <label for="profile-seat" class="block text-sm font-pixel text-slate-300 mb-1.5">座號 (1-50 號):</label>
         <input type="number" id="profile-seat" name="seat_number" required min="1" max="50"
-          class="w-full bg-slate-900 border-2 border-slate-800 p-2.5 font-pixel text-[11px] text-cyan-400 focus:outline-none focus:border-cyan-500 rounded"
+          class="w-full bg-slate-900 border-2 border-slate-800 p-3 font-pixel text-base text-cyan-400 focus:outline-none focus:border-cyan-500 rounded"
           placeholder="例如: 12">
       </div>
 
       <!-- 暱稱 -->
       <div>
-        <label for="profile-nickname" class="block text-[10px] font-pixel text-slate-400 mb-1.5">遊戲暱稱 (2-8 字元):</label>
+        <label for="profile-nickname" class="block text-sm font-pixel text-slate-300 mb-1.5">遊戲暱稱 (2-8 字元):</label>
         <input type="text" id="profile-nickname" name="nickname" required minlength="2" maxlength="8"
-          class="w-full bg-slate-900 border-2 border-slate-800 p-2.5 font-pixel text-[11px] text-cyan-400 focus:outline-none focus:border-cyan-500 rounded"
+          class="w-full bg-slate-900 border-2 border-slate-800 p-3 font-pixel text-base text-cyan-400 focus:outline-none focus:border-cyan-500 rounded"
           placeholder="例如: 暱稱或英文名字">
       </div>
 
       <!-- 錯誤/提示訊息區 -->
       <div id="profile-error-msg"
-        class="hidden text-[10px] font-pixel text-red-500 glow-pink text-center animate-pulse py-1">
+        class="hidden text-sm font-pixel text-red-500 glow-pink text-center animate-pulse py-1">
         暱稱不合法，請重新輸入！
       </div>
 
       <!-- 提交與略過按鈕 -->
-      <div class="flex gap-4 mt-2">
+      <div class="flex gap-3 mt-2">
         <button type="submit" id="profile-submit-btn"
-          class="flex-1 cyber-btn cyber-btn-green py-3.5 font-pixel text-xs text-green-400">
+          class="flex-1 cyber-btn cyber-btn-green py-3.5 font-pixel text-sm text-green-400">
           進入 180 禁區
         </button>
         <button type="button" id="profile-cloud-login-btn"
-          class="flex-1 cyber-btn py-3.5 font-pixel text-xs text-cyan-300 border border-cyan-700 hover:bg-cyan-950 rounded">
+          class="flex-1 cyber-btn py-3.5 font-pixel text-sm text-cyan-300 border border-cyan-700 hover:bg-cyan-950 rounded">
           跨裝置登入
         </button>
         <button type="button" id="profile-skip-btn"
-          class="flex-1 cyber-btn py-3.5 font-pixel text-xs text-slate-400 border border-slate-800 hover:bg-slate-900 rounded">
+          class="flex-1 cyber-btn py-3.5 font-pixel text-sm text-slate-400 border border-slate-800 hover:bg-slate-900 rounded">
           暫時略過
         </button>
       </div>

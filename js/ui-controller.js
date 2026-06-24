@@ -8,6 +8,7 @@
       if (this.hasInitialized) return;
       this.hasInitialized = true;
       this.initAccessibilityMode();
+      this.initHomeAccordion();
 
       // 使用事件代理 (Event Delegation) 監聽全域點擊事件，防止 Race Condition 與動態渲染 DOM 失效
       document.addEventListener('click', (e) => {
@@ -83,6 +84,30 @@
           toggleBtn.textContent = `易讀模式：${enabled ? '開' : '關'}`;
         });
       }
+    },
+
+    initHomeAccordion() {
+      window.addEventListener('limit180ComponentsLoaded', () => {
+        const ids = [
+          'home-dashboard-wrapper',
+          'home-rules-wrapper',
+          'home-achievements-wrapper',
+          'home-store-wrapper'
+        ];
+        const wrappers = ids
+          .map((id) => document.getElementById(id))
+          .filter(Boolean);
+        if (wrappers.length === 0) return;
+
+        wrappers.forEach((current) => {
+          current.addEventListener('toggle', () => {
+            if (!current.open) return;
+            wrappers.forEach((other) => {
+              if (other !== current) other.open = false;
+            });
+          });
+        });
+      });
     },
 
     closeToHome() {

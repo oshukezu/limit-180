@@ -125,6 +125,43 @@
     }
   }
 
+  function renderAvatarInfoModal() {
+    const profile = window.MathSprintStorage.getProfile();
+    const identity = JSON.parse(localStorage.getItem('limit180_user_profile') || 'null');
+    const av = AVATARS[profile.equipped_avatar] || AVATARS['avatar-default'] || { icon: '🛡️', name: '實習特工' };
+    const bor = BORDERS[profile.equipped_border] || BORDERS['border-none'] || { name: '無外框' };
+    const badgeNames = (profile.equipped_badges || [])
+      .map((id) => BADGES[id]?.name)
+      .filter(Boolean)
+      .join('、') || '無';
+
+    const iconEl = document.getElementById('avatar-info-icon');
+    const nameEl = document.getElementById('avatar-info-name');
+    const classEl = document.getElementById('avatar-info-class-seat');
+    const borderEl = document.getElementById('avatar-info-border');
+    const badgesEl = document.getElementById('avatar-info-badges');
+    const streakEl = document.getElementById('avatar-info-streak');
+    const syncEl = document.getElementById('avatar-info-sync');
+
+    if (iconEl) iconEl.textContent = av.icon || '🛡️';
+    if (nameEl) nameEl.textContent = identity?.nickname || '訪客特工';
+    if (classEl) classEl.textContent = identity?.grade_class ? `${identity.grade_class} 班 ${identity?.seat_number || '--'} 號` : '訪客狀態';
+    if (borderEl) borderEl.textContent = bor.name || '無外框';
+    if (badgesEl) badgesEl.textContent = badgeNames;
+    if (streakEl) streakEl.textContent = `Day ${Math.max(0, Number(localStorage.getItem('limit180_login_reward_streak') || 0))}`;
+    if (syncEl) {
+      const raw = localStorage.getItem('limit180_last_sync_at');
+      const d = raw ? new Date(raw) : null;
+      syncEl.textContent = d && !Number.isNaN(d.getTime()) ? d.toLocaleString('zh-TW') : '--';
+    }
+  }
+
+  function openAvatarInfoModal() {
+    renderAvatarInfoModal();
+    const modal = document.getElementById('avatar-info-modal');
+    if (modal) modal.classList.remove('hidden');
+  }
+
   const Customization = {
     currentTab: 'theme', // theme, avatar, border, badge
     tempProfile: {},      // 用於暫存選擇但尚未儲存的外觀
@@ -427,6 +464,61 @@
 
     // 首次載入即渲染，避免首頁長時間顯示「特工載入中...」
     renderHomeIdentityCard();
+
+    const avatarTap = document.getElementById('home-avatar-tap-area');
+    if (avatarTap) {
+      avatarTap.addEventListener('click', (e) => {
+        if (e.target && e.target.closest && e.target.closest('#open-custom-btn-main')) return;
+        openAvatarInfoModal();
+      });
+    }
+    const infoClose = document.getElementById('avatar-info-close-btn');
+    if (infoClose) infoClose.addEventListener('click', () => {
+      const modal = document.getElementById('avatar-info-modal');
+      if (modal) modal.classList.add('hidden');
+    });
+    const infoModal = document.getElementById('avatar-info-modal');
+    if (infoModal) {
+      infoModal.addEventListener('click', (e) => {
+        if (e.target === infoModal) infoModal.classList.add('hidden');
+      });
+    }
+    const openCustomBtn = document.getElementById('avatar-info-open-custom-btn');
+    if (openCustomBtn) {
+      openCustomBtn.addEventListener('click', () => {
+        const modal = document.getElementById('avatar-info-modal');
+        if (modal) modal.classList.add('hidden');
+        Customization.openModal();
+      });
+    }
+    const copyIdentityBtn = document.getElementById('avatar-info-copy-btn');
+    if (copyIdentityBtn) {
+      copyIdentityBtn.addEventListener('click', async () => {
+        let identity = null;
+        try {
+          identity = JSON.parse(localStorage.getItem('limit180_user_profile') || 'null');
+        } catch (_) {
+          identity = null;
+        }
+        const payload = identity
+          ? `班級：${identity.grade_class || '--'}\n座號：${identity.seat_number || '--'}\n暱稱：${identity.nickname || '--'}`
+          : '班級：--\n座號：--\n暱稱：訪客特工';
+        try {
+          await navigator.clipboard.writeText(payload);
+          if (window.UIFeedback) {
+            window.UIFeedback.toast('已複製身分資訊', 'success');
+          } else {
+            alert('已複製身分資訊');
+          }
+        } catch (err) {
+          if (window.UIFeedback) {
+            window.UIFeedback.toast('複製失敗，請手動複製', 'error');
+          } else {
+            alert('複製失敗，請手動複製');
+          }
+        }
+      });
+    }
   });
 
 })();
