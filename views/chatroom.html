@@ -1,24 +1,8 @@
 <section id="view-chatroom" class="view-section hidden py-6 relative max-w-lg mx-auto w-full px-4">
-  <button class="close-btn" id="chatroom-close-btn">&times;</button>
-  
-  <div class="flex justify-between items-center mb-6">
-    <h2 class="text-2xl font-pixel text-white">特工聊天室</h2>
-  </div>
-
-  <!-- 頻道分頁切換 -->
-  <div class="flex border-b border-slate-800 mb-4 font-pixel text-[10px]">
-    <button id="tab-chat-global" class="flex-1 text-center py-2.5 text-white border-b-2 border-white font-bold focus:outline-none cursor-pointer">
-      全台公頻 [GLOBAL]
-    </button>
-    <button id="tab-chat-class" class="flex-1 text-center py-2.5 text-slate-400 hover:text-white border-b border-slate-800 focus:outline-none cursor-pointer">
-      班級頻道 [CLASS]
-    </button>
-  </div>
-
   <!-- 今日免費額度狀態 HUD -->
-  <div class="bg-slate-950 border border-slate-800 p-3 mb-4 rounded-xl flex justify-between items-center text-xs font-pixel text-slate-400">
+  <div class="bg-slate-950 border border-slate-800 p-4 mb-4 rounded-xl flex justify-between items-center text-sm font-pixel text-slate-400">
     <div id="chat-coin-status">
-      今日已發言：<span id="chat-today-count" class="text-cyan-400 font-bold">0</span> / 10 次 (免費)
+      今日免費發言量：<span id="chat-today-count" class="text-cyan-400 font-bold">0 / 10</span>
     </div>
     <div id="chat-user-coins-block">
       金幣餘額：<span id="chat-current-coins" class="text-[#39ff14] font-bold">0</span> 💰
@@ -26,22 +10,22 @@
   </div>
 
   <!-- 實時訊息串流容器 -->
-  <div id="chat-messages" class="bg-slate-950/80 border-2 border-slate-800/80 rounded-2xl p-4 overflow-y-auto mb-4 flex flex-col gap-3 min-h-[350px] max-h-[450px]">
+  <div id="chat-messages" class="bg-slate-950/80 border-2 border-slate-800/80 rounded-2xl p-4 overflow-y-auto mb-4 flex flex-col gap-4 min-h-[380px] max-h-[480px]">
     <!-- 訊息會動態注入 -->
   </div>
 
   <!-- 快捷片語列 -->
-  <div class="flex gap-2 overflow-x-auto pb-2 mb-2 text-[9px] font-pixel scrollbar-none" id="chat-quick-templates">
+  <div class="flex gap-2 overflow-x-auto pb-2 mb-2 text-xs font-pixel scrollbar-none" id="chat-quick-templates">
     <!-- 由 JS 動態注入 -->
   </div>
 
   <!-- 輸入框與發送按鈕 -->
   <div class="flex gap-2 items-center">
     <input type="text" id="chat-input-field" 
-      class="flex-1 bg-slate-950 border-2 border-slate-800 rounded-xl px-4 py-3 text-white text-xs sm:text-sm focus:outline-none focus:border-cyan-500 font-pixel" 
-      placeholder="輸入訊息..." maxlength="100">
+      class="flex-1 bg-slate-950 border-2 border-slate-800 rounded-xl px-4 py-3 text-white text-base focus:outline-none focus:border-cyan-500 font-pixel" 
+      placeholder="發送訊息至班級留言板..." maxlength="100">
     <button id="chat-send-btn" 
-      class="px-5 py-3 rounded-xl bg-cyan-500 text-black text-xs font-black font-pixel hover:bg-cyan-400 transition-colors shadow-[0_0_10px_rgba(6,182,212,0.3)]">
+      class="px-5 py-3 rounded-xl bg-cyan-500 text-black text-sm font-black font-pixel hover:bg-cyan-400 transition-colors shadow-[0_0_10px_rgba(6,182,212,0.3)]">
       傳送
     </button>
   </div>
