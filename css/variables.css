@@ -267,7 +267,7 @@ body.theme-emerald .text-slate-500,
 body.theme-thunder .text-slate-500,
 body.theme-sunset .text-slate-500,
 body.theme-mint .text-slate-500 {
-  color: color-mix(in srgb, var(--text-primary) 70%, #ffffff) !important;
+  color: color-mix(in srgb, var(--text-primary) 70%, #000000) !important;
 }
 
 
@@ -290,6 +290,31 @@ body.theme-sunset .bg-dark-force *, body.theme-sunset .bg-slate-950-force *, bod
 body.theme-mint .bg-dark-force *, body.theme-mint .bg-slate-950-force *, body.theme-mint .bg-slate-900-force *, body.theme-mint .cyber-btn, body.theme-mint .cyber-btn * {
   color: #ffffff !important;
 }
+
+/* 按鈕 Hover 狀態對比度優化：Hover 背景為深色時，強制使用白字 */
+body.theme-aurora .cyber-btn:hover, body.theme-aurora .cyber-btn-pink:hover, body.theme-aurora .cyber-btn-green:hover, body.theme-aurora .cyber-btn-yellow:hover,
+body.theme-abyss .cyber-btn:hover, body.theme-abyss .cyber-btn-pink:hover, body.theme-abyss .cyber-btn-green:hover, body.theme-abyss .cyber-btn-yellow:hover,
+body.theme-sakura-night .cyber-btn:hover, body.theme-sakura-night .cyber-btn-pink:hover, body.theme-sakura-night .cyber-btn-green:hover, body.theme-sakura-night .cyber-btn-yellow:hover,
+body.theme-lava .cyber-btn:hover, body.theme-lava .cyber-btn-pink:hover, body.theme-lava .cyber-btn-green:hover, body.theme-lava .cyber-btn-yellow:hover,
+body.theme-sunset .cyber-btn:hover, body.theme-sunset .cyber-btn-pink:hover, body.theme-sunset .cyber-btn-green:hover, body.theme-sunset .cyber-btn-yellow:hover {
+  color: #ffffff !important;
+}
+
+/* 聊天室內容強制為深色面板，以展現霓虹與高對比發光文字 */
+body #chat-messages.bg-slate-950\/80 {
+  background-color: #0c0c16 !important;
+  border-color: #1e293b !important;
+}
+body #chat-messages * {
+  text-shadow: none;
+}
+body #chat-messages .text-white { color: #ffffff !important; }
+body #chat-messages .text-slate-400 { color: #94a3b8 !important; }
+body #chat-messages .text-slate-500 { color: #64748b !important; }
+body #chat-messages .text-green-400 { color: #4ade80 !important; }
+body #chat-messages .text-cyan-500 { color: #06b6d4 !important; }
+body #chat-messages .text-cyan-100 { color: #cffafe !important; }
+body #chat-messages .text-slate-100 { color: #f1f5f9 !important; }
 
 body {
   background-color: var(--dark-bg);

@@ -98,6 +98,17 @@
         });
       }
 
+      const navChatroomBtn = document.getElementById('nav-chatroom-btn');
+      if (navChatroomBtn) {
+        navChatroomBtn.addEventListener('click', () => {
+          this.exitCurrentContext();
+          window.showView('view-chatroom');
+          if (window.MathSprintChatroom && typeof window.MathSprintChatroom.init === 'function') {
+            window.MathSprintChatroom.init();
+          }
+        });
+      }
+
       // Lobby navigation
       const lobbyBtnHandler = () => {
         this.exitCurrentContext();
