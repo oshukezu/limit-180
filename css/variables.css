@@ -12,6 +12,9 @@
   --text-primary: #FFF5F6;  /* 落櫻白文字 */
   --pixel-font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Microsoft JhengHei", sans-serif;
   --tech-font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Microsoft JhengHei", sans-serif;
+  --chart-grid: rgba(255, 255, 255, 0.15);
+  --chart-text: rgba(255, 255, 255, 0.7);
+  --chart-subtext: rgba(255, 255, 255, 0.4);
 }
 
 /* 覆寫主題：特務霓虹 (Agent Neon) - 原 Cyberpunk 經典霓虹 */
@@ -48,6 +51,9 @@ body.theme-aurora {
   --panel-bg: #d9fbff;      /* 冰河面板 */
   --border-color: var(--neon-blue);
   --text-primary: #12333a;
+  --chart-grid: rgba(0, 0, 0, 0.15);
+  --chart-text: rgba(18, 51, 58, 0.8);
+  --chart-subtext: rgba(18, 51, 58, 0.5);
 }
 
 /* 覆寫主題：黃金帝國 (Golden Empire) */
@@ -60,6 +66,9 @@ body.theme-gold {
   --panel-bg: #fff0a8;      /* 亮金面板 */
   --border-color: var(--neon-blue);
   --text-primary: #3b2f00;
+  --chart-grid: rgba(0, 0, 0, 0.15);
+  --chart-text: rgba(59, 47, 0, 0.8);
+  --chart-subtext: rgba(59, 47, 0, 0.5);
 }
 
 /* 覆寫主題：深海深淵 (Abyss) */
@@ -96,6 +105,9 @@ body.theme-emerald {
   --panel-bg: #d6fbe8;
   --border-color: var(--neon-blue);
   --text-primary: #083a25;
+  --chart-grid: rgba(0, 0, 0, 0.15);
+  --chart-text: rgba(8, 58, 37, 0.8);
+  --chart-subtext: rgba(8, 58, 37, 0.5);
 }
 
 /* 覆寫主題：雷暴核心 (Thunder) */
@@ -108,6 +120,9 @@ body.theme-thunder {
   --panel-bg: #fff0a0;
   --border-color: var(--neon-blue);
   --text-primary: #352b00;
+  --chart-grid: rgba(0, 0, 0, 0.15);
+  --chart-text: rgba(53, 43, 0, 0.8);
+  --chart-subtext: rgba(53, 43, 0, 0.5);
 }
 
 /* 覆寫主題：銀河曲率 (Galaxy) */
@@ -132,6 +147,9 @@ body.theme-sunset {
   --panel-bg: #ffd9c2;
   --border-color: var(--neon-blue);
   --text-primary: #4a1f0f;
+  --chart-grid: rgba(0, 0, 0, 0.15);
+  --chart-text: rgba(74, 31, 15, 0.8);
+  --chart-subtext: rgba(74, 31, 15, 0.5);
 }
 
 /* 覆寫主題：薄荷霧境 (Mint) */
@@ -144,6 +162,9 @@ body.theme-mint {
   --panel-bg: #d9fff4;
   --border-color: var(--neon-blue);
   --text-primary: #073b35;
+  --chart-grid: rgba(0, 0, 0, 0.15);
+  --chart-text: rgba(7, 59, 53, 0.8);
+  --chart-subtext: rgba(7, 59, 53, 0.5);
 }
 
 /* 覆寫主題：黑銀極簡 (Mono) */
@@ -251,7 +272,13 @@ body.theme-gold .text-slate-200,
 body.theme-emerald .text-slate-200,
 body.theme-thunder .text-slate-200,
 body.theme-sunset .text-slate-200,
-body.theme-mint .text-slate-200 {
+body.theme-mint .text-slate-200,
+body.theme-aurora .text-slate-300,
+body.theme-gold .text-slate-300,
+body.theme-emerald .text-slate-300,
+body.theme-thunder .text-slate-300,
+body.theme-sunset .text-slate-300,
+body.theme-mint .text-slate-300 {
   color: var(--text-primary) !important;
 }
 
@@ -282,13 +309,23 @@ body.theme-mint .text-cyan-300, body.theme-mint .text-cyan-400, body.theme-mint 
 }
 
 /* 如果框線內背景為深色，就要用淺色字體 */
-body.theme-aurora .bg-dark-force *, body.theme-aurora .bg-slate-950-force *, body.theme-aurora .bg-slate-900-force *, body.theme-aurora .cyber-btn, body.theme-aurora .cyber-btn *,
-body.theme-gold .bg-dark-force *, body.theme-gold .bg-slate-950-force *, body.theme-gold .bg-slate-900-force *, body.theme-gold .cyber-btn, body.theme-gold .cyber-btn *,
-body.theme-emerald .bg-dark-force *, body.theme-emerald .bg-slate-950-force *, body.theme-emerald .bg-slate-900-force *, body.theme-emerald .cyber-btn, body.theme-emerald .cyber-btn *,
-body.theme-thunder .bg-dark-force *, body.theme-thunder .bg-slate-950-force *, body.theme-thunder .bg-slate-900-force *, body.theme-thunder .cyber-btn, body.theme-thunder .cyber-btn *,
-body.theme-sunset .bg-dark-force *, body.theme-sunset .bg-slate-950-force *, body.theme-sunset .bg-slate-900-force *, body.theme-sunset .cyber-btn, body.theme-sunset .cyber-btn *,
-body.theme-mint .bg-dark-force *, body.theme-mint .bg-slate-950-force *, body.theme-mint .bg-slate-900-force *, body.theme-mint .cyber-btn, body.theme-mint .cyber-btn * {
+body.theme-aurora .bg-dark-force *, body.theme-aurora .bg-slate-950-force *, body.theme-aurora .bg-slate-900-force *,
+body.theme-gold .bg-dark-force *, body.theme-gold .bg-slate-950-force *, body.theme-gold .bg-slate-900-force *,
+body.theme-emerald .bg-dark-force *, body.theme-emerald .bg-slate-950-force *, body.theme-emerald .bg-slate-900-force *,
+body.theme-thunder .bg-dark-force *, body.theme-thunder .bg-slate-950-force *, body.theme-thunder .bg-slate-900-force *,
+body.theme-sunset .bg-dark-force *, body.theme-sunset .bg-slate-950-force *, body.theme-sunset .bg-slate-900-force *,
+body.theme-mint .bg-dark-force *, body.theme-mint .bg-slate-950-force *, body.theme-mint .bg-slate-900-force * {
   color: #ffffff !important;
+}
+
+/* 淺色主題的按鈕文字：在淺色/透明背景下落實使用黑色字體 */
+body.theme-aurora .cyber-btn, body.theme-aurora .cyber-btn *,
+body.theme-gold .cyber-btn, body.theme-gold .cyber-btn *,
+body.theme-emerald .cyber-btn, body.theme-emerald .cyber-btn *,
+body.theme-thunder .cyber-btn, body.theme-thunder .cyber-btn *,
+body.theme-sunset .cyber-btn, body.theme-sunset .cyber-btn *,
+body.theme-mint .cyber-btn, body.theme-mint .cyber-btn * {
+  color: #000000 !important;
 }
 
 /* 按鈕 Hover 狀態對比度優化：Hover 背景為深色時，強制使用白字 */

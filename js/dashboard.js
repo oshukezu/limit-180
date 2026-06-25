@@ -95,6 +95,10 @@
       const neonPink = (bodyStyle.getPropertyValue('--neon-pink') || '#ff007f').trim();
       const neonBlue = (bodyStyle.getPropertyValue('--neon-blue') || '#00f0ff').trim();
       const neonGreen = (bodyStyle.getPropertyValue('--neon-green') || '#39ff14').trim();
+      
+      const chartGrid = (bodyStyle.getPropertyValue('--chart-grid') || 'rgba(255, 255, 255, 0.15)').trim();
+      const chartText = (bodyStyle.getPropertyValue('--chart-text') || 'rgba(255, 255, 255, 0.7)').trim();
+      const chartSubText = (bodyStyle.getPropertyValue('--chart-subtext') || 'rgba(255, 255, 255, 0.4)').trim();
 
       // 1. Radar Chart Setup
       const radarDataObj = getRadarData(historyLog);
@@ -126,15 +130,15 @@
             maintainAspectRatio: false,
             scales: {
               r: {
-                angleLines: { color: 'rgba(255, 255, 255, 0.15)' },
-                grid: { color: 'rgba(255, 255, 255, 0.15)' },
+                angleLines: { color: chartGrid },
+                grid: { color: chartGrid },
                 pointLabels: {
-                  color: 'rgba(255, 255, 255, 0.7)',
+                  color: chartText,
                   font: { family: 'Share Tech Mono', size: 10 }
                 },
                 ticks: {
                   backdropColor: 'transparent',
-                  color: 'rgba(255, 255, 255, 0.4)',
+                  color: chartSubText,
                   font: { family: 'Share Tech Mono' }
                 },
                 suggestedMin: 0,
@@ -144,7 +148,7 @@
             plugins: {
               legend: {
                 labels: {
-                  color: 'rgba(255, 255, 255, 0.8)',
+                  color: chartText,
                   font: { family: 'Share Tech Mono' }
                 }
               }
@@ -185,22 +189,22 @@
             maintainAspectRatio: false,
             scales: {
               x: {
-                grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                grid: { color: chartGrid },
                 ticks: {
-                  color: 'rgba(255, 255, 255, 0.6)',
+                  color: chartText,
                   font: { family: 'Share Tech Mono' }
                 }
               },
               y: {
-                grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                grid: { color: chartGrid },
                 ticks: {
-                  color: 'rgba(255, 255, 255, 0.6)',
+                  color: chartText,
                   font: { family: 'Share Tech Mono' }
                 },
                 title: {
                   display: true,
                   text: '反應秒數',
-                  color: 'rgba(255, 255, 255, 0.4)',
+                  color: chartSubText,
                   font: { family: 'Share Tech Mono' }
                 },
                 suggestedMin: 0
@@ -209,7 +213,7 @@
             plugins: {
               legend: {
                 labels: {
-                  color: 'rgba(255, 255, 255, 0.8)',
+                  color: chartText,
                   font: { family: 'Share Tech Mono' }
                 }
               }
