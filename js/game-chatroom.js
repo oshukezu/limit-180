@@ -14,6 +14,14 @@
     "💡 這題可以用速算法解答！"
   ];
 
+  function getUserIdentity() {
+    try {
+      return JSON.parse(localStorage.getItem('limit180_user_profile') || 'null');
+    } catch (_) {
+      return null;
+    }
+  }
+
   function escapeHtml(text) {
     if (!text) return '';
     const div = document.createElement('div');
@@ -142,8 +150,8 @@
         return;
       }
 
-      const profile = window.MathSprintStorage?.getProfile();
-      if (!profile) {
+      const identity = getUserIdentity();
+      if (!identity) {
         container.innerHTML = `<div class="text-center text-yellow-500 font-pixel text-xs py-8">👤 請先建立特工身份，方可使用班級留言板。</div>`;
         return;
       }
@@ -151,7 +159,7 @@
       try {
         const { data, error } = await supabase.from('messages')
           .select('*')
-          .eq('grade_class', profile.grade_class)
+          .eq('grade_class', identity.grade_class)
           .order('created_at', { ascending: false })
           .limit(50);
 
@@ -178,13 +186,13 @@
 
     subscribe() {
       if (!supabase) return;
-      const profile = window.MathSprintStorage?.getProfile();
-      if (!profile) return;
+      const identity = getUserIdentity();
+      if (!identity) return;
 
-      chatChannelSubscription = supabase.channel(`public:messages:class:${profile.grade_class}`)
+      chatChannelSubscription = supabase.channel(`public:messages:class:${identity.grade_class}`)
         .on(
           'postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'messages', filter: `grade_class=eq.${profile.grade_class}` },
+          { event: 'INSERT', schema: 'public', table: 'messages', filter: `grade_class=eq.${identity.grade_class}` },
           (payload) => {
             this.appendMessageElement(payload.new, true);
           }
@@ -206,8 +214,8 @@
       const placeholder = container.querySelector('.text-slate-500, .text-red-400, .text-yellow-500');
       if (placeholder) placeholder.remove();
 
-      const profile = window.MathSprintStorage?.getProfile();
-      const isMe = profile && msg.grade_class === profile.grade_class && String(msg.seat_number) === String(profile.seat_number);
+      const identity = getUserIdentity();
+      const isMe = identity && msg.grade_class === identity.grade_class && String(msg.seat_number) === String(identity.seat_number);
 
       const bubbleClass = isMe 
         ? 'bg-cyan-950/40 border-cyan-500/40 text-cyan-100 self-end ml-12 shadow-[0_0_8px_rgba(6,182,212,0.1)]' 
@@ -259,9 +267,15 @@
         return;
       }
 
+      const identity = getUserIdentity();
+      if (!identity) {
+        window.UIFeedback?.toast?.('請建立特工身分方可發言', 'warning');
+        return;
+      }
+
       const profile = window.MathSprintStorage?.getProfile();
       if (!profile) {
-        window.UIFeedback?.toast?.('請建立特工身分方可發言', 'warning');
+        window.UIFeedback?.toast?.('無法讀取本機存檔', 'error');
         return;
       }
 
@@ -275,7 +289,7 @@
 
       if (willCharge && dailyCount === 10) {
         const confirmSend = window.UIFeedback?.confirm
-          ? await window.UIFeedback.confirm("🚨 特工請注意：您今日的 10 則免費發言額度已用完。接下來的每條訊息將消耗 10 💰 金幣，是否繼續發送？", "發言收費提示")
+          ? await window.UIFeedback.confirm("🚨 特工請注意：您今日 of 10 則免費發言額度已用完。接下來的每條訊息將消耗 10 💰 金幣，是否繼續發送？", "發言收費提示")
           : confirm("【發言收費提示】\n\n您今日的 10 則免費發言額度已用完。\n接下來的每條訊息將消耗 10 💰 金幣，是否繼續發送？");
         
         if (!confirmSend) return;
@@ -285,9 +299,9 @@
         if (willCharge) {
           if (window.MathSprintSupabaseService?.applyCoinTransaction) {
             const tx = await window.MathSprintSupabaseService.applyCoinTransaction(
-              profile.grade_class,
-              profile.seat_number,
-              profile.nickname,
+              identity.grade_class,
+              identity.seat_number,
+              identity.nickname,
               -10,
               'chat_send_fee'
             );
@@ -305,9 +319,9 @@
         const maxStage = getAgentMaxUnlocked();
 
         const { error } = await supabase.from('messages').insert({
-          grade_class: profile.grade_class,
-          seat_number: String(profile.seat_number),
-          nickname: profile.nickname,
+          grade_class: identity.grade_class,
+          seat_number: String(identity.seat_number),
+          nickname: identity.nickname,
           max_mission: maxStage.max_mission,
           max_level: maxStage.max_level,
           content: content,
