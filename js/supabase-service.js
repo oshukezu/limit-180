@@ -186,11 +186,13 @@
   async function addSensitiveWord(word) {
     const db = getSupabaseClient();
     const w = String(word || '').trim();
-    if (!w) return;
+    if (!w) return false;
+    let cloudSuccess = false;
     try {
       if (db) {
         const { error } = await db.from('sensitive_words').insert({ word: w });
         if (error) throw error;
+        cloudSuccess = true;
       }
     } catch (_) {}
     try {
@@ -201,16 +203,19 @@
         localStorage.setItem('limit180_sensitive_words', JSON.stringify(list));
       }
     } catch (_) {}
+    return cloudSuccess;
   }
 
   async function deleteSensitiveWord(word) {
     const db = getSupabaseClient();
     const w = String(word || '').trim();
-    if (!w) return;
+    if (!w) return false;
+    let cloudSuccess = false;
     try {
       if (db) {
         const { error } = await db.from('sensitive_words').delete().eq('word', w);
         if (error) throw error;
+        cloudSuccess = true;
       }
     } catch (_) {}
     try {
@@ -218,6 +223,7 @@
       list = list.filter(item => (typeof item === 'object' ? item.word : item) !== w);
       localStorage.setItem('limit180_sensitive_words', JSON.stringify(list));
     } catch (_) {}
+    return cloudSuccess;
   }
 
   async function checkSensitiveWords(content) {
