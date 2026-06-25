@@ -1,5 +1,4 @@
 <section id="view-admin" class="view-section hidden py-6 relative max-w-4xl mx-auto w-full px-4">
-  <button class="close-btn" id="admin-close-btn">&times;</button>
   
   <div class="flex justify-between items-center mb-6">
     <div>
@@ -162,6 +161,26 @@
           </thead>
           <tbody id="admin-team-list" class="divide-y divide-slate-800/40"></tbody>
         </table>
+      </div>
+    </div>
+
+    <!-- 敏感詞管理 -->
+    <div class="hud-panel p-5 bg-slate-900/80 border border-slate-800 flex flex-col gap-4 font-pixel">
+      <h4 class="text-xs text-red-500 glow-pink">敏感詞管理 SENSITIVE WORDS</h4>
+      <p class="text-[9px] text-slate-500 font-tech">設定過濾詞彙。訊息內容若模糊匹配敏感詞將無法發送。</p>
+
+      <div class="flex gap-2">
+        <input type="text" id="admin-sensitive-input" placeholder="輸入敏感詞彙..."
+          class="flex-1 bg-slate-950 border border-slate-800 px-3 py-2 text-xs text-red-400 rounded focus:outline-none focus:border-red-500">
+        <button id="admin-sensitive-add-btn" class="cyber-btn cyber-btn-pink px-4 py-2 text-xs text-pink-500 rounded">
+          新增敏感詞
+        </button>
+      </div>
+
+      <div class="overflow-x-auto max-h-48 overflow-y-auto">
+        <div id="admin-sensitive-list" class="flex flex-wrap gap-2 py-2">
+          <div class="text-[10px] text-slate-500">載入中...</div>
+        </div>
       </div>
     </div>
   </div>

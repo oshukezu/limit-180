@@ -373,6 +373,16 @@ body #chat-messages .text-green-400 { color: #4ade80 !important; }
 body #chat-messages .text-cyan-500 { color: #06b6d4 !important; }
 body #chat-messages .text-cyan-100 { color: #cffafe !important; }
 body #chat-messages .text-slate-100 { color: #f1f5f9 !important; }
+body #chat-messages .chat-bubble-me {
+  background-color: rgba(6, 182, 212, 0.15) !important;
+  border: 1px solid rgba(6, 182, 212, 0.4) !important;
+  color: #cffafe !important;
+}
+body #chat-messages .chat-bubble-other {
+  background-color: rgba(30, 41, 59, 0.9) !important;
+  border: 1px solid rgba(71, 85, 105, 0.8) !important;
+  color: #f1f5f9 !important;
+}
 
 body {
   background-color: var(--dark-bg);
@@ -398,3 +408,95 @@ body {
   background: var(--neon-pink);
   box-shadow: 0 0 5px var(--neon-pink);
 }
+
+/* 只要是按鈕文字，只能採用黑色、咖啡色、灰色、白色，其他顏色一率不採用 */
+button,
+input[type="button"],
+input[type="submit"],
+.cyber-btn,
+.lvl-btn,
+.nav-btn,
+.neon-green-btn {
+  color: #ffffff !important;
+}
+
+button *,
+.cyber-btn *,
+.lvl-btn *,
+.nav-btn *,
+.neon-green-btn * {
+  color: inherit !important;
+}
+
+button:hover,
+input[type="button"]:hover,
+input[type="submit"]:hover,
+.cyber-btn:hover,
+.lvl-btn:hover,
+.nav-btn:hover,
+.neon-green-btn:hover {
+  color: #ffffff !important;
+}
+
+.cyber-btn-green,
+.cyber-btn-yellow,
+.neon-green-btn,
+#start-levels-btn,
+#start-review-btn {
+  color: #000000 !important;
+}
+
+.cyber-btn-green:hover,
+.cyber-btn-yellow:hover,
+.neon-green-btn:hover,
+#start-levels-btn:hover,
+#start-review-btn:hover {
+  color: #000000 !important;
+}
+
+#accessibility-toggle-btn,
+#accessibility-toggle-btn:hover,
+#edit-profile-btn,
+#edit-profile-btn:hover,
+#lobby-category-tabs button,
+#lobby-category-tabs button:hover,
+#store-rarity-filter button,
+#store-rarity-filter button:hover,
+.store-sync-balance-btn,
+.store-sync-balance-btn:hover,
+#tab-leaderboard-personal,
+#tab-leaderboard-team,
+#tab-leaderboard-mission {
+  color: #ffffff !important;
+}
+
+body.theme-aurora button,
+body.theme-gold button,
+body.theme-emerald button,
+body.theme-thunder button,
+body.theme-sunset button,
+body.theme-mint button,
+body.theme-aurora .cyber-btn,
+body.theme-gold .cyber-btn,
+body.theme-emerald .cyber-btn,
+body.theme-thunder .cyber-btn,
+body.theme-sunset .cyber-btn,
+body.theme-mint .cyber-btn {
+  color: #000000 !important;
+}
+
+body.theme-aurora button:hover,
+body.theme-gold button:hover,
+body.theme-emerald button:hover,
+body.theme-thunder button:hover,
+body.theme-sunset button:hover,
+body.theme-mint button:hover,
+body.theme-aurora .cyber-btn:hover,
+body.theme-gold .cyber-btn:hover,
+body.theme-emerald .cyber-btn:hover,
+body.theme-thunder .cyber-btn:hover,
+body.theme-sunset .cyber-btn:hover,
+body.theme-mint .cyber-btn:hover {
+  color: #ffffff !important;
+}
+

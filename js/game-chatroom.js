@@ -73,6 +73,10 @@
   }
 
   const Chatroom = {
+    lastSentTime: 0,
+    consecutiveCount: 0,
+    cooldownUntil: 0,
+
     async init() {
       if (window.MathSprintSupabaseService) {
         supabase = window.MathSprintSupabaseService.initSupabase();
@@ -133,7 +137,7 @@
 
       const count = getDailyChatCount();
       if (countSpan) {
-        countSpan.textContent = `${count} / 10`;
+        countSpan.textContent = `${Math.min(10, count)} / 10`;
       }
 
       if (coinsSpan && profile) {
@@ -218,8 +222,8 @@
       const isMe = identity && msg.grade_class === identity.grade_class && String(msg.seat_number) === String(identity.seat_number);
 
       const bubbleClass = isMe 
-        ? 'bg-cyan-950/40 border-cyan-500/40 text-cyan-100 self-end ml-12 shadow-[0_0_8px_rgba(6,182,212,0.1)]' 
-        : 'bg-slate-900/80 border-slate-800/80 text-slate-100 self-start mr-12';
+        ? 'chat-bubble-me self-end ml-12 shadow-[0_0_8px_rgba(6,182,212,0.1)]' 
+        : 'chat-bubble-other self-start mr-12';
 
       const tag = `M${msg.max_mission || 1}L${msg.max_level || 1}`;
       const nameText = escapeHtml(msg.nickname);
@@ -261,6 +265,29 @@
 
       const content = inputField.value.trim();
       if (!content) return;
+
+      const now = Date.now();
+      if (this.cooldownUntil && now < this.cooldownUntil) {
+        const remaining = Math.ceil((this.cooldownUntil - now) / 1000);
+        window.UIFeedback?.toast?.(`🚨 發言過於頻繁，請等待冷卻結束（剩餘 ${remaining} 秒）`, 'warning');
+        return;
+      }
+      if (now - this.lastSentTime < 3000) {
+        const remaining = Math.ceil((3000 - (now - this.lastSentTime)) / 1000);
+        window.UIFeedback?.toast?.(`⏳ 冷卻中，請等待 ${remaining} 秒後再發送`, 'warning');
+        return;
+      }
+      if (now - this.lastSentTime > 30000) {
+        this.consecutiveCount = 0;
+      }
+
+      if (window.MathSprintSupabaseService?.checkSensitiveWords) {
+        const hasSensitive = await window.MathSprintSupabaseService.checkSensitiveWords(content);
+        if (hasSensitive) {
+          window.UIFeedback?.toast?.('⚠️ 訊息內包含敏感詞彙，無法發送！', 'error');
+          return;
+        }
+      }
 
       if (!supabase) {
         window.UIFeedback?.toast?.('雲端伺服器未連線', 'error');
@@ -332,6 +359,18 @@
 
         incrementDailyChatCount();
         inputField.value = '';
+        
+        this.lastSentTime = Date.now();
+        this.consecutiveCount++;
+        if (this.consecutiveCount >= 10) {
+          this.cooldownUntil = Date.now() + 30000;
+          window.UIFeedback?.toast?.('🚨 連續發言已達 10 則，進入 30 秒安全冷卻期！', 'warning');
+          setTimeout(() => {
+            this.consecutiveCount = 0;
+            window.UIFeedback?.toast?.('✓ 冷卻期結束，可以繼續發言。', 'info');
+          }, 30000);
+        }
+
         this.updateStatusHUD();
 
         if (window.MathSprintDashboard?.renderCharts) {
