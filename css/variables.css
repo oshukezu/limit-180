@@ -27,6 +27,10 @@ body.theme-neon {
   --panel-bg: #121224;
   --border-color: var(--neon-blue);
   --text-primary: #e2e8f0;
+  background-image: 
+    linear-gradient(rgba(0, 240, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 240, 255, 0.08) 1px, transparent 1px);
+  background-size: 20px 20px;
 }
 
 /* 覆寫主題：熔岩深淵 (Lava Abyss) */
@@ -39,6 +43,7 @@ body.theme-lava {
   --panel-bg: #240f00;      /* 深紅面板 */
   --border-color: var(--neon-blue);
   --text-primary: #FFF5F6;
+  background-image: radial-gradient(circle at 50% 50%, #2a0b00 0%, #120500 100%);
 }
 
 /* 覆寫主題：極地極光 (Polar Aurora) */
@@ -54,6 +59,7 @@ body.theme-aurora {
   --chart-grid: rgba(0, 0, 0, 0.15);
   --chart-text: rgba(18, 51, 58, 0.8);
   --chart-subtext: rgba(18, 51, 58, 0.5);
+  background-image: linear-gradient(135deg, #e8fff8 0%, #d5fdf6 100%);
 }
 
 /* 覆寫主題：黃金帝國 (Golden Empire) */
@@ -69,6 +75,7 @@ body.theme-gold {
   --chart-grid: rgba(0, 0, 0, 0.15);
   --chart-text: rgba(59, 47, 0, 0.8);
   --chart-subtext: rgba(59, 47, 0, 0.5);
+  background-image: radial-gradient(circle at 50% 50%, #fffbf0 0%, #fff8d6 100%);
 }
 
 /* 覆寫主題：深海深淵 (Abyss) */
@@ -81,6 +88,7 @@ body.theme-abyss {
   --panel-bg: #062033;
   --border-color: var(--neon-blue);
   --text-primary: #e0f2fe;
+  background-image: radial-gradient(circle at 50% 30%, #03213a 0%, #021220 100%);
 }
 
 /* 覆寫主題：夜櫻月影 (Sakura Night) */
@@ -93,6 +101,7 @@ body.theme-sakura-night {
   --panel-bg: #2a1531;
   --border-color: var(--neon-blue);
   --text-primary: #fdf2f8;
+  background-image: radial-gradient(circle at 50% 30%, #2f1737 0%, #170d1a 100%);
 }
 
 /* 覆寫主題：翡翠矩陣 (Emerald) */
@@ -108,6 +117,10 @@ body.theme-emerald {
   --chart-grid: rgba(0, 0, 0, 0.15);
   --chart-text: rgba(8, 58, 37, 0.8);
   --chart-subtext: rgba(8, 58, 37, 0.5);
+  background-image: 
+    linear-gradient(rgba(16, 185, 129, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(16, 185, 129, 0.08) 1px, transparent 1px);
+  background-size: 20px 20px;
 }
 
 /* 覆寫主題：雷暴核心 (Thunder) */
@@ -123,6 +136,7 @@ body.theme-thunder {
   --chart-grid: rgba(0, 0, 0, 0.15);
   --chart-text: rgba(53, 43, 0, 0.8);
   --chart-subtext: rgba(53, 43, 0, 0.5);
+  background-image: radial-gradient(circle at 50% 50%, #ffe99b 0%, #fff7c2 100%);
 }
 
 /* 覆寫主題：銀河曲率 (Galaxy) */
@@ -135,6 +149,7 @@ body.theme-galaxy {
   --panel-bg: #151b3d;
   --border-color: var(--neon-blue);
   --text-primary: #eef2ff;
+  background-image: radial-gradient(circle at 50% 50%, #12183a 0%, #0b1026 100%);
 }
 
 /* 覆寫主題：暮光餘燼 (Sunset) */
@@ -150,6 +165,7 @@ body.theme-sunset {
   --chart-grid: rgba(0, 0, 0, 0.15);
   --chart-text: rgba(74, 31, 15, 0.8);
   --chart-subtext: rgba(74, 31, 15, 0.5);
+  background-image: linear-gradient(180deg, #fffcf5 0%, #fff1e6 100%);
 }
 
 /* 覆寫主題：薄荷霧境 (Mint) */
@@ -165,6 +181,7 @@ body.theme-mint {
   --chart-grid: rgba(0, 0, 0, 0.15);
   --chart-text: rgba(7, 59, 53, 0.8);
   --chart-subtext: rgba(7, 59, 53, 0.5);
+  background-image: radial-gradient(circle at 50% 50%, #f3fffb 0%, #ecfff9 100%);
 }
 
 /* 覆寫主題：黑銀極簡 (Mono) */
@@ -177,6 +194,10 @@ body.theme-mono {
   --panel-bg: #171717;
   --border-color: var(--neon-blue);
   --text-primary: #f4f4f5;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 20px 20px;
 }
 
 body.theme-mono {
@@ -357,10 +378,7 @@ body {
   background-color: var(--dark-bg);
   color: var(--text-primary);
   font-family: var(--tech-font);
-  background-image: 
-    linear-gradient(rgba(18, 18, 36, 0.3) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(18, 18, 36, 0.3) 1px, transparent 1px);
-  background-size: 20px 20px;
+  background-image: radial-gradient(circle at 50% 50%, #302124 0%, #1e1618 100%);
   overflow-x: hidden;
 }
 
