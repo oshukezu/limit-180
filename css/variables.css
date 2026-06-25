@@ -211,16 +211,32 @@ body.theme-mono .bg-pink-500 {
 /* 對接 Tailwind 背景與邊框，確保舊視圖元件套用對應的主題顏色 */
 body .bg-slate-950,
 body .bg-slate-900,
-body .bg-black {
+body .bg-black,
+body .bg-slate-950\/95,
+body .bg-slate-900\/95,
+body .bg-slate-950\/90,
+body .bg-slate-900\/90,
+body .bg-slate-950\/80,
+body .bg-slate-900\/80,
+body .bg-slate-950\/60,
+body .bg-slate-900\/60 {
   background-color: var(--dark-bg) !important;
 }
 body .bg-slate-800,
-body .bg-slate-900\/80,
-body .bg-slate-950\/80 {
+body .bg-slate-800\/90,
+body .bg-slate-800\/80,
+body .bg-slate-800\/60,
+body .bg-slate-800\/40,
+body .bg-slate-800\/20 {
   background-color: var(--panel-bg) !important;
 }
 body .border-slate-800,
-body .border-slate-900 {
+body .border-slate-900,
+body .border-slate-700,
+body .border-slate-800\/60,
+body .border-slate-800\/40,
+body .border-slate-900\/50,
+body .border-slate-900\/40 {
   border-color: var(--border-color) !important;
 }
 

@@ -10,30 +10,15 @@
 
   function formatLeaderboardCoins(value) {
     const val = Number(value) || 0;
-    if (val < 10000) {
-      return val.toLocaleString('zh-TW') + ' 💰';
-    } else if (val < 1000000) {
-      const wan = val / 10000;
-      return (wan % 1 === 0 ? wan : wan.toFixed(1)) + '萬 💰';
-    } else {
-      const million = val / 1000000;
-      return (million % 1 === 0 ? million : million.toFixed(1)) + 'M 💰';
-    }
+    if (val < 10000) return val.toLocaleString('zh-TW') + ' 💰';
+    if (val < 1000000) return ((val / 10000) % 1 === 0 ? val / 10000 : (val / 10000).toFixed(1)) + '萬 💰';
+    return ((val / 1000000) % 1 === 0 ? val / 1000000 : (val / 1000000).toFixed(1)) + 'M 💰';
   }
 
   function getBaseCoin(m) {
-    if (m >= 1 && m <= 5) return 200;
-    if (m >= 6 && m <= 10) return 300;
-    if (m >= 11 && m <= 15) return 1000;
-    if (m >= 16 && m <= 20) return 2000;
-    if (m >= 21 && m <= 25) return 5000;
-    if (m >= 26 && m <= 30) return 10000;
-    if (m >= 31 && m <= 35) return 20000;
-    if (m >= 36 && m <= 40) return 40000;
-    if (m >= 41 && m <= 44) return 100000;
-    if (m >= 45 && m <= 47) return 250000;
-    if (m >= 48 && m <= 49) return 500000;
-    return 0;
+    const arr = [[5, 200], [10, 300], [15, 1000], [20, 2000], [25, 5000], [30, 10000], [35, 20000], [40, 40000], [44, 100000], [47, 250000], [49, 500000]];
+    const found = arr.find(([limit]) => m <= limit);
+    return found ? found[1] : 0;
   }
 
   function estimateHighestLevel(mission, stars) {
@@ -41,9 +26,7 @@
     if (total <= 0) return 0;
     let acc = 0;
     for (let level = 1; level <= 20; level++) {
-      const oneStar = mission === 50
-        ? 500000 * level
-        : Math.floor(getBaseCoin(mission) * level / 3);
+      const oneStar = mission === 50 ? 500000 * level : Math.floor(getBaseCoin(mission) * level / 3);
       acc += Math.max(1, oneStar);
       if (total < acc) return Math.max(1, level - 1);
     }
@@ -98,14 +81,39 @@
         }
       });
 
+      // 取得當前特工本機實際最高關卡與小關卡
+      let localMaxMission = 1;
+      let localMaxLevel = 1;
+      if (window.MathSprintStorage) {
+        const localProfile = window.MathSprintStorage.getProfile();
+        if (localProfile) {
+          const configs = window.MathSprintConfigs?.MISSION_CONFIGS || {};
+          const missionCount = Object.keys(configs).length || 50;
+          for (let m = 1; m <= missionCount; m++) {
+            if (window.MathSprintStorage.isMissionUnlocked(m, localProfile)) {
+              localMaxMission = m;
+            }
+          }
+          Object.keys(localProfile.level_records || {}).forEach((key) => {
+            const m = key.match(/mission-(\d+)-level-(\d+)/);
+            if (!m || !localProfile.level_records[key]?.is_passed) return;
+            const mi = parseInt(m[1], 10), lv = parseInt(m[2], 10);
+            if (mi === localMaxMission && lv > localMaxLevel) {
+              localMaxLevel = lv;
+            }
+          });
+        }
+      }
+
       const personalList = Object.values(personMap).map(p => {
+        const isMe = currentUser && p.grade_class === currentUser.grade_class && String(p.seat_number) === String(currentUser.seat_number);
         return {
           grade_class: p.grade_class,
           seat_number: p.seat_number,
           nickname: p.nickname,
           total_stars: p.total_stars,
-          max_mission: p.max_mission,
-          max_level: p.max_level,
+          max_mission: isMe ? localMaxMission : p.max_mission,
+          max_level: isMe ? localMaxLevel : p.max_level,
           avg_time: p.mission_count > 0 ? parseFloat((p.total_time / p.mission_count).toFixed(2)) : 99.9
         };
       });
