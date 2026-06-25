@@ -246,9 +246,27 @@
       const input = document.getElementById('admin-sensitive-input');
       const val = String(input?.value || '').trim();
       if (!val) return;
+      
       try {
-        await window.MathSprintSupabaseService.addSensitiveWord(val);
+        const list = await window.MathSprintSupabaseService.listSensitiveWords();
+        const wordsOnly = list.map(item => {
+          const w = typeof item === 'object' ? item.word : item;
+          return String(w || '').trim().toLowerCase();
+        });
+        if (wordsOnly.includes(val.toLowerCase())) {
+          alert(`⚠️ 敏感詞「${val}」已經在清單中囉！`);
+          return;
+        }
+
+        const cloudSuccess = await window.MathSprintSupabaseService.addSensitiveWord(val);
         if (input) input.value = '';
+        
+        if (!cloudSuccess) {
+          alert('⚠️ 敏感詞已暫存於此瀏覽器。注意：因雲端資料庫連線失敗或資料表未更新，其他裝置將無法同步此敏感詞！');
+        } else {
+          alert('✓ 敏感詞已成功新增並同步至雲端資料庫！');
+        }
+        
         this.fetchSensitiveWords();
       } catch (err) { alert('新增敏感詞失敗：' + err.message); }
     },

@@ -226,16 +226,30 @@
     return cloudSuccess;
   }
 
+  function normalizeText(str) {
+    let s = String(str || '').toLowerCase().replace(/\s+/g, '');
+    // 全形轉半形
+    s = s.replace(/[\uFF01-\uFF5E]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xfee0)).replace(/\u3000/g, '');
+    // 常用敏感詞簡轉繁對照表
+    const simToTra = {
+      '机': '機', '垃': '垃', '圾': '圾', '鸡': '雞', '爸': '爸', '妈': '媽', '国': '國',
+      '骂': '罵', '傻': '傻', '逼': '逼', '杀': '殺', '死': '死', '滚': '滾', '猪': '豬',
+      '贱': '賤', '货': '貨', '脑': '腦', '残': '殘', '骗': '騙', '强': '強', '奸': '姦'
+    };
+    return s.split('').map(ch => simToTra[ch] || ch).join('');
+  }
+
   async function checkSensitiveWords(content) {
     const words = await listSensitiveWords();
-    const cleanContent = String(content || '').toLowerCase().replace(/\s+/g, '');
+    const cleanContent = normalizeText(content);
     for (const item of words) {
       const wordStr = typeof item === 'object' ? item.word : item;
-      const cleanWord = String(wordStr || '').toLowerCase().replace(/\s+/g, '');
+      const cleanWord = normalizeText(wordStr);
       if (cleanWord && cleanContent.includes(cleanWord)) return true;
     }
     return false;
   }
+
 
   window.MathSprintSupabaseService = {
     initSupabase: getSupabaseClient,
