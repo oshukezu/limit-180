@@ -25,9 +25,16 @@
     const seatGroup = document.getElementById('profile-seat-group');
     const cloudLoginBtn = document.getElementById('profile-cloud-login-btn');
     const customBtn = document.getElementById('profile-open-customization-btn');
+    const submitBtn = document.getElementById('profile-submit-btn');
+    const modalTitle = modal.querySelector('h3');
+    const modalSubtitle = modal.querySelector('.text-center > span');
+
     if (errorMsg) errorMsg.classList.add('hidden');
     const skipBtn = document.getElementById('profile-skip-btn');
     if (isEditMode) {
+      if (modalTitle) modalTitle.textContent = '姓名、頭像與主題設定';
+      if (modalSubtitle) modalSubtitle.textContent = '個人化中心';
+      if (submitBtn) submitBtn.textContent = '儲存姓名';
       if (skipBtn) skipBtn.classList.add('hidden');
       if (cloudLoginBtn) cloudLoginBtn.classList.add('hidden');
       if (classGroup) classGroup.classList.add('hidden');
@@ -48,8 +55,14 @@
         inputNickname.value = profile.nickname || '';
       }
     } else {
+      if (modalTitle) modalTitle.textContent = '特工登入與角色註冊';
+      if (modalSubtitle) modalSubtitle.textContent = '登入已有特工或註冊新角色';
+      if (submitBtn) submitBtn.textContent = '建立新角色';
+      if (cloudLoginBtn) {
+        cloudLoginBtn.textContent = '直接登入';
+        cloudLoginBtn.classList.remove('hidden');
+      }
       if (skipBtn) skipBtn.classList.remove('hidden');
-      if (cloudLoginBtn) cloudLoginBtn.classList.remove('hidden');
       if (classGroup) classGroup.classList.remove('hidden');
       if (seatGroup) seatGroup.classList.remove('hidden');
       if (customBtn) customBtn.classList.add('hidden');
@@ -67,7 +80,10 @@
         inputNickname.value = '';
       }
       if (preset && typeof preset === 'object') {
-        if (inputClass && preset.grade_class) inputClass.value = String(preset.grade_class).toUpperCase();
+        if (inputClass && preset.grade_class) {
+          inputClass.value = String(preset.grade_class).toUpperCase();
+          if (classGroup) classGroup.classList.add('hidden');
+        }
         if (inputSeat && preset.seat_number) inputSeat.value = String(preset.seat_number);
         if (inputNickname && preset.nickname) inputNickname.value = String(preset.nickname);
       }

@@ -84,11 +84,23 @@
       }
     }
 
+    const createSection = document.getElementById('home-team-create-section');
+    const joinTitle = document.getElementById('home-team-join-title');
+    const joinSection = document.getElementById('home-team-join-section');
+
     if (!isValidIdentity(identity)) {
+      if (createSection) createSection.classList.add('hidden');
+      if (joinTitle) joinTitle.textContent = '填寫開團分享碼';
+      if (joinSection) joinSection.classList.remove('mt-3', 'pt-3', 'border-t', 'border-slate-900');
       setUI('-----', '登入後可建立專屬分享碼');
       setTeamInfo(null);
       return null;
     }
+
+    if (createSection) createSection.classList.remove('hidden');
+    if (joinTitle) joinTitle.textContent = '輸入分享碼加入團';
+    if (joinSection) joinSection.classList.add('mt-3', 'pt-3', 'border-t', 'border-slate-900');
+
     try {
       const row = await getMyLatestCode();
       if (row?.share_code) {

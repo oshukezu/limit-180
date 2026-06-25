@@ -105,15 +105,19 @@
         </button>
       </div>
       <div class="mt-5 pt-4 border-t border-slate-900 font-pixel">
-        <div class="text-[10px] text-emerald-400 mb-2">開團分享碼（5 位英數）</div>
-        <div id="home-team-share-code" class="text-lg font-black text-white tracking-widest">-----</div>
-        <div id="home-team-share-hint" class="text-[9px] text-slate-500 mt-1">登入後可建立專屬分享碼</div>
-        <div class="grid grid-cols-2 gap-2 mt-3">
-          <button id="home-team-share-generate-btn" class="cyber-btn px-2 py-2 text-[10px] text-emerald-300 border border-emerald-700 rounded">建立</button>
-          <button id="home-team-share-copy-btn" class="cyber-btn px-2 py-2 text-[10px] text-cyan-300 border border-cyan-700 rounded">複製</button>
+        <!-- 建立分享碼區塊 -->
+        <div id="home-team-create-section">
+          <div class="text-[10px] text-emerald-400 mb-2">開團分享碼（5 位英數）</div>
+          <div id="home-team-share-code" class="text-lg font-black text-white tracking-widest">-----</div>
+          <div id="home-team-share-hint" class="text-[9px] text-slate-500 mt-1">登入後可建立專屬分享碼</div>
+          <div class="grid grid-cols-2 gap-2 mt-3 mb-3">
+            <button id="home-team-share-generate-btn" class="cyber-btn px-2 py-2 text-[10px] text-emerald-300 border border-emerald-700 rounded">建立</button>
+            <button id="home-team-share-copy-btn" class="cyber-btn px-2 py-2 text-[10px] text-cyan-300 border border-cyan-700 rounded">複製</button>
+          </div>
         </div>
-        <div class="mt-3 pt-3 border-t border-slate-900">
-          <div class="text-[10px] text-cyan-400 mb-2">輸入分享碼加入團</div>
+        <!-- 輸入分享碼區塊 -->
+        <div id="home-team-join-section" class="mt-3 pt-3 border-t border-slate-900">
+          <div id="home-team-join-title" class="text-[10px] text-cyan-400 mb-2">輸入分享碼加入團</div>
           <input id="home-team-join-code-input" type="text" maxlength="5" placeholder="輸入5位碼"
             class="w-full bg-slate-950 border border-slate-800 px-3 py-2 text-xs text-cyan-300 rounded focus:outline-none focus:border-cyan-500 uppercase">
           <button id="home-team-join-btn" class="cyber-btn mt-2 w-full px-3 py-2 text-xs text-cyan-300 border border-cyan-700 rounded">加入團隊</button>
