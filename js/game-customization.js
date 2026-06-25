@@ -85,12 +85,14 @@
   const Customization = {
     currentTab: 'theme', // theme, avatar, border, badge
     tempProfile: {},      // 用於暫存選擇但尚未儲存的外觀
+    originalTheme: 'akaimon',
 
     openModal() {
       const modal = document.getElementById('customization-modal');
       if (!modal) return;
 
       const profile = window.MathSprintStorage.getProfile();
+      this.originalTheme = profile.equipped_theme || 'akaimon';
       this.tempProfile = {
         equipped_theme: profile.equipped_theme || 'akaimon',
         purchased_themes: [...(profile.purchased_themes || ['akaimon'])],
@@ -103,6 +105,13 @@
       this.updatePreview();
       this.switchTab('theme');
       modal.classList.remove('hidden');
+    },
+
+    cancelAndClose() {
+      if (this.originalTheme && window.ThemeManager && typeof window.ThemeManager.applyTheme === 'function') {
+        window.ThemeManager.applyTheme(this.originalTheme);
+      }
+      document.getElementById('customization-modal').classList.add('hidden');
     },
 
     updatePreview() {
@@ -297,6 +306,9 @@
     selectTheme(themeId) {
       this.tempProfile.equipped_theme = themeId;
       this.renderList();
+      if (window.ThemeManager && typeof window.ThemeManager.applyTheme === 'function') {
+        window.ThemeManager.applyTheme(themeId);
+      }
     },
 
     selectAvatar(avId) {
@@ -355,7 +367,7 @@
     const closeBtn = document.getElementById('customization-close-btn');
     if (closeBtn) {
       closeBtn.addEventListener('click', () => {
-        document.getElementById('customization-modal').classList.add('hidden');
+        Customization.cancelAndClose();
       });
     }
 

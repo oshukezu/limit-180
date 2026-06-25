@@ -5,18 +5,18 @@
   <div id="placement-choice-panel" class="hud-panel p-6 bg-slate-950 border-2 border-cyan-500 max-w-md w-full relative">
     <div class="text-center mb-6">
       <span class="text-xs font-pixel text-pink-500 glow-pink block mb-1">SKIP EXAM TICKET</span>
-      <h3 class="text-base font-pixel text-cyan-400 glow-blue">跳級考試</h3>
-      <p class="text-[11px] font-tech text-slate-400 mt-3 leading-relaxed">
+      <h3 class="text-lg font-pixel text-cyan-400 glow-blue">跳級考試</h3>
+      <p class="text-sm font-tech text-slate-400 mt-3 leading-relaxed">
         消耗 1 張跳級考試券，挑戰 10 題階梯式心算。開始後即扣券，失敗不退券。
       </p>
-      <div class="mt-3 text-[10px] text-yellow-300 font-pixel">目前持有：<span id="placement-ticket-count">0</span> 張</div>
+      <div class="mt-3 text-xs text-yellow-300 font-pixel">目前持有：<span id="placement-ticket-count">0</span> 張</div>
     </div>
 
     <div class="flex flex-col gap-4 mt-6">
       <button type="button" id="placement-btn-elite"
         class="cyber-btn cyber-btn-pink py-4 font-pixel text-xs text-pink-500 flex flex-col items-center justify-center gap-1">
         <span class="text-sm font-bold">開始跳級考試</span>
-        <span class="text-[8px] text-slate-500 font-tech">通過後最高已解鎖 Mission +5，並獲得 200,000 💰</span>
+        <span class="text-[10px] text-slate-500 font-tech">通過後最高已解鎖 Mission +5，並獲得 200,000 💰</span>
       </button>
       <button type="button" id="placement-btn-junior"
         class="cyber-btn py-3 font-pixel text-xs text-slate-400 border border-slate-800 rounded">
@@ -29,8 +29,8 @@
   <div id="placement-confirm-panel" class="hud-panel p-6 bg-slate-950 border-2 border-pink-500 max-w-md w-full relative hidden">
     <div class="text-center mb-6">
       <span class="text-xs font-pixel text-red-500 glow-pink block mb-1">CONFIRM TICKET USE</span>
-      <h3 class="text-base font-pixel text-red-400 glow-pink">確認消耗考試券</h3>
-      <p class="text-xs font-pixel text-slate-300 mt-4 leading-relaxed bg-red-950/30 border border-red-500/20 p-3 rounded text-left">
+      <h3 class="text-lg font-pixel text-red-400 glow-pink">確認消耗考試券</h3>
+      <p class="text-sm font-pixel text-slate-300 mt-4 leading-relaxed bg-red-950/30 border border-red-500/20 p-3 rounded text-left">
         按下開始後會立刻扣除 1 張跳級考試券。若中途離開、答錯達 3 題或沒有通過，考試券都不會退回。<br><br>確定要開始嗎？
       </p>
     </div>
@@ -51,11 +51,11 @@
   <div id="placement-result-panel" class="hud-panel p-6 bg-slate-950 border-2 max-w-md w-full relative hidden">
     <div class="text-center mb-6">
       <span class="text-xs font-pixel block mb-1" id="placement-result-tag">TEST RESULTS</span>
-      <h3 class="text-base font-pixel" id="placement-result-title">判定結果</h3>
+      <h3 class="text-lg font-pixel" id="placement-result-title">判定結果</h3>
     </div>
 
     <!-- 尊嚴保護 Growth Mindset 文案 -->
-    <div id="placement-result-desc" class="text-xs font-pixel text-slate-300 leading-relaxed bg-slate-900 border p-4 rounded text-left mb-6">
+    <div id="placement-result-desc" class="text-sm font-pixel text-slate-300 leading-relaxed bg-slate-900 border p-4 rounded text-left mb-6">
       <!-- 動態載入文字 -->
     </div>
 

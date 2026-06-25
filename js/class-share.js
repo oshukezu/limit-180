@@ -58,6 +58,32 @@
 
   async function refreshMyCode() {
     const identity = getIdentity();
+    const joinInput = document.getElementById('home-team-join-code-input');
+    const joinBtn = document.getElementById('home-team-join-btn');
+
+    if (isValidIdentity(identity)) {
+      if (joinInput) {
+        joinInput.disabled = true;
+        joinInput.placeholder = '已加入班級團隊';
+        joinInput.classList.add('opacity-50', 'cursor-not-allowed');
+        joinInput.value = '';
+      }
+      if (joinBtn) {
+        joinBtn.disabled = true;
+        joinBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      }
+    } else {
+      if (joinInput) {
+        joinInput.disabled = false;
+        joinInput.placeholder = '輸入5位碼';
+        joinInput.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+      if (joinBtn) {
+        joinBtn.disabled = false;
+        joinBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+    }
+
     if (!isValidIdentity(identity)) {
       setUI('-----', '登入後可建立專屬分享碼');
       setTeamInfo(null);
@@ -132,6 +158,11 @@
   }
 
   async function joinByShareCode() {
+    const identity = getIdentity();
+    if (isValidIdentity(identity)) {
+      window.UIFeedback?.toast?.('您已擁有班級身份，無法填寫其他邀請代碼！', 'error');
+      return;
+    }
     const input = document.getElementById('home-team-join-code-input');
     const raw = String(input?.value || '').trim().toUpperCase();
     if (!/^[A-Z0-9]{5}$/.test(raw)) {

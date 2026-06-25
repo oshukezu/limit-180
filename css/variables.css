@@ -254,6 +254,27 @@ body.theme-mint .text-slate-500 {
   color: color-mix(in srgb, var(--text-primary) 70%, #ffffff) !important;
 }
 
+
+/* 淺色主題下，預設將所有明亮的霓虹色字體改為深色 */
+body.theme-aurora .text-cyan-300, body.theme-aurora .text-cyan-400, body.theme-aurora .text-pink-400, body.theme-aurora .text-pink-500, body.theme-aurora .text-green-300, body.theme-aurora .text-green-400, body.theme-aurora .text-yellow-300, body.theme-aurora .text-yellow-400, body.theme-aurora .text-emerald-300, body.theme-aurora .text-emerald-400, body.theme-aurora .text-violet-300,
+body.theme-gold .text-cyan-300, body.theme-gold .text-cyan-400, body.theme-gold .text-pink-400, body.theme-gold .text-pink-500, body.theme-gold .text-green-300, body.theme-gold .text-green-400, body.theme-gold .text-yellow-300, body.theme-gold .text-yellow-400, body.theme-gold .text-emerald-300, body.theme-gold .text-emerald-400, body.theme-gold .text-violet-300,
+body.theme-emerald .text-cyan-300, body.theme-emerald .text-cyan-400, body.theme-emerald .text-pink-400, body.theme-emerald .text-pink-500, body.theme-emerald .text-green-300, body.theme-emerald .text-green-400, body.theme-emerald .text-yellow-300, body.theme-emerald .text-yellow-400, body.theme-emerald .text-emerald-300, body.theme-emerald .text-emerald-400, body.theme-emerald .text-violet-300,
+body.theme-thunder .text-cyan-300, body.theme-thunder .text-cyan-400, body.theme-thunder .text-pink-400, body.theme-thunder .text-pink-500, body.theme-thunder .text-green-300, body.theme-thunder .text-green-400, body.theme-thunder .text-yellow-300, body.theme-thunder .text-yellow-400, body.theme-thunder .text-emerald-300, body.theme-thunder .text-emerald-400, body.theme-thunder .text-violet-300,
+body.theme-sunset .text-cyan-300, body.theme-sunset .text-cyan-400, body.theme-sunset .text-pink-400, body.theme-sunset .text-pink-500, body.theme-sunset .text-green-300, body.theme-sunset .text-green-400, body.theme-sunset .text-yellow-300, body.theme-sunset .text-yellow-400, body.theme-sunset .text-emerald-300, body.theme-sunset .text-emerald-400, body.theme-sunset .text-violet-300,
+body.theme-mint .text-cyan-300, body.theme-mint .text-cyan-400, body.theme-mint .text-pink-400, body.theme-mint .text-pink-500, body.theme-mint .text-green-300, body.theme-mint .text-green-400, body.theme-mint .text-yellow-300, body.theme-mint .text-yellow-400, body.theme-mint .text-emerald-300, body.theme-mint .text-emerald-400, body.theme-mint .text-violet-300 {
+  color: var(--text-primary) !important;
+}
+
+/* 如果框線內背景為深色，就要用淺色字體 */
+body.theme-aurora .bg-dark-force *, body.theme-aurora .bg-slate-950-force *, body.theme-aurora .bg-slate-900-force *, body.theme-aurora .cyber-btn, body.theme-aurora .cyber-btn *,
+body.theme-gold .bg-dark-force *, body.theme-gold .bg-slate-950-force *, body.theme-gold .bg-slate-900-force *, body.theme-gold .cyber-btn, body.theme-gold .cyber-btn *,
+body.theme-emerald .bg-dark-force *, body.theme-emerald .bg-slate-950-force *, body.theme-emerald .bg-slate-900-force *, body.theme-emerald .cyber-btn, body.theme-emerald .cyber-btn *,
+body.theme-thunder .bg-dark-force *, body.theme-thunder .bg-slate-950-force *, body.theme-thunder .bg-slate-900-force *, body.theme-thunder .cyber-btn, body.theme-thunder .cyber-btn *,
+body.theme-sunset .bg-dark-force *, body.theme-sunset .bg-slate-950-force *, body.theme-sunset .bg-slate-900-force *, body.theme-sunset .cyber-btn, body.theme-sunset .cyber-btn *,
+body.theme-mint .bg-dark-force *, body.theme-mint .bg-slate-950-force *, body.theme-mint .bg-slate-900-force *, body.theme-mint .cyber-btn, body.theme-mint .cyber-btn * {
+  color: #ffffff !important;
+}
+
 body {
   background-color: var(--dark-bg);
   color: var(--text-primary);
