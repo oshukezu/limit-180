@@ -326,7 +326,8 @@
 
       } catch (err) {
         console.error('[Chatroom] 發送訊息失敗:', err);
-        window.UIFeedback?.toast?.('發送失敗，請稍後再試', 'error');
+        const errMsg = err?.message || err?.details || JSON.stringify(err) || '未知錯誤';
+        window.UIFeedback?.toast?.(`發送失敗：${errMsg}`, 'error');
       }
     }
   };
