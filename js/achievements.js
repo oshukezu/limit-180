@@ -249,13 +249,15 @@
           titleColor = ach.color === 'cyan' ? 'text-cyan-400' : ach.color === 'pink' ? 'text-pink-500' : ach.color === 'green' ? 'text-green-400' : 'text-yellow-400';
         }
 
-        card.className = `hud-panel p-6 bg-slate-900/80 flex flex-col items-center text-center transition-all duration-300 ${borderClass}`;
+        card.className = `hud-panel p-4 bg-slate-900/80 flex flex-row items-center gap-4 transition-all duration-300 max-w-[340px] mx-auto w-full text-left ${borderClass}`;
         card.innerHTML = `
-          <div class="text-4xl mb-3 ${ach.isUnlocked ? 'scale-110' : 'filter grayscale'}">${ach.icon}</div>
-          <h3 class="text-base font-pixel ${titleColor} mb-2">${ach.name}</h3>
-          <p class="text-xs text-slate-400 font-tech leading-relaxed">${ach.desc}</p>
-          <div class="mt-4 text-[10px] font-pixel text-slate-600">
-            ${ach.isUnlocked ? '// UNLOCKED //' : '// LOCKED //'}
+          <div class="text-5xl shrink-0 ${ach.isUnlocked ? 'scale-110' : 'filter grayscale'}">${ach.icon}</div>
+          <div class="flex-1 min-w-0">
+            <h3 class="text-lg font-pixel ${titleColor} mb-1">${ach.name}</h3>
+            <p class="text-sm text-slate-300 font-tech leading-relaxed break-words">${ach.desc}</p>
+            <div class="mt-2 text-xs font-pixel text-slate-500">
+              ${ach.isUnlocked ? '// UNLOCKED //' : '// LOCKED //'}
+            </div>
           </div>
         `;
 
