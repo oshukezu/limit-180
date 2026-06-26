@@ -6,9 +6,9 @@
 
   // Default initial profile structure
   const DEFAULT_PROFILE = {
-    total_stars: 0,
+    total_stars: 100000,
     shields_count: 0, // 保留相容性，實際已廢除
-    bonus_stars: 0,   // 新增：四維給星獎勵的額外星星
+    bonus_stars: 100000,   // 將初始金幣加在額外星星/金幣庫中防止 recalculated 歸零
     total_correct_count: 0, // 累計答對題數
     total_cleared_wrong_count: 0, // 累計成功消除的錯題數
     today_earnings: 0, // 新增：今日獲得獎金
@@ -304,9 +304,16 @@
   // 全域金幣格式化邏輯
   window.formatCoins = function(amount, forceFull = false) {
     if (amount === undefined || amount === null) return '0';
-    if (!forceFull && amount >= 1000000) {
+    if (!forceFull && amount >= 10000) {
       const mVal = amount / 1000000;
-      return (mVal % 1 === 0 ? mVal.toFixed(0) : mVal.toFixed(2)) + 'M';
+      // 若是整數或可除盡則去除小數點零，最多保留兩位小數
+      let formatted = mVal.toFixed(2);
+      if (formatted.endsWith('.00')) {
+        formatted = mVal.toFixed(0);
+      } else if (formatted.endsWith('0')) {
+        formatted = mVal.toFixed(1);
+      }
+      return formatted + 'M';
     }
     return amount.toLocaleString('zh-TW');
   };

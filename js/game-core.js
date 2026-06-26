@@ -103,11 +103,7 @@ window.CFG = window.MATH_SPRINT_CONFIG;
           if (window.GameStore && typeof window.GameStore.renderStore === 'function') {
             window.GameStore.renderStore();
           }
-          // 同步更新錯題消除頁面的右側金幣與考卷數量
-          const displayEl = document.getElementById('review-stars-display');
-          if (displayEl) {
-            displayEl.textContent = window.formatCoins(profile.total_stars || 0, true);
-          }
+          // 同步更新考卷數量
           document.querySelectorAll('.skip-exam-ticket-count').forEach(el => {
             el.textContent = Number(profile.skip_exam_tickets || 0).toLocaleString('zh-TW');
           });

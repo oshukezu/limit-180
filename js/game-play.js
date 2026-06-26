@@ -62,6 +62,7 @@
        clearInterval(this.timerInterval);
        
        const timeBar = document.getElementById('game-time-bar');
+       const countdownText = document.getElementById('game-countdown-seconds');
        if (!timeBar) return;
        timeBar.style.width = '100%';
        timeBar.style.backgroundColor = 'var(--neon-green)';
@@ -69,6 +70,7 @@
  
        // 自由計時，無時間限制
        if (this.gameState.limitTime >= 999) {
+         if (countdownText) countdownText.textContent = '∞';
          return;
        }
  
@@ -78,7 +80,11 @@
            if (this.gameState.isPaused) return;
  
            this.gameState.stageTimeRemaining -= (step / 1000);
-           const pct = Math.max(0, (this.gameState.stageTimeRemaining / this.gameState.stageTimeTotal) * 100);
+           const currentRemaining = Math.max(0, this.gameState.stageTimeRemaining);
+           if (countdownText) {
+             countdownText.textContent = `${currentRemaining.toFixed(1)}s`;
+           }
+           const pct = Math.max(0, (currentRemaining / this.gameState.stageTimeTotal) * 100);
            timeBar.style.width = `${pct}%`;
  
            if (pct < 30) {
@@ -107,6 +113,10 @@
            if (this.gameState.isPaused) return;
  
            timeSpent += step;
+           const currentRemaining = Math.max(0, (duration - timeSpent) / 1000);
+           if (countdownText) {
+             countdownText.textContent = `${currentRemaining.toFixed(1)}s`;
+           }
            const pct = Math.max(0, 100 - (timeSpent / duration) * 100);
            timeBar.style.width = `${pct}%`;
  

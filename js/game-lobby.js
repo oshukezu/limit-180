@@ -239,10 +239,10 @@
         btn.addEventListener('click', (e) => {
           // 清除所有 tabs 啟用樣式
           tabsContainer.querySelectorAll('button[data-min]').forEach(b => {
-            b.className = "px-3 py-2 text-[10px] font-pixel rounded border border-slate-800 bg-slate-950 text-slate-400 hover:border-slate-700 focus:outline-none transition-all duration-200";
+            b.className = "shrink-0 snap-start px-3 py-2 text-[10px] font-pixel rounded border border-slate-800 bg-slate-950 text-slate-400 hover:border-slate-700 focus:outline-none transition-all duration-200";
           });
           // 設定目前 tab 啟用樣式 (Cyan 霓虹)
-          btn.className = "px-3 py-2 text-[10px] font-pixel rounded border border-cyan-500 bg-cyan-950/20 text-cyan-400 focus:outline-none transition-all duration-200";
+          btn.className = "shrink-0 snap-start px-3 py-2 text-[10px] font-pixel rounded border border-cyan-500 bg-cyan-950/20 text-cyan-400 focus:outline-none transition-all duration-200";
           
           // 更新大廳目前的篩選區間
           const minVal = parseInt(btn.getAttribute('data-min'));

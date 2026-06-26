@@ -134,18 +134,10 @@
       }
     }
 
-    // 如果進入錯題消除，自動更新渲染錯題消除工作區與側欄金幣
+    // 如果進入錯題消除，自動更新渲染錯題消除工作區
     if (viewId === 'view-review') {
       if (window.MathSprintGame && typeof window.MathSprintGame.setupLobbyReviewMode === 'function') {
         window.MathSprintGame.setupLobbyReviewMode();
-      }
-      const profile = window.MathSprintStorage ? window.MathSprintStorage.getProfile() : null;
-      if (profile) {
-        const displayEl = document.getElementById('review-stars-display');
-        if (displayEl) displayEl.textContent = window.formatCoins(profile.total_stars || 0, true);
-        document.querySelectorAll('.skip-exam-ticket-count').forEach(el => {
-          el.textContent = Number(profile.skip_exam_tickets || 0).toLocaleString('zh-TW');
-        });
       }
     }
 

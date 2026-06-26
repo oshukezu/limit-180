@@ -67,15 +67,6 @@
         this.setupLobbyReviewMode();
       }
 
-      // 渲染右側特工金幣
-      const displayEl = document.getElementById('review-stars-display');
-      if (displayEl) {
-        displayEl.textContent = window.formatCoins(profile.total_stars || 0, true);
-      }
-      document.querySelectorAll('.skip-exam-ticket-count').forEach(el => {
-        el.textContent = Number(profile.skip_exam_tickets || 0).toLocaleString('zh-TW');
-      });
-
       // 聚焦輸入框
       setTimeout(() => {
         const input = document.getElementById('review-input');

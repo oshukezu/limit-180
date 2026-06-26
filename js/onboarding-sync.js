@@ -87,14 +87,14 @@
         }
       }
       
-      // 如果本機完全無成績，我們也幫他建一筆 Mission 1 的 0 星記錄佔位
+      // 如果本機完全無成績，我們也幫他建一筆 Mission 1 的 0 星記錄佔位，並給予 100,000 初始星等獎勵
       if (!hasUploaded) {
         await window.MathSprintSupabaseService.saveRecord(
           inputClass,
           inputSeat,
           inputNickname,
           1,
-          0,
+          100000, // 初始註冊贈送 100,000 顆星星/金幣
           99.9,
           99.9
         );

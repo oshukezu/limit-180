@@ -1,126 +1,81 @@
 <section id="view-review" class="view-section hidden py-6 relative">
-  <div class="flex flex-col lg:flex-row gap-6 w-full items-start">
-    <!-- 左側欄：錯題消除訓練工作區 -->
-    <div class="flex-grow w-full lg:w-3/5 xl:w-2/3">
-      <div class="flex justify-between items-center mb-6">
-        <div>
-          <h2 class="text-2xl font-pixel text-white">錯題消除訓練</h2>
-          <p class="text-xs text-slate-400 font-tech mt-1">待消除錯題本：重新答對 3 次即可完全消除該做錯題目。此模式無時間限制。</p>
-        </div>
-      </div>
-
-      <!-- 空白狀態提示 -->
-      <div id="review-empty-state" class="hud-panel p-8 bg-slate-900/60 text-center flex flex-col items-center gap-4">
-        <span class="text-4xl">🎉</span>
-        <h3 class="text-lg font-pixel text-cyan-400">錯題本空空如也！</h3>
-        <p class="text-sm text-slate-400 font-tech">太厲害了！你目前沒有任何做錯的題目。請繼續保持！</p>
-      </div>
-
-      <!-- 錯題工作區 -->
-      <div id="review-workspace" class="hidden flex flex-col md:flex-row gap-6">
-        <!-- Left Side: Wrong list -->
-        <div class="hud-panel p-4 bg-slate-900/80 md:w-2/5 flex flex-col max-h-[450px]">
-          <h3 class="text-xs font-pixel text-pink-500 mb-3">待消除清單 (<span id="review-total-count">0</span>)</h3>
-          <div id="review-list-items" class="flex-grow overflow-y-auto space-y-2 pr-2">
-            <!-- Wrong questions rows will be inserted here -->
-          </div>
-        </div>
-
-        <!-- Right Side: Interaction Area -->
-        <div class="hud-panel p-6 bg-slate-950 md:w-3/5 flex flex-col gap-4 min-h-[350px]">
-          <div>
-            <div class="flex justify-between items-center text-xs font-pixel text-slate-400 mb-4">
-              <div>錯題消除模式</div>
-              <div>進度：當前題需答對 <span id="review-item-correct-count" class="text-green-400">0</span>/3 次</div>
-            </div>
-
-            <!-- 題目顯示框 -->
-            <div class="bg-slate-900 border border-slate-800 p-8 flex justify-center items-center rounded mb-1 min-h-[100px]">
-              <div id="review-question-text" class="text-4xl font-pixel font-black text-white text-center">
-                --
-              </div>
-            </div>
-
-            <!-- 解答輸入框 (緊鄰在題目框下方) -->
-            <div class="flex items-center gap-2 w-full mb-3">
-              <input type="text" id="review-input" inputmode="numeric"
-                class="flex-1 min-w-0 bg-slate-900 border-2 border-pink-500 p-3 text-2xl font-pixel text-pink-400 text-center rounded focus:outline-none focus:border-pink-400"
-                placeholder="解答..." autocomplete="off">
-              <button id="review-submit-btn"
-                class="cyber-btn cyber-btn-pink px-4 py-3.5 font-pixel text-xs text-pink-400 rounded flex-shrink-0 hidden">
-                確認
-              </button>
-            </div>
-
-            <!-- Feedback area for review -->
-            <div id="review-feedback" class="hidden p-3 mb-4 rounded text-center text-xs font-pixel"></div>
-          </div>
-
-          <div id="review-controls-container">
-            <div class="flex flex-col gap-4">
-              <div class="keypad-grid grid grid-cols-4 gap-2">
-                <button data-review-key="1" class="cyber-btn py-3 font-pixel text-slate-300">1</button>
-                <button data-review-key="2" class="cyber-btn py-3 font-pixel text-slate-300">2</button>
-                <button data-review-key="3" class="cyber-btn py-3 font-pixel text-slate-300">3</button>
-                <button data-review-key="back" class="cyber-btn cyber-btn-pink py-3 font-pixel text-pink-400">退格</button>
-
-                <button data-review-key="4" class="cyber-btn py-3 font-pixel text-slate-300">4</button>
-                <button data-review-key="5" class="cyber-btn py-3 font-pixel text-slate-300">5</button>
-                <button data-review-key="6" class="cyber-btn py-3 font-pixel text-slate-300">6</button>
-                <button data-review-key="-" class="cyber-btn py-3 font-pixel text-slate-400">-</button>
-
-                <button data-review-key="7" class="cyber-btn py-3 font-pixel text-slate-300">7</button>
-                <button data-review-key="8" class="cyber-btn py-3 font-pixel text-slate-300">8</button>
-                <button data-review-key="9" class="cyber-btn py-3 font-pixel text-slate-300">9</button>
-                <button data-review-key="." class="cyber-btn py-3 font-pixel text-slate-400">.</button>
-
-                <button data-review-key="0" class="col-span-3 cyber-btn py-3 font-pixel text-slate-300">0</button>
-                <button data-review-key="clear" class="cyber-btn cyber-btn-pink py-3 font-pixel text-pink-400">清除</button>
-              </div>
-            </div>
-          </div>
-        </div>
+  <div class="max-w-5xl mx-auto w-full">
+    <div class="flex justify-between items-center mb-6">
+      <div>
+        <h2 class="text-2xl font-pixel text-white">錯題消除訓練</h2>
+        <p class="text-xs text-slate-400 font-tech mt-1">待消除錯題本：重新答對 3 次即可完全消除該做錯題目。此模式無時間限制。</p>
       </div>
     </div>
 
-    <!-- 右側欄：特工商店與代碼兌換選單 -->
-    <div class="w-full lg:w-2/5 xl:w-1/3 shrink-0 lg:sticky lg:top-6">
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-pixel text-cyan-400">特工補給</h2>
+    <!-- 空白狀態提示 -->
+    <div id="review-empty-state" class="hud-panel p-8 bg-slate-900/60 text-center flex flex-col items-center gap-4">
+      <span class="text-4xl">🎉</span>
+      <h3 class="text-lg font-pixel text-cyan-400">錯題本空空如也！</h3>
+      <p class="text-sm text-slate-400 font-tech">太厲害了！你目前沒有任何做錯的題目。請繼續保持！</p>
+    </div>
+
+    <!-- 錯題工作區 -->
+    <div id="review-workspace" class="hidden flex flex-col md:flex-row gap-6">
+      <!-- Left Side: Wrong list -->
+      <div class="hud-panel p-4 bg-slate-900/80 md:w-2/5 flex flex-col max-h-[450px]">
+        <h3 class="text-xs font-pixel text-pink-500 mb-3">待消除清單 (<span id="review-total-count">0</span>)</h3>
+        <div id="review-list-items" class="flex-grow overflow-y-auto space-y-2 pr-2">
+          <!-- Wrong questions rows will be inserted here -->
+        </div>
       </div>
 
-      <div class="w-full flex flex-col gap-4">
-        <!-- 顯示金幣與跳級考試券 -->
-        <div class="hud-panel p-4 bg-slate-950 border border-slate-800 rounded font-pixel flex flex-col gap-3">
-          <div class="flex justify-between items-center text-xs text-slate-400">
-            <div>累積金幣：<span id="review-stars-display" class="text-green-400">0</span> 💰</div>
-            <div>持有考卷：<span class="skip-exam-ticket-count text-yellow-400">0</span> 張</div>
+      <!-- Right Side: Interaction Area -->
+      <div class="hud-panel p-6 bg-slate-950 md:w-3/5 flex flex-col gap-4 min-h-[350px]">
+        <div>
+          <div class="flex justify-between items-center text-xs font-pixel text-slate-400 mb-4">
+            <div>錯題消除模式</div>
+            <div>進度：當前題需答對 <span id="review-item-correct-count" class="text-green-400">0</span>/3 次</div>
           </div>
-        </div>
 
-        <!-- 代碼兌換區塊 -->
-        <div class="hud-panel p-4 bg-slate-900/90 border border-slate-800 rounded flex flex-col gap-3 font-pixel">
-          <div class="text-xs text-pink-500 glow-pink">代碼兌換 REDEEM CODE</div>
-          <div class="flex gap-2">
-            <!-- review 專用 redeem 欄位，名稱與 store 相同以複用 JS，但 ID 可以維持獨立以防重疊 -->
-            <input type="text" id="review-redeem-code-input" placeholder="輸入 7 位代碼..." maxlength="12"
-              class="flex-1 bg-slate-950 border border-slate-800 px-3 py-2 text-xs text-cyan-400 rounded focus:outline-none focus:border-cyan-500 uppercase">
-            <button id="review-redeem-submit-btn" class="cyber-btn cyber-btn-green px-3 py-2 text-xs text-green-400 rounded">
-              兌換
+          <!-- 題目顯示框 -->
+          <div class="bg-slate-900 border border-slate-800 p-8 flex justify-center items-center rounded mb-1 min-h-[100px]">
+            <div id="review-question-text" class="text-4xl font-pixel font-black text-white text-center">
+              --
+            </div>
+          </div>
+
+          <!-- 解答輸入框 (緊鄰在題目框下方) -->
+          <div class="flex items-center gap-2 w-full mb-3">
+            <input type="text" id="review-input" inputmode="numeric"
+              class="flex-1 min-w-0 bg-slate-900 border-2 border-pink-500 p-3 text-2xl font-pixel text-pink-400 text-center rounded focus:outline-none focus:border-pink-400"
+              placeholder="解答..." autocomplete="off">
+            <button id="review-submit-btn"
+              class="cyber-btn cyber-btn-pink px-4 py-3.5 font-pixel text-xs text-pink-400 rounded flex-shrink-0 hidden">
+              確認
             </button>
           </div>
-          <div id="review-redeem-msg" class="text-[9px] text-slate-500 font-tech hidden"></div>
+
+          <!-- Feedback area for review -->
+          <div id="review-feedback" class="hidden p-3 mb-4 rounded text-center text-xs font-pixel"></div>
         </div>
 
-        <!-- 快速商店跳級考試券購買 -->
-        <div class="hud-panel px-4 py-3 bg-slate-900/90 border border-yellow-700/60 rounded flex items-center justify-between gap-3 font-pixel">
-          <div class="min-w-0">
-            <div class="text-xs text-yellow-300 font-black">購買跳級考試券</div>
-            <div class="text-[10px] text-slate-400 mt-0.5 truncate">500,000 💰 / 張</div>
+        <div id="review-controls-container">
+          <div class="flex flex-col gap-4">
+            <div class="keypad-grid grid grid-cols-4 gap-2">
+              <button data-review-key="1" class="cyber-btn py-3 font-pixel text-slate-300">1</button>
+              <button data-review-key="2" class="cyber-btn py-3 font-pixel text-slate-300">2</button>
+              <button data-review-key="3" class="cyber-btn py-3 font-pixel text-slate-300">3</button>
+              <button data-review-key="back" class="cyber-btn cyber-btn-pink py-3 font-pixel text-pink-400">退格</button>
+
+              <button data-review-key="4" class="cyber-btn py-3 font-pixel text-slate-300">4</button>
+              <button data-review-key="5" class="cyber-btn py-3 font-pixel text-slate-300">5</button>
+              <button data-review-key="6" class="cyber-btn py-3 font-pixel text-slate-300">6</button>
+              <button data-review-key="-" class="cyber-btn py-3 font-pixel text-slate-400">-</button>
+
+              <button data-review-key="7" class="cyber-btn py-3 font-pixel text-slate-300">7</button>
+              <button data-review-key="8" class="cyber-btn py-3 font-pixel text-slate-300">8</button>
+              <button data-review-key="9" class="cyber-btn py-3 font-pixel text-slate-300">9</button>
+              <button data-review-key="." class="cyber-btn py-3 font-pixel text-slate-400">.</button>
+
+              <button data-review-key="0" class="col-span-3 cyber-btn py-3 font-pixel text-slate-300">0</button>
+              <button data-review-key="clear" class="cyber-btn cyber-btn-pink py-3 font-pixel text-pink-400">清除</button>
+            </div>
           </div>
-          <button class="skip-exam-ticket-buy-btn shrink-0 px-3 py-1.5 rounded bg-yellow-950/40 text-yellow-300 border border-yellow-500 hover:bg-yellow-500 hover:text-black transition-all duration-200 text-[10px] font-bold" type="button">
-            購買
-          </button>
         </div>
       </div>
     </div>
