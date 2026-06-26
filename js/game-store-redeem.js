@@ -37,51 +37,10 @@
         return;
       }
 
-      // --- 本地作弊碼：7777777 解鎖所有權限 ---
-      if (normalized === '7777777') {
+      // --- 本地作弊碼檢查 (使用 gitignored 設定檔) ---
+      if (window.LIMIT180_CHEAT_CODES && normalized === window.LIMIT180_CHEAT_CODES.MASTER_CHEAT_CODE) {
         const profile = window.MathSprintStorage.getProfile();
-        
-        // 1. 解鎖 50 個 Mission
-        profile.purchased_missions = Array.from({ length: 50 }, (_, i) => i + 1);
-        profile.max_unlocked_phase = 4;
-        
-        // 2. 解鎖所有佈景主題
-        const themeDefs = window.LIMIT180_THEME_DEFS || {};
-        profile.purchased_themes = Object.keys(themeDefs);
-        
-        // 3. 贈送百萬金幣
-        profile.total_stars = 1000000;
-        profile.bonus_stars = 1000000;
-        profile.coins_spent = 0;
-        
-        // 4. 解鎖所有頭像、外框配件資源
-        profile.unlocked_assets = [
-          'avatar-default', 'border-none',
-          'avatar-agent-cyan', 'avatar-agent-pink', 'avatar-agent-gold', 'avatar-agent-purple',
-          'border-neon', 'border-gold', 'border-matrix', 'border-violet'
-        ];
-        
-        window.MathSprintStorage.saveProfile(profile);
-        
-        // 同步上傳至雲端 (若已綁定)
-        const identity = getCurrentIdentity();
-        if (identity && window.MathSprintSupabaseService?.saveGlobalProfile) {
-          try {
-            await window.MathSprintSupabaseService.saveGlobalProfile(
-              identity.grade_class,
-              identity.seat_number,
-              identity.nickname,
-              profile.total_stars || 0,
-              profile.purchased_themes || ['akaimon'],
-              profile.equipped_avatar || 'avatar-default',
-              profile.equipped_border || 'border-none',
-              profile.equipped_badges || [],
-              profile.unlocked_assets || ['avatar-default', 'border-none']
-            );
-          } catch (e) {
-            console.error("同步至雲端失敗：", e);
-          }
-        }
+        await window.LIMIT180_CHEAT_CODES.applyMasterCheat(profile, getCurrentIdentity);
         
         msgEl.textContent = '✓ 特工神之權限已解鎖！';
         msgEl.className = 'text-[9px] text-green-400 font-tech';

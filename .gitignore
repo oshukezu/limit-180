@@ -29,3 +29,6 @@ __pycache__/
 *.sln
 *.swp
 *.log
+
+# 本地特工特有作弊代碼
+js/game-cheats.js
