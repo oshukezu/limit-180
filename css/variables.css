@@ -23,9 +23,9 @@ body.theme-neon {
   --neon-green: #39ff14;
   --neon-blue: #00f0ff;
   --neon-yellow: #39ff14;
-  --dark-bg: #0a0a12;
-  --panel-bg: #121224;
-  --border-color: var(--neon-blue);
+  --dark-bg: #05050a;
+  --panel-bg: #16162e;
+  --border-color: #00f0ff;
   --text-primary: #e2e8f0;
   background-image: 
     linear-gradient(rgba(0, 240, 255, 0.08) 1px, transparent 1px),
@@ -39,11 +39,11 @@ body.theme-lava {
   --neon-green: #ffaa00;    /* 亮橘 */
   --neon-blue: #ff6600;     /* 深橘 */
   --neon-yellow: #ffaa00;
-  --dark-bg: #120500;       /* 暗紅底 */
-  --panel-bg: #240f00;      /* 深紅面板 */
-  --border-color: var(--neon-blue);
+  --dark-bg: #0f0400;       /* 暗紅底 */
+  --panel-bg: #2d1200;      /* 深紅面板 */
+  --border-color: #ff6600;
   --text-primary: #FFF5F6;
-  background-image: radial-gradient(circle at 50% 50%, #2a0b00 0%, #120500 100%);
+  background-image: radial-gradient(circle at 50% 50%, #2a0b00 0%, #0f0400 100%);
 }
 
 /* 覆寫主題：極地極光 (Polar Aurora) */
@@ -53,12 +53,12 @@ body.theme-aurora {
   --neon-blue: #7000ff;     /* 深紫羅蘭 */
   --neon-yellow: #00ffaa;
   --dark-bg: #e8fff8;       /* 極光雪境 */
-  --panel-bg: #d9fbff;      /* 冰河面板 */
-  --border-color: var(--neon-blue);
-  --text-primary: #12333a;
+  --panel-bg: #c6f5ff;      /* 冰河面板 */
+  --border-color: #7000ff;
+  --text-primary: #0f2a30;
   --chart-grid: rgba(0, 0, 0, 0.15);
-  --chart-text: rgba(18, 51, 58, 0.8);
-  --chart-subtext: rgba(18, 51, 58, 0.5);
+  --chart-text: rgba(15, 42, 48, 0.8);
+  --chart-subtext: rgba(15, 42, 48, 0.5);
   background-image: linear-gradient(135deg, #e8fff8 0%, #d5fdf6 100%);
 }
 
@@ -69,8 +69,8 @@ body.theme-gold {
   --neon-blue: #b8860b;     /* 青銅 */
   --neon-yellow: #ffd700;
   --dark-bg: #fff8d6;       /* 金砂底 */
-  --panel-bg: #fff0a8;      /* 亮金面板 */
-  --border-color: var(--neon-blue);
+  --panel-bg: #ffe885;      /* 亮金面板 */
+  --border-color: #b8860b;
   --text-primary: #3b2f00;
   --chart-grid: rgba(0, 0, 0, 0.15);
   --chart-text: rgba(59, 47, 0, 0.8);
@@ -84,11 +84,11 @@ body.theme-abyss {
   --neon-green: #38bdf8;
   --neon-blue: #0077b6;
   --neon-yellow: #7dd3fc;
-  --dark-bg: #021220;
-  --panel-bg: #062033;
-  --border-color: var(--neon-blue);
+  --dark-bg: #010a14;
+  --panel-bg: #0a2b45;
+  --border-color: #0077b6;
   --text-primary: #e0f2fe;
-  background-image: radial-gradient(circle at 50% 30%, #03213a 0%, #021220 100%);
+  background-image: radial-gradient(circle at 50% 30%, #03213a 0%, #010a14 100%);
 }
 
 /* 覆寫主題：夜櫻月影 (Sakura Night) */
@@ -97,11 +97,11 @@ body.theme-sakura-night {
   --neon-green: #c084fc;
   --neon-blue: #8b5cf6;
   --neon-yellow: #f9a8d4;
-  --dark-bg: #170d1a;
-  --panel-bg: #2a1531;
-  --border-color: var(--neon-blue);
+  --dark-bg: #120914;
+  --panel-bg: #35193e;
+  --border-color: #8b5cf6;
   --text-primary: #fdf2f8;
-  background-image: radial-gradient(circle at 50% 30%, #2f1737 0%, #170d1a 100%);
+  background-image: radial-gradient(circle at 50% 30%, #2f1737 0%, #120914 100%);
 }
 
 /* 覆寫主題：翡翠矩陣 (Emerald) */
@@ -111,12 +111,12 @@ body.theme-emerald {
   --neon-blue: #0ea5a0;
   --neon-yellow: #86efac;
   --dark-bg: #eafff3;
-  --panel-bg: #d6fbe8;
-  --border-color: var(--neon-blue);
-  --text-primary: #083a25;
+  --panel-bg: #c2f7da;
+  --border-color: #0ea5a0;
+  --text-primary: #052618;
   --chart-grid: rgba(0, 0, 0, 0.15);
-  --chart-text: rgba(8, 58, 37, 0.8);
-  --chart-subtext: rgba(8, 58, 37, 0.5);
+  --chart-text: rgba(5, 38, 24, 0.8);
+  --chart-subtext: rgba(5, 38, 24, 0.5);
   background-image: 
     linear-gradient(rgba(16, 185, 129, 0.08) 1px, transparent 1px),
     linear-gradient(90deg, rgba(16, 185, 129, 0.08) 1px, transparent 1px);
@@ -129,14 +129,14 @@ body.theme-thunder {
   --neon-green: #facc15;
   --neon-blue: #60a5fa;
   --neon-yellow: #fde047;
-  --dark-bg: #fff7c2;
-  --panel-bg: #fff0a0;
-  --border-color: var(--neon-blue);
-  --text-primary: #352b00;
+  --dark-bg: #faf3d2;
+  --panel-bg: #f0e3a6;
+  --border-color: #4a3e00;
+  --text-primary: #2b2200;
   --chart-grid: rgba(0, 0, 0, 0.15);
-  --chart-text: rgba(53, 43, 0, 0.8);
-  --chart-subtext: rgba(53, 43, 0, 0.5);
-  background-image: radial-gradient(circle at 50% 50%, #ffe99b 0%, #fff7c2 100%);
+  --chart-text: rgba(43, 34, 0, 0.8);
+  --chart-subtext: rgba(43, 34, 0, 0.5);
+  background-image: radial-gradient(circle at 50% 50%, #ffe99b 0%, #faf3d2 100%);
 }
 
 /* 覆寫主題：銀河曲率 (Galaxy) */
@@ -145,11 +145,11 @@ body.theme-galaxy {
   --neon-green: #c4b5fd;
   --neon-blue: #22d3ee;
   --neon-yellow: #ddd6fe;
-  --dark-bg: #0b1026;
-  --panel-bg: #151b3d;
-  --border-color: var(--neon-blue);
+  --dark-bg: #060a1a;
+  --panel-bg: #1a234d;
+  --border-color: #22d3ee;
   --text-primary: #eef2ff;
-  background-image: radial-gradient(circle at 50% 50%, #12183a 0%, #0b1026 100%);
+  background-image: radial-gradient(circle at 50% 50%, #12183a 0%, #060a1a 100%);
 }
 
 /* 覆寫主題：暮光餘燼 (Sunset) */
@@ -159,8 +159,8 @@ body.theme-sunset {
   --neon-blue: #fb7185;
   --neon-yellow: #fdba74;
   --dark-bg: #fff1e6;
-  --panel-bg: #ffd9c2;
-  --border-color: var(--neon-blue);
+  --panel-bg: #ffcba4;
+  --border-color: #e11d48;
   --text-primary: #4a1f0f;
   --chart-grid: rgba(0, 0, 0, 0.15);
   --chart-text: rgba(74, 31, 15, 0.8);
@@ -175,12 +175,12 @@ body.theme-mint {
   --neon-blue: #22d3ee;
   --neon-yellow: #99f6e4;
   --dark-bg: #ecfff9;
-  --panel-bg: #d9fff4;
-  --border-color: var(--neon-blue);
-  --text-primary: #073b35;
+  --panel-bg: #c4fff0;
+  --border-color: #0284c7;
+  --text-primary: #052b26;
   --chart-grid: rgba(0, 0, 0, 0.15);
-  --chart-text: rgba(7, 59, 53, 0.8);
-  --chart-subtext: rgba(7, 59, 53, 0.5);
+  --chart-text: rgba(5, 43, 38, 0.8);
+  --chart-subtext: rgba(5, 43, 38, 0.5);
   background-image: radial-gradient(circle at 50% 50%, #f3fffb 0%, #ecfff9 100%);
 }
 
@@ -191,8 +191,8 @@ body.theme-mono {
   --neon-blue: #f4f4f5;
   --neon-yellow: #ffffff;
   --dark-bg: #050505;
-  --panel-bg: #171717;
-  --border-color: var(--neon-blue);
+  --panel-bg: #262626;
+  --border-color: #f4f4f5;
   --text-primary: #f4f4f5;
   background-image:
     linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
@@ -409,7 +409,11 @@ body {
   box-shadow: 0 0 5px var(--neon-pink);
 }
 
-/* 只要是按鈕文字，只能採用黑色、咖啡色、灰色、白色，其他顏色一率不採用 */
+/* ==========================================================================
+   統一按鈕顏色與 Hover 互動處理（依照 Theme-Color.md 規範）
+   ========================================================================== */
+
+/* 1. 按鈕文字顏色基底預設 */
 button,
 input[type="button"],
 input[type="submit"],
@@ -428,32 +432,43 @@ button *,
   color: inherit !important;
 }
 
-button:hover,
-input[type="button"]:hover,
-input[type="submit"]:hover,
-.cyber-btn:hover,
-.lvl-btn:hover,
-.nav-btn:hover,
-.neon-green-btn:hover {
-  color: #ffffff !important;
-}
-
-.cyber-btn-green,
-.cyber-btn-yellow,
-.neon-green-btn,
-#start-levels-btn,
-#start-review-btn {
+/* 2. 深色主題 Hover 時按鈕背景轉為極亮霓虹色，文字轉為黑色 */
+body:not(.theme-aurora):not(.theme-gold):not(.theme-emerald):not(.theme-thunder):not(.theme-sunset):not(.theme-mint) button:hover,
+body:not(.theme-aurora):not(.theme-gold):not(.theme-emerald):not(.theme-thunder):not(.theme-sunset):not(.theme-mint) input[type="button"]:hover,
+body:not(.theme-aurora):not(.theme-gold):not(.theme-emerald):not(.theme-thunder):not(.theme-sunset):not(.theme-mint) input[type="submit"]:hover,
+body:not(.theme-aurora):not(.theme-gold):not(.theme-emerald):not(.theme-thunder):not(.theme-sunset):not(.theme-mint) .cyber-btn:hover,
+body:not(.theme-aurora):not(.theme-gold):not(.theme-emerald):not(.theme-thunder):not(.theme-sunset):not(.theme-mint) .lvl-btn:hover,
+body:not(.theme-aurora):not(.theme-gold):not(.theme-emerald):not(.theme-thunder):not(.theme-sunset):not(.theme-mint) .nav-btn:hover {
+  background-color: var(--neon-blue) !important;
   color: #000000 !important;
 }
 
-.cyber-btn-green:hover,
-.cyber-btn-yellow:hover,
-.neon-green-btn:hover,
-#start-levels-btn:hover,
-#start-review-btn:hover {
+/* 個別深色主題 Hover 覆寫 */
+body.theme-akaimon .cyber-btn:hover, body.theme-akaimon button:hover { background-color: #FFF5F6 !important; color: #1A1012 !important; }
+body.theme-neon .cyber-btn:hover, body.theme-neon button:hover { background-color: #00F0FF !important; color: #05050A !important; }
+body.theme-lava .cyber-btn:hover, body.theme-lava button:hover { background-color: #FF6600 !important; color: #0F0400 !important; }
+body.theme-abyss .cyber-btn:hover, body.theme-abyss button:hover { background-color: #0077B6 !important; color: #ffffff !important; }
+body.theme-sakura-night .cyber-btn:hover, body.theme-sakura-night button:hover { background-color: #8B5CF6 !important; color: #120914 !important; }
+body.theme-galaxy .cyber-btn:hover, body.theme-galaxy button:hover { background-color: #22D3EE !important; color: #060A1A !important; }
+body.theme-mono .cyber-btn:hover, body.theme-mono button:hover { background-color: #F4F4F5 !important; color: #050505 !important; }
+
+/* 3. 淺色主題下，一般按鈕文字強制為黑色；Hover 時背景變為深色，文字變為白色 */
+body.theme-aurora button, body.theme-aurora .cyber-btn,
+body.theme-gold button, body.theme-gold .cyber-btn,
+body.theme-emerald button, body.theme-emerald .cyber-btn,
+body.theme-thunder button, body.theme-thunder .cyber-btn,
+body.theme-sunset button, body.theme-sunset .cyber-btn,
+body.theme-mint button, body.theme-mint .cyber-btn {
   color: #000000 !important;
 }
+body.theme-aurora button:hover, body.theme-aurora .cyber-btn:hover { background-color: #7000FF !important; color: #ffffff !important; }
+body.theme-gold button:hover, body.theme-gold .cyber-btn:hover { background-color: #B8860B !important; color: #ffffff !important; }
+body.theme-emerald button:hover, body.theme-emerald .cyber-btn:hover { background-color: #0EA5A0 !important; color: #ffffff !important; }
+body.theme-thunder button:hover, body.theme-thunder .cyber-btn:hover { background-color: #4A3E00 !important; color: #ffffff !important; }
+body.theme-sunset button:hover, body.theme-sunset .cyber-btn:hover { background-color: #E11D48 !important; color: #ffffff !important; }
+body.theme-mint button:hover, body.theme-mint .cyber-btn:hover { background-color: #0284C7 !important; color: #ffffff !important; }
 
+/* 4. 排除例外白色文字按鈕 */
 #accessibility-toggle-btn,
 #accessibility-toggle-btn:hover,
 #edit-profile-btn,
@@ -470,33 +485,25 @@ input[type="submit"]:hover,
   color: #ffffff !important;
 }
 
-body.theme-aurora button,
-body.theme-gold button,
-body.theme-emerald button,
-body.theme-thunder button,
-body.theme-sunset button,
-body.theme-mint button,
-body.theme-aurora .cyber-btn,
-body.theme-gold .cyber-btn,
-body.theme-emerald .cyber-btn,
-body.theme-thunder .cyber-btn,
-body.theme-sunset .cyber-btn,
-body.theme-mint .cyber-btn {
-  color: #000000 !important;
-}
+/* ==========================================================================
+   大廳與錯題複習主按鈕 (#start-levels-btn / #start-review-btn) 獨立優化
+   ========================================================================== */
 
-body.theme-aurora button:hover,
-body.theme-gold button:hover,
-body.theme-emerald button:hover,
-body.theme-thunder button:hover,
-body.theme-sunset button:hover,
-body.theme-mint button:hover,
-body.theme-aurora .cyber-btn:hover,
-body.theme-gold .cyber-btn:hover,
-body.theme-emerald .cyber-btn:hover,
-body.theme-thunder .cyber-btn:hover,
-body.theme-sunset .cyber-btn:hover,
-body.theme-mint .cyber-btn:hover {
-  color: #ffffff !important;
-}
+/* 深色主題主按鈕 (保持螢光亮綠，黑字) */
+body.theme-akaimon #start-levels-btn, body.theme-akaimon #start-review-btn { background-color: #10B981 !important; color: #000000 !important; }
+body.theme-neon #start-levels-btn, body.theme-neon #start-review-btn { background-color: #39FF14 !important; color: #000000 !important; }
+body.theme-lava #start-levels-btn, body.theme-lava #start-review-btn { background-color: #00FF66 !important; color: #000000 !important; }
+body.theme-abyss #start-levels-btn, body.theme-abyss #start-review-btn { background-color: #39FF14 !important; color: #000000 !important; }
+body.theme-sakura-night #start-levels-btn, body.theme-sakura-night #start-review-btn { background-color: #00FF88 !important; color: #000000 !important; }
+body.theme-galaxy #start-levels-btn, body.theme-galaxy #start-review-btn { background-color: #39FF14 !important; color: #000000 !important; }
+body.theme-mono #start-levels-btn, body.theme-mono #start-review-btn { background-color: #FFFFFF !important; color: #000000 !important; }
+
+/* 淺色主題主按鈕 (依照主題色客製，保留閱讀權重與對比度) */
+body.theme-aurora #start-levels-btn, body.theme-aurora #start-review-btn { background-color: #00BD9D !important; color: #ffffff !important; }
+body.theme-gold #start-levels-btn, body.theme-gold #start-review-btn { background-color: #D4AF37 !important; color: #000000 !important; }
+body.theme-emerald #start-levels-btn, body.theme-emerald #start-review-btn { background-color: #059669 !important; color: #ffffff !important; }
+body.theme-thunder #start-levels-btn, body.theme-thunder #start-review-btn { background-color: #D97706 !important; color: #ffffff !important; }
+body.theme-sunset #start-levels-btn, body.theme-sunset #start-review-btn { background-color: #EA580C !important; color: #ffffff !important; }
+body.theme-mint #start-levels-btn, body.theme-mint #start-review-btn { background-color: #0D9488 !important; color: #ffffff !important; }
+
 
