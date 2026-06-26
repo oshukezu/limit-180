@@ -252,6 +252,7 @@
       const delay = this.gameState.isPlacementTest ? 300 : 350;
       if (correctFeedback) {
         clearInterval(this.timerInterval);
+        this.timerInterval = null;
         this.gameState.isPaused = true;
         // 清空輸入框
         const input = document.getElementById('calc-input');
@@ -270,6 +271,7 @@
     handleFailure(wrongAnswerText) {
       playSound('wrong');
       clearInterval(this.timerInterval);
+      this.timerInterval = null;
 
       this.gameState.combo = 0;
       localStorage.setItem('math_sprint_current_combo', 0);
