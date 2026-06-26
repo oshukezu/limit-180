@@ -141,7 +141,7 @@
       }
 
       if (coinsSpan && profile) {
-        coinsSpan.textContent = (profile.total_stars || 0).toLocaleString('zh-TW');
+        coinsSpan.textContent = window.formatCoins(profile.total_stars || 0, false);
       }
     },
 

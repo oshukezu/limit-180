@@ -46,36 +46,50 @@ body.theme-lava {
   background-image: radial-gradient(circle at 50% 50%, #2a0b00 0%, #0f0400 100%);
 }
 
-/* 覆寫主題：極地極光 (Polar Aurora) */
+/* 覆寫主題：極地極光 (Polar Aurora) - 改為深紫色背景與冷色霓虹 */
 body.theme-aurora {
   --neon-pink: #00ffaa;     /* 薄荷綠 */
   --neon-green: #00e5ff;    /* 冰河藍 */
   --neon-blue: #7000ff;     /* 深紫羅蘭 */
   --neon-yellow: #00ffaa;
-  --dark-bg: #e8fff8;       /* 極光雪境 */
-  --panel-bg: #c6f5ff;      /* 冰河面板 */
+  --dark-bg: #0b021a;       /* 深紫色底 */
+  --panel-bg: #1c0b36;      /* 暗紫面板 */
   --border-color: #7000ff;
-  --text-primary: #0f2a30;
-  --chart-grid: rgba(0, 0, 0, 0.15);
-  --chart-text: rgba(15, 42, 48, 0.8);
-  --chart-subtext: rgba(15, 42, 48, 0.5);
-  background-image: linear-gradient(135deg, #e8fff8 0%, #d5fdf6 100%);
+  --text-primary: #f3e8ff;
+  --chart-grid: rgba(255, 255, 255, 0.15);
+  --chart-text: rgba(243, 232, 255, 0.8);
+  --chart-subtext: rgba(243, 232, 255, 0.5);
+  background-image: radial-gradient(circle at 50% 50%, #200445 0%, #0b021a 100%);
 }
 
-/* 覆寫主題：黃金帝國 (Golden Empire) */
+/* 覆寫主題：黃金帝國 (Golden Empire) - 金黃背景，灰/白文字 */
 body.theme-gold {
   --neon-pink: #ffd700;     /* 黃金 */
-  --neon-green: #ff9000;    /* 琥珀 */
-  --neon-blue: #b8860b;     /* 青銅 */
-  --neon-yellow: #ffd700;
-  --dark-bg: #fff8d6;       /* 金砂底 */
-  --panel-bg: #ffe885;      /* 亮金面板 */
-  --border-color: #b8860b;
-  --text-primary: #3b2f00;
-  --chart-grid: rgba(0, 0, 0, 0.15);
-  --chart-text: rgba(59, 47, 0, 0.8);
-  --chart-subtext: rgba(59, 47, 0, 0.5);
-  background-image: radial-gradient(circle at 50% 50%, #fffbf0 0%, #fff8d6 100%);
+  --neon-green: #ffea70;    /* 淺黃金 */
+  --neon-blue: #d4af37;     /* 金黃色 */
+  --neon-yellow: #f3e5ab;   /* 象牙黃 */
+  --dark-bg: #2d2600;       /* 深金黃色底 */
+  --panel-bg: #4a3e00;      /* 深金黃面板 */
+  --border-color: #ffd700;
+  --text-primary: #f3f4f6;  /* 灰色與白色文字 (主文字設為亮灰) */
+  --chart-grid: rgba(255, 255, 255, 0.15);
+  --chart-text: rgba(255, 255, 255, 0.9);
+  --chart-subtext: rgba(229, 231, 235, 0.5);
+  background-image: radial-gradient(circle at 50% 50%, #856a00 0%, #2d2600 100%);
+}
+body.theme-gold .text-white {
+  color: #ffffff !important;
+}
+body.theme-gold .text-slate-400,
+body.theme-gold .text-slate-500 {
+  color: #9ca3af !important;
+}
+/* 黃金帝國按鈕字體與特別標示強制設為灰色與白色，避免使用原主題彩色 */
+body.theme-gold .cyber-btn, body.theme-gold .cyber-btn * {
+  color: #e5e7eb !important;
+}
+body.theme-gold .cyber-btn:hover, body.theme-gold .cyber-btn:hover * {
+  color: #ffffff !important;
 }
 
 /* 覆寫主題：深海深淵 (Abyss) */
@@ -123,20 +137,21 @@ body.theme-emerald {
   background-size: 20px 20px;
 }
 
-/* 覆寫主題：雷暴核心 (Thunder) */
+/* 覆寫主題：雷暴核心 (Thunder) - 黑色背景與雷光黃/藍 */
 body.theme-thunder {
   --neon-pink: #f5d000;
   --neon-green: #facc15;
   --neon-blue: #60a5fa;
   --neon-yellow: #fde047;
-  --dark-bg: #faf3d2;
-  --panel-bg: #f0e3a6;
-  --border-color: #4a3e00;
-  --text-primary: #2b2200;
-  --chart-grid: rgba(0, 0, 0, 0.15);
-  --chart-text: rgba(43, 34, 0, 0.8);
-  --chart-subtext: rgba(43, 34, 0, 0.5);
-  background-image: radial-gradient(circle at 50% 50%, #ffe99b 0%, #faf3d2 100%);
+  --dark-bg: #000000;       /* 純黑色底 */
+  --panel-bg: #111111;      /* 暗面板 */
+  --border-color: #facc15;
+  --text-primary: #f8fafc;
+  --chart-grid: rgba(255, 255, 255, 0.1);
+  --chart-text: rgba(248, 250, 252, 0.8);
+  --chart-subtext: rgba(248, 250, 252, 0.5);
+  background-image: none;
+  background-color: #000000;
 }
 
 /* 覆寫主題：銀河曲率 (Galaxy) */
@@ -152,20 +167,20 @@ body.theme-galaxy {
   background-image: radial-gradient(circle at 50% 50%, #12183a 0%, #060a1a 100%);
 }
 
-/* 覆寫主題：暮光餘燼 (Sunset) */
+/* 覆寫主題：暮光餘燼 (Sunset) - 暗橘色背景 */
 body.theme-sunset {
   --neon-pink: #ff7a59;
   --neon-green: #ffb86b;
   --neon-blue: #fb7185;
   --neon-yellow: #fdba74;
-  --dark-bg: #fff1e6;
-  --panel-bg: #ffcba4;
-  --border-color: #e11d48;
-  --text-primary: #4a1f0f;
-  --chart-grid: rgba(0, 0, 0, 0.15);
-  --chart-text: rgba(74, 31, 15, 0.8);
-  --chart-subtext: rgba(74, 31, 15, 0.5);
-  background-image: linear-gradient(180deg, #fffcf5 0%, #fff1e6 100%);
+  --dark-bg: #290d00;       /* 暗橘色底 */
+  --panel-bg: #4c1a05;      /* 深暗橘面板 */
+  --border-color: #ff7a59;
+  --text-primary: #ffedd5;
+  --chart-grid: rgba(255, 255, 255, 0.12);
+  --chart-text: rgba(255, 237, 213, 0.8);
+  --chart-subtext: rgba(255, 237, 213, 0.5);
+  background-image: radial-gradient(circle at 50% 50%, #5c240b 0%, #290d00 100%);
 }
 
 /* 覆寫主題：薄荷霧境 (Mint) */

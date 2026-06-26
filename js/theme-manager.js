@@ -36,14 +36,14 @@
         this.vx = Math.random() * 1.0 - 0.5; // 風向微弱
         this.vy = Math.random() * 0.8 + 0.5; // 下落較慢
         this.color = `rgba(255, 255, 255, ${Math.random() * 0.6 + 0.4})`;
-        this.shape = Math.random() > 0.55 ? 'hex' : 'diamond';
+        this.shape = 'snowflake';
       } else if (activeTheme === 'gold') {
         // 黃金帝國：旋轉掉落的金幣
         this.y = initY ? (Math.random() * this.canvas.height) : -20;
         this.vx = Math.random() * 0.8 - 0.4;
         this.vy = Math.random() * 1.5 + 1.2; // 下落較快
-        this.color = '#ffd700';
-        this.shape = Math.random() > 0.35 ? 'coin' : 'diamond';
+        this.color = Math.random() > 0.5 ? '#ffd700' : '#facc15';
+        this.shape = 'coin';
       } else if (activeTheme === 'abyss') {
         this.y = initY ? (Math.random() * this.canvas.height) : this.canvas.height + 20;
         this.vx = Math.random() * 0.6 - 0.3;
@@ -57,18 +57,24 @@
         this.color = Math.random() > 0.5 ? '#39ff88' : '#0ea5a0';
         this.shape = Math.random() > 0.5 ? 'square' : 'diamond';
       } else if (activeTheme === 'thunder') {
+        // 雷暴核心：黃色三角形迅速落下
         this.y = initY ? (Math.random() * this.canvas.height) : -20;
-        this.r *= 2;
-        this.vx = Math.random() * 1.2 - 0.6;
-        this.vy = Math.random() * 1.4 + 0.8;
-        this.color = Math.random() > 0.5 ? '#facc15' : '#fde047';
-        this.shape = Math.random() > 0.5 ? 'triangle' : 'triangle-down';
-      } else if (activeTheme === 'galaxy') {
-        this.y = initY ? (Math.random() * this.canvas.height) : -20;
+        this.r = Math.random() * 6 + 4;
         this.vx = Math.random() * 0.8 - 0.4;
-        this.vy = Math.random() * 0.9 + 0.5;
-        this.color = Math.random() > 0.5 ? '#a78bfa' : '#22d3ee';
-        this.shape = 'wave';
+        this.vy = Math.random() * 5 + 6; // 迅速落下速度
+        this.color = Math.random() > 0.5 ? '#facc15' : '#fde047';
+        this.shape = 'triangle';
+      } else if (activeTheme === 'galaxy') {
+        // 銀河曲率：多條長弧線從左向右移，像聲波波形一樣
+        this.y = Math.random() * this.canvas.height;
+        this.x = Math.random() * this.canvas.width;
+        this.vx = Math.random() * 1.5 + 1.5; // 從左向右移速
+        this.vy = 0;
+        this.color = Math.random() > 0.5 ? 'rgba(167, 139, 250, 0.35)' : 'rgba(34, 211, 238, 0.35)';
+        this.shape = 'wave-arc';
+        this.amplitude = Math.random() * 25 + 15;
+        this.frequency = Math.random() * 0.006 + 0.003;
+        this.phase = Math.random() * Math.PI * 2;
       } else if (activeTheme === 'mono') {
         this.y = initY ? (Math.random() * this.canvas.height) : -20;
         this.vx = Math.random() * 0.7 - 0.35;
@@ -86,25 +92,50 @@
     }
 
     update() {
-      this.x += this.vx;
-      this.y += this.vy;
-      this.deg += this.spin;
-
-      // 飄出視窗則重置
-      if (activeTheme === 'lava' || activeTheme === 'abyss') {
-        // 向上飄出頂部重置
-        if (this.y < -20 || this.x < -20 || this.x > this.canvas.width + 20) {
-          this.reset(false);
+      if (activeTheme === 'galaxy') {
+        this.x += this.vx;
+        // 銀河曲率長弧線向右移動超出螢幕後，在左側重新進場
+        if (this.x > this.canvas.width + 100) {
+          this.x = -100;
+          this.y = Math.random() * this.canvas.height;
         }
       } else {
-        // 向下飄出底部重置
-        if (this.y > this.canvas.height + 20 || this.x < -20 || this.x > this.canvas.width + 20) {
-          this.reset(false);
+        this.x += this.vx;
+        this.y += this.vy;
+        this.deg += this.spin;
+
+        // 飄出視窗則重置
+        if (activeTheme === 'lava' || activeTheme === 'abyss') {
+          // 向上飄出頂部重置
+          if (this.y < -20 || this.x < -20 || this.x > this.canvas.width + 20) {
+            this.reset(false);
+          }
+        } else {
+          // 向下飄出底部重置
+          if (this.y > this.canvas.height + 20 || this.x < -20 || this.x > this.canvas.width + 20) {
+            this.reset(false);
+          }
         }
       }
     }
 
     draw(ctx) {
+      if (this.shape === 'wave-arc') {
+        // wave-arc 不使用旋轉與原點偏移繪製，它畫出跨螢幕的連續弧線
+        ctx.save();
+        ctx.strokeStyle = this.color;
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        for (let px = 0; px < this.canvas.width; px += 8) {
+          const py = this.y + Math.sin((px - this.x) * this.frequency) * this.amplitude;
+          if (px === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+        ctx.restore();
+        return;
+      }
+
       ctx.save();
       ctx.translate(this.x, this.y);
       ctx.rotate((this.deg * Math.PI) / 180);
@@ -134,24 +165,25 @@
         ctx.lineWidth = 1.5;
         ctx.arc(0, 0, this.r * 1.3, 0, 2 * Math.PI);
         ctx.stroke();
-      } else if (this.shape === 'wave') {
+      } else if (this.shape === 'snowflake') {
+        // 繪製雪花粒子：六角形分支
         ctx.strokeStyle = this.color;
-        ctx.lineWidth = 1.6;
+        ctx.lineWidth = 1.2;
         ctx.beginPath();
-        for (let i = -2; i <= 2; i++) {
-          const x = i * this.r;
-          const y = Math.sin(i * Math.PI / 2) * this.r * 0.45;
-          if (i === -2) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
+        const r = this.r;
+        for (let i = 0; i < 6; i++) {
+          ctx.moveTo(0, 0);
+          const angle = (i * Math.PI) / 3;
+          ctx.lineTo(Math.cos(angle) * r, Math.sin(angle) * r);
+          // 小分支
+          const bx = Math.cos(angle) * r * 0.5;
+          const by = Math.sin(angle) * r * 0.5;
+          ctx.moveTo(bx, by);
+          ctx.lineTo(bx + Math.cos(angle + Math.PI/4) * r * 0.4, by + Math.sin(angle + Math.PI/4) * r * 0.4);
+          ctx.moveTo(bx, by);
+          ctx.lineTo(bx + Math.cos(angle - Math.PI/4) * r * 0.4, by + Math.sin(angle - Math.PI/4) * r * 0.4);
         }
         ctx.stroke();
-      } else if (activeTheme === 'aurora') {
-        const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, this.r);
-        grad.addColorStop(0, this.color);
-        grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
-        ctx.fillStyle = grad;
-        ctx.arc(0, 0, this.r, 0, 2 * Math.PI);
-        ctx.fill();
       } else {
         ctx.ellipse(0, 0, this.r * 1.5, this.r, 0, 0, 2 * Math.PI);
         ctx.fill();
