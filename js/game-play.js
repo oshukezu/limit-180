@@ -53,92 +53,104 @@
       this.startTimer();
     },
 
-     startTimer() {
-       if (this.gameState.isStageTimer && this.timerInterval) {
-         this.gameState.startTime = performance.now();
-         return;
-       }
+      startTimer() {
+        if (this.gameState.isStageTimer && this.timerInterval) {
+          this.gameState.startTime = performance.now();
+          return;
+        }
 
-       clearInterval(this.timerInterval);
-       
-       const timeBar = document.getElementById('game-time-bar');
-       const countdownText = document.getElementById('game-countdown-seconds');
-       if (!timeBar) return;
-       timeBar.style.width = '100%';
-       timeBar.style.backgroundColor = 'var(--neon-green)';
-       timeBar.style.boxShadow = '0 0 10px var(--neon-green)';
+        clearInterval(this.timerInterval);
+        
+        const timeBar = document.getElementById('game-time-bar');
+        const countdownText = document.getElementById('game-countdown-seconds');
+        if (!timeBar) return;
+        timeBar.style.width = '100%';
+        timeBar.style.backgroundColor = 'var(--neon-green)';
+        timeBar.style.boxShadow = '0 0 10px var(--neon-green)';
+        if (countdownText) {
+          countdownText.style.color = 'var(--neon-green)';
+        }
  
-       // 自由計時，無時間限制
-       if (this.gameState.limitTime >= 999) {
-         if (countdownText) countdownText.textContent = '∞';
-         return;
-       }
+        // 自由計時，無時間限制
+        if (this.gameState.limitTime >= 999) {
+          if (countdownText) {
+            countdownText.textContent = '∞';
+            countdownText.style.color = 'var(--text-primary)';
+          }
+          return;
+        }
  
-       if (this.gameState.isStageTimer) {
-         const step = 50;
-         this.timerInterval = setInterval(() => {
-           if (this.gameState.isPaused) return;
+        if (this.gameState.isStageTimer) {
+          const step = 50;
+          this.timerInterval = setInterval(() => {
+            if (this.gameState.isPaused) return;
  
-           this.gameState.stageTimeRemaining -= (step / 1000);
-           const currentRemaining = Math.max(0, this.gameState.stageTimeRemaining);
-           if (countdownText) {
-             countdownText.textContent = `${currentRemaining.toFixed(1)}s`;
-           }
-           const pct = Math.max(0, (currentRemaining / this.gameState.stageTimeTotal) * 100);
-           timeBar.style.width = `${pct}%`;
+            this.gameState.stageTimeRemaining -= (step / 1000);
+            const currentRemaining = Math.max(0, this.gameState.stageTimeRemaining);
+            if (countdownText) {
+              countdownText.textContent = `${currentRemaining.toFixed(1)}s`;
+            }
+            const pct = Math.max(0, (currentRemaining / this.gameState.stageTimeTotal) * 100);
+            timeBar.style.width = `${pct}%`;
  
-           if (pct < 30) {
-             timeBar.style.backgroundColor = 'var(--neon-pink)';
-             timeBar.style.boxShadow = '0 0 10px var(--neon-pink)';
-           } else if (pct < 60) {
-             timeBar.style.backgroundColor = 'var(--neon-yellow)';
-             timeBar.style.boxShadow = '0 0 10px var(--neon-yellow)';
-           } else {
-             timeBar.style.backgroundColor = 'var(--neon-green)';
-             timeBar.style.boxShadow = '0 0 10px var(--neon-green)';
-           }
+            if (pct < 30) {
+              timeBar.style.backgroundColor = 'var(--neon-pink)';
+              timeBar.style.boxShadow = '0 0 10px var(--neon-pink)';
+              if (countdownText) countdownText.style.color = 'var(--neon-pink)';
+            } else if (pct < 60) {
+              timeBar.style.backgroundColor = 'var(--neon-yellow)';
+              timeBar.style.boxShadow = '0 0 10px var(--neon-yellow)';
+              if (countdownText) countdownText.style.color = 'var(--neon-yellow)';
+            } else {
+              timeBar.style.backgroundColor = 'var(--neon-green)';
+              timeBar.style.boxShadow = '0 0 10px var(--neon-green)';
+              if (countdownText) countdownText.style.color = 'var(--neon-green)';
+            }
  
-           if (this.gameState.stageTimeRemaining <= 0) {
-             clearInterval(this.timerInterval);
-             this.timerInterval = null;
-             this.handleTimeout();
-           }
-         }, step);
-       } else {
-         const duration = this.gameState.limitTime * 1000;
-         let timeSpent = 0;
-         const step = 50;
+            if (this.gameState.stageTimeRemaining <= 0) {
+              clearInterval(this.timerInterval);
+              this.timerInterval = null;
+              this.handleTimeout();
+            }
+          }, step);
+        } else {
+          const duration = this.gameState.limitTime * 1000;
+          let timeSpent = 0;
+          const step = 50;
  
-         this.timerInterval = setInterval(() => {
-           if (this.gameState.isPaused) return;
+          this.timerInterval = setInterval(() => {
+            if (this.gameState.isPaused) return;
  
-           timeSpent += step;
-           const currentRemaining = Math.max(0, (duration - timeSpent) / 1000);
-           if (countdownText) {
-             countdownText.textContent = `${currentRemaining.toFixed(1)}s`;
-           }
-           const pct = Math.max(0, 100 - (timeSpent / duration) * 100);
-           timeBar.style.width = `${pct}%`;
+            timeSpent += step;
+            const currentRemaining = Math.max(0, (duration - timeSpent) / 1000);
+            if (countdownText) {
+              countdownText.textContent = `${currentRemaining.toFixed(1)}s`;
+            }
+            const pct = Math.max(0, 100 - (timeSpent / duration) * 100);
+            timeBar.style.width = `${pct}%`;
  
-           if (pct < 30) {
-             timeBar.style.backgroundColor = 'var(--neon-pink)';
-             timeBar.style.boxShadow = '0 0 10px var(--neon-pink)';
-           } else if (pct < 60) {
-             timeBar.style.backgroundColor = 'var(--neon-yellow)';
-             timeBar.style.boxShadow = '0 0 10px var(--neon-yellow)';
-           } else {
-             timeBar.style.backgroundColor = 'var(--neon-green)';
-             timeBar.style.boxShadow = '0 0 10px var(--neon-green)';
-           }
+            if (pct < 30) {
+              timeBar.style.backgroundColor = 'var(--neon-pink)';
+              timeBar.style.boxShadow = '0 0 10px var(--neon-pink)';
+              if (countdownText) countdownText.style.color = 'var(--neon-pink)';
+            } else if (pct < 60) {
+              timeBar.style.backgroundColor = 'var(--neon-yellow)';
+              timeBar.style.boxShadow = '0 0 10px var(--neon-yellow)';
+              if (countdownText) countdownText.style.color = 'var(--neon-yellow)';
+            } else {
+              timeBar.style.backgroundColor = 'var(--neon-green)';
+              timeBar.style.boxShadow = '0 0 10px var(--neon-green)';
+              if (countdownText) countdownText.style.color = 'var(--neon-green)';
+            }
  
-           if (timeSpent >= duration) {
-             clearInterval(this.timerInterval);
-             this.timerInterval = null;
-             this.handleTimeout();
-           }
-         }, step);
-       }
-     },
+            if (timeSpent >= duration) {
+              clearInterval(this.timerInterval);
+              this.timerInterval = null;
+              this.handleTimeout();
+            }
+          }, step);
+        }
+      },
 
     handleTimeout() {
       playSound('wrong');
