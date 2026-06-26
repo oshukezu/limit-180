@@ -23,6 +23,7 @@
       
       const starsEl = document.getElementById('lobby-stars');
       const todayEl = document.getElementById('lobby-today-earnings');
+      const maxLvlEl = document.getElementById('lobby-max-level');
       if (starsEl) starsEl.textContent = window.formatCoins(profile.total_stars || 0, false);
       if (todayEl) todayEl.textContent = window.formatCoins(profile.today_earnings || 0, false);
       document.querySelectorAll('.skip-exam-ticket-count').forEach(el => {

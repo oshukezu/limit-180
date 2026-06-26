@@ -304,7 +304,7 @@
   // 全域金幣格式化邏輯
   window.formatCoins = function(amount, forceFull = false) {
     if (amount === undefined || amount === null) return '0';
-    if (!forceFull && amount >= 10000) {
+    if (!forceFull && amount >= 300000) {
       const mVal = amount / 1000000;
       // 若是整數或可除盡則去除小數點零，最多保留兩位小數
       let formatted = mVal.toFixed(2);
