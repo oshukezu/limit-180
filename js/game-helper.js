@@ -127,6 +127,13 @@
       }
     }
 
+    // 如果進入大廳，自動更新渲染右側欄的錯題本
+    if (viewId === 'view-lobby') {
+      if (window.MathSprintGame && typeof window.MathSprintGame.setupLobbyReviewMode === 'function') {
+        window.MathSprintGame.setupLobbyReviewMode();
+      }
+    }
+
     // 如果進入商店，自動渲染商店介面
     if (viewId === 'view-store') {
       if (window.GameStore) {
@@ -134,8 +141,8 @@
       }
     }
     
-    // 如果進入遊戲或複習，隱藏 header 與 footer
-    if (viewId === 'view-game' || viewId === 'view-review') {
+    // 如果進入遊戲，隱藏 header 與 footer
+    if (viewId === 'view-game') {
       document.body.classList.add('body-in-game');
     } else {
       document.body.classList.remove('body-in-game');

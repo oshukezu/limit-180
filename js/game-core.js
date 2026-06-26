@@ -99,6 +99,9 @@ window.CFG = window.MATH_SPRINT_CONFIG;
         window.addEventListener('mathSprintProfileUpdated', () => {
           this.renderHome();
           this.renderLobby();
+          if (window.GameStore && typeof window.GameStore.renderStore === 'function') {
+            window.GameStore.renderStore();
+          }
         });
 
         window.addEventListener('mathSprintBonusStarAwarded', (e) => {

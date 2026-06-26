@@ -105,6 +105,9 @@
         if (window.MathSprintGame && window.MathSprintGame.renderHome) {
           window.MathSprintGame.renderHome();
         }
+        if (window.MathSprintGame && window.MathSprintGame.renderLobby) {
+          window.MathSprintGame.renderLobby();
+        }
         
         // 撥放音效
         if (window.MathSprintAudio && window.MathSprintAudio.play) {

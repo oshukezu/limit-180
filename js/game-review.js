@@ -1,18 +1,8 @@
 // Limit 180 — 錯題消除模式模組 (Review Module)
 (function() {
   const Review = {
-    // --- REVIEW MODE METHODS ---
-    startReviewMode() {
-      const until = Number(localStorage.getItem('limit180_rest_lock_until') || 0);
-      if (Number.isFinite(until) && until > Date.now()) {
-        const sec = Math.ceil((until - Date.now()) / 1000);
-        if (window.UIFeedback) {
-          window.UIFeedback.toast(`休息中，約 ${sec} 秒後可進入錯題消除。`, 'error');
-        } else {
-          alert(`休息中，約 ${sec} 秒後可進入錯題消除。`);
-        }
-        return;
-      }
+    // 新增：初始化大廳右側錯題消除版面
+    setupLobbyReviewMode() {
       const profile = window.MathSprintStorage.getProfile();
       this.gameState.isReviewMode = true;
       
@@ -43,6 +33,8 @@
       const emptyState = document.getElementById('review-empty-state');
       const workspace = document.getElementById('review-workspace');
 
+      if (!emptyState || !workspace) return;
+
       if (this.gameState.reviewList.length === 0) {
         emptyState.classList.remove('hidden');
         workspace.classList.add('hidden');
@@ -53,8 +45,40 @@
         this.renderReviewList();
         this.loadReviewQuestion();
       }
+    },
 
-      window.showView('view-review');
+    // --- REVIEW MODE METHODS ---
+    startReviewMode() {
+      const until = Number(localStorage.getItem('limit180_rest_lock_until') || 0);
+      if (Number.isFinite(until) && until > Date.now()) {
+        const sec = Math.ceil((until - Date.now()) / 1000);
+        if (window.UIFeedback) {
+          window.UIFeedback.toast(`休息中，約 ${sec} 秒後可進入錯題消除。`, 'error');
+        } else {
+          alert(`休息中，約 ${sec} 秒後可進入錯題消除。`);
+        }
+        return;
+      }
+      
+      // 不再跳轉 view-review，而是直接跳到大廳並初始化右側錯題
+      if (window.currentView !== 'view-lobby') {
+        if (typeof this.renderLobby === 'function') {
+          this.renderLobby();
+        }
+        window.showView('view-lobby');
+      } else {
+        this.setupLobbyReviewMode();
+      }
+
+      // 滾動到右側錯題本區塊
+      setTimeout(() => {
+        const workspace = document.getElementById('review-workspace') || document.getElementById('review-empty-state');
+        if (workspace) {
+          workspace.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        const input = document.getElementById('review-input');
+        if (input) input.focus();
+      }, 150);
     },
 
     renderReviewList() {
@@ -83,7 +107,7 @@
 
     loadReviewQuestion() {
       if (this.gameState.reviewList.length === 0) {
-        this.startReviewMode();
+        this.setupLobbyReviewMode();
         return;
       }
 
@@ -133,7 +157,7 @@
             if (this.gameState.reviewList.length === 0) {
               localStorage.removeItem('error_questions_queue');
               console.log('[Game] 所有錯題已完全消除，本機快取已清空。');
-              this.startReviewMode();
+              this.setupLobbyReviewMode();
               return;
             }
           } else {
