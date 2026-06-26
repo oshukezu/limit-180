@@ -172,7 +172,7 @@
     <!-- 敏感詞管理 -->
     <div class="hud-panel p-5 bg-slate-900/80 border border-slate-800 flex flex-col gap-4 font-pixel">
       <h4 class="text-xs text-red-500 glow-pink">敏感詞管理 SENSITIVE WORDS</h4>
-      <p class="text-[9px] text-slate-500 font-tech">設定過濾詞彙。訊息內容若模糊匹配敏感詞將無法發送。</p>
+      <p class="text-[9px] text-slate-500 font-tech">設定過濾詞彙。訊息內容若模糊匹配敏感詞將無法發送。支援批次 Markdown 檔案匯入/匯出。</p>
 
       <div class="flex gap-2">
         <input type="text" id="admin-sensitive-input" placeholder="輸入敏感詞彙..."
@@ -182,7 +182,18 @@
         </button>
       </div>
 
-      <div class="overflow-x-auto max-h-48 overflow-y-auto">
+      <!-- Markdown 批次匯入/匯出 -->
+      <div class="flex flex-wrap gap-2">
+        <button id="admin-sensitive-export-btn" class="cyber-btn px-3 py-1.5 text-[10px] text-cyan-400 rounded">
+          📤 匯出 Markdown 清單
+        </button>
+        <button id="admin-sensitive-import-btn" class="cyber-btn px-3 py-1.5 text-[10px] text-yellow-400 rounded">
+          📥 匯入 Markdown 檔案
+        </button>
+        <input type="file" id="admin-sensitive-file-input" accept=".md,.txt" class="hidden">
+      </div>
+
+      <div class="overflow-x-auto max-h-48 overflow-y-auto border-t border-slate-800/40 pt-2">
         <div id="admin-sensitive-list" class="flex flex-wrap gap-2 py-2">
           <div class="text-[10px] text-slate-500">載入中...</div>
         </div>

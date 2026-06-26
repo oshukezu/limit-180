@@ -302,6 +302,80 @@
       } catch (err) {
         alert("❌ 清除發生錯誤: " + err.message);
       }
+    },
+
+    async exportSensitiveWords() {
+      try {
+        const list = await window.MathSprintSupabaseService.listSensitiveWords();
+        const words = list.map(item => typeof item === 'object' ? item.word : item);
+        
+        let mdContent = `# Limit 180 敏感詞清單\n\n匯出時間：${new Date().toLocaleString('zh-TW')}\n\n`;
+        mdContent += `目前共有 ${words.length} 個敏感詞：\n\n`;
+        words.forEach(w => {
+          mdContent += `- ${w}\n`;
+        });
+
+        const blob = new Blob([mdContent], { type: 'text/markdown;charset=utf-8;' });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.setAttribute("download", `limit180_sensitive_words_${Date.now()}.md`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } catch (err) { alert("匯出失敗：" + err.message); }
+    },
+
+    async handleImportFile(file) {
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const content = e.target.result;
+        const lines = content.split('\n');
+        const newWords = [];
+        
+        lines.forEach(line => {
+          let clean = line.trim();
+          // 支援解析 Markdown 的無序清單語法 "- 詞彙" 或 "* 詞彙"
+          if (clean.startsWith('-') || clean.startsWith('*')) {
+            clean = clean.substring(1).trim();
+          }
+          // 忽略 Markdown 標題、空行或表格分隔線
+          if (clean && !clean.startsWith('#') && !clean.startsWith('|') && !clean.startsWith('-')) {
+            newWords.push(clean);
+          }
+        });
+
+        if (newWords.length === 0) {
+          alert("⚠️ 未在檔案中解析出有效的敏感詞彙。請確保格式為每行一個詞，或使用 - 列表項目格式。");
+          return;
+        }
+
+        if (!confirm(`解析出 ${newWords.length} 個敏感詞彙，確定要批次匯入嗎？（重複的詞彙將自動過濾）`)) return;
+
+        let successCount = 0;
+        let localCount = 0;
+        try {
+          const currentList = await window.MathSprintSupabaseService.listSensitiveWords();
+          const currentWords = currentList.map(item => {
+            const w = typeof item === 'object' ? item.word : item;
+            return String(w || '').trim().toLowerCase();
+          });
+
+          for (const w of newWords) {
+            if (!currentWords.includes(w.toLowerCase())) {
+              const cloudSuccess = await window.MathSprintSupabaseService.addSensitiveWord(w);
+              if (cloudSuccess) successCount++;
+              else localCount++;
+            }
+          }
+
+          alert(`✓ 匯入完成！\n成功同步至雲端：${successCount} 個\n僅儲存於本機：${localCount} 個`);
+          this.fetchSensitiveWords();
+        } catch (err) {
+          alert("匯入過程中發生錯誤：" + err.message);
+        }
+      };
+      reader.readAsText(file);
     }
   };
 
@@ -322,6 +396,20 @@
       if (e.key === 'Enter') Admin.addSensitiveWord();
     });
     document.getElementById('admin-clear-chat-btn')?.addEventListener('click', () => Admin.clearChatHistory());
+    
+    // 匯出 / 匯入按鈕綁定
+    document.getElementById('admin-sensitive-export-btn')?.addEventListener('click', () => Admin.exportSensitiveWords());
+    
+    const fileInput = document.getElementById('admin-sensitive-file-input');
+    document.getElementById('admin-sensitive-import-btn')?.addEventListener('click', () => {
+      fileInput?.click();
+    });
+    fileInput?.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files[0]) {
+        Admin.handleImportFile(e.target.files[0]);
+        e.target.value = ''; // 重置以支援重複上傳同名檔案
+      }
+    });
   });
 
   window.addEventListener('limit180AdminAuthorized', () => {
