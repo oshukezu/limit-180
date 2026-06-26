@@ -251,10 +251,25 @@
   }
 
 
+  async function clearAllMessages() {
+    const db = getSupabaseClient();
+    if (!db) return false;
+    try {
+      // 由於無 auth 依賴，直接依據大於 0 的 ID 條件清空所有資料
+      const { error } = await db.from('messages').delete().neq('id', 0);
+      if (error) throw error;
+      return true;
+    } catch (err) {
+      console.error("[Supabase] 清除聊天記錄失敗:", err);
+      return false;
+    }
+  }
+
   window.MathSprintSupabaseService = {
     initSupabase: getSupabaseClient,
     saveRecord, getLeaderboard, saveGlobalProfile, applyCoinTransaction, getGlobalProfile,
     purchaseSkipExamTicket, consumeSkipExamTicket, updatePurchasedMissions, getLatestCoinLedger,
-    listGlobalProfiles, listSensitiveWords, addSensitiveWord, deleteSensitiveWord, checkSensitiveWords
+    listGlobalProfiles, listSensitiveWords, addSensitiveWord, deleteSensitiveWord, checkSensitiveWords,
+    clearAllMessages
   };
 })();

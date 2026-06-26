@@ -277,6 +277,24 @@
         await window.MathSprintSupabaseService.deleteSensitiveWord(word);
         this.fetchSensitiveWords();
       } catch (err) { alert('刪除敏感詞失敗：' + err.message); }
+    },
+
+    async clearChatHistory() {
+      const confirmFirst = confirm("🚨 警告！您即將刪除雲端資料庫 messages 表格內的所有聊天歷史記錄！\n\n此操作為永久性刪除且無法撤銷，確定要清除嗎？");
+      if (!confirmFirst) return;
+      const confirmSecond = confirm("⚠️ 請再次確認：是否確定清空留言板的所有聊天記錄？");
+      if (!confirmSecond) return;
+
+      try {
+        const success = await window.MathSprintSupabaseService.clearAllMessages();
+        if (success) {
+          alert("✓ 所有聊天記錄已成功清除！");
+        } else {
+          alert("❌ 清除失敗，可能是因為雲端 RLS 安全政策不允許 DELETE，或者連線中斷。");
+        }
+      } catch (err) {
+        alert("❌ 清除發生錯誤: " + err.message);
+      }
     }
   };
 
@@ -296,6 +314,7 @@
     document.getElementById('admin-sensitive-input')?.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') Admin.addSensitiveWord();
     });
+    document.getElementById('admin-clear-chat-btn')?.addEventListener('click', () => Admin.clearChatHistory());
   });
 
   window.addEventListener('limit180AdminAuthorized', () => {
