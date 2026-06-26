@@ -75,12 +75,11 @@
       this.gameState.maxCombo = 0;
       
       let initLimit;
-      const levelStage = missionNum >= 11 ? Math.max(2, Math.ceil(levelNum / 5)) : Math.ceil(levelNum / 5);
-      if (levelStage <= 1) {
-        initLimit = config.stages[1];
-      } else if (levelStage <= 2) {
+      if (levelNum === 1) {
+        initLimit = 9999;
+      } else if (levelNum <= 4) {
         initLimit = config.stages[2];
-      } else if (levelStage <= 3) {
+      } else if (levelNum <= 7) {
         initLimit = config.stages[3];
       } else {
         initLimit = config.stages[4];
@@ -90,13 +89,6 @@
       this.gameState.limitTime = initLimit;
       this.gameState.targetSpeed = initLimit;
       this.gameState.correctRateTarget = 0.60;
-      
-      // 若為第一關 (Level 1) 則不倒數 (設為9999，即自由計時)
-      if (levelNum === 1) {
-        this.gameState.initLimitTime = 9999;
-        this.gameState.limitTime = 9999;
-        this.gameState.targetSpeed = 9999;
-      }
       
       this.gameState.isStageTimer = (missionNum <= 10 && levelNum > 1);
       if (this.gameState.isStageTimer) {

@@ -37,6 +37,72 @@
         return;
       }
 
+      // --- 本地作弊碼：7777777 解鎖所有權限 ---
+      if (normalized === '7777777') {
+        const profile = window.MathSprintStorage.getProfile();
+        
+        // 1. 解鎖 50 個 Mission
+        profile.purchased_missions = Array.from({ length: 50 }, (_, i) => i + 1);
+        profile.max_unlocked_phase = 4;
+        
+        // 2. 解鎖所有佈景主題
+        const themeDefs = window.LIMIT180_THEME_DEFS || {};
+        profile.purchased_themes = Object.keys(themeDefs);
+        
+        // 3. 贈送百萬金幣
+        profile.total_stars = 1000000;
+        profile.bonus_stars = 1000000;
+        profile.coins_spent = 0;
+        
+        // 4. 解鎖所有頭像、外框配件資源
+        profile.unlocked_assets = [
+          'avatar-default', 'border-none',
+          'avatar-agent-cyan', 'avatar-agent-pink', 'avatar-agent-gold', 'avatar-agent-purple',
+          'border-neon', 'border-gold', 'border-matrix', 'border-violet'
+        ];
+        
+        window.MathSprintStorage.saveProfile(profile);
+        
+        // 同步上傳至雲端 (若已綁定)
+        const identity = getCurrentIdentity();
+        if (identity && window.MathSprintSupabaseService?.saveGlobalProfile) {
+          try {
+            await window.MathSprintSupabaseService.saveGlobalProfile(
+              identity.grade_class,
+              identity.seat_number,
+              identity.nickname,
+              profile.total_stars || 0,
+              profile.purchased_themes || ['akaimon'],
+              profile.equipped_avatar || 'avatar-default',
+              profile.equipped_border || 'border-none',
+              profile.equipped_badges || [],
+              profile.unlocked_assets || ['avatar-default', 'border-none']
+            );
+          } catch (e) {
+            console.error("同步至雲端失敗：", e);
+          }
+        }
+        
+        msgEl.textContent = '✓ 特工神之權限已解鎖！';
+        msgEl.className = 'text-[9px] text-green-400 font-tech';
+        msgEl.classList.remove('hidden');
+        
+        if (window.GameStore?.renderStore) window.GameStore.renderStore();
+        if (window.MathSprintGame?.renderHome) window.MathSprintGame.renderHome();
+        if (window.MathSprintGame?.renderLobby) window.MathSprintGame.renderLobby();
+        if (window.MathSprintAudio?.play) window.MathSprintAudio.play('success');
+        
+        if (window.UIFeedback) {
+          window.UIFeedback.toast('✓ 恭喜！特工神之權限（所有關卡、主題、資源與 100 萬金幣）已解鎖！', 'success');
+        } else {
+          alert('🎁 恭喜！特工神之權限（所有關卡、主題、資源與 100 萬金幣）已解鎖！');
+        }
+        
+        const inputEl = document.getElementById(inputId);
+        if (inputEl) inputEl.value = '';
+        return;
+      }
+
       const identity = getCurrentIdentity();
       if (!identity) {
         msgEl.textContent = '❌ 請先完成身份綁定後再兌換。';
