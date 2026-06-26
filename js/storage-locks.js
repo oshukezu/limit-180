@@ -73,7 +73,7 @@
         }
         const prevMission = m - 1;
         const reqAcc = getRequiredAccuracy(m);
-        for (let l = 1; l <= 20; l++) {
+        for (let l = 1; l <= 10; l++) {
           const record = profile.level_records[`mission-${prevMission}-level-${l}`];
           if (!record || !record.is_passed || (record.accuracy !== undefined && record.accuracy < reqAcc)) {
             return false;

@@ -129,9 +129,9 @@
             }
           });
 
-          // Draw the 20 levels grids inside
+          // Draw the 10 levels grids inside
           const subGrid = card.querySelector('.mission-levels-grid');
-          for (let L = 1; L <= 20; L++) {
+          for (let L = 1; L <= 10; L++) {
             const isLUnlocked = window.MathSprintStorage.isLevelUnlocked(i, L, profile);
             const key = `mission-${i}-level-${L}`;
             const record = profile.level_records[key] || { stars: 0, best_avg_time: null, max_combo: 0 };

@@ -16,9 +16,9 @@
 
   const StoreRedeem = {
     // 兌換代碼功能
-    async redeemCode(code) {
+    async redeemCode(code, msgId = 'redeem-msg', inputId = 'redeem-code-input') {
       const normalized = code.trim().toUpperCase();
-      const msgEl = document.getElementById('redeem-msg');
+      const msgEl = document.getElementById(msgId);
       if (!msgEl) return;
       
       msgEl.classList.remove('hidden', 'text-green-400', 'text-red-400');
@@ -119,7 +119,9 @@
         } else {
           alert(`🎁 兌換成功：獲得 ${earned.toLocaleString('zh-TW')} 💰 金幣！`);
         }
-        document.getElementById('redeem-code-input').value = '';
+        
+        const inputEl = document.getElementById(inputId);
+        if (inputEl) inputEl.value = '';
       } catch (err) {
         msgEl.textContent = `❌ ${err?.message || '兌換失敗'}`;
         msgEl.className = 'text-[9px] text-red-400 font-tech';
@@ -134,16 +136,30 @@
 
   // 綁定事件監聽
   window.addEventListener('limit180ComponentsLoaded', () => {
+    // 綁定商店的兌換
     const submitBtn = document.getElementById('redeem-submit-btn');
     const inputEl = document.getElementById('redeem-code-input');
-    
     if (submitBtn && inputEl) {
       submitBtn.addEventListener('click', () => {
-        window.GameStore.redeemCode(inputEl.value);
+        window.GameStore.redeemCode(inputEl.value, 'redeem-msg', 'redeem-code-input');
       });
       inputEl.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
-          window.GameStore.redeemCode(inputEl.value);
+          window.GameStore.redeemCode(inputEl.value, 'redeem-msg', 'redeem-code-input');
+        }
+      });
+    }
+
+    // 綁定錯題消除頁面的兌換
+    const revSubmitBtn = document.getElementById('review-redeem-submit-btn');
+    const revInputEl = document.getElementById('review-redeem-code-input');
+    if (revSubmitBtn && revInputEl) {
+      revSubmitBtn.addEventListener('click', () => {
+        window.GameStore.redeemCode(revInputEl.value, 'review-redeem-msg', 'review-redeem-code-input');
+      });
+      revInputEl.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          window.GameStore.redeemCode(revInputEl.value, 'review-redeem-msg', 'review-redeem-code-input');
         }
       });
     }

@@ -60,22 +60,24 @@
         return;
       }
       
-      // 不再跳轉 view-review，而是直接跳到大廳並初始化右側錯題
-      if (window.currentView !== 'view-lobby') {
-        if (typeof this.renderLobby === 'function') {
-          this.renderLobby();
-        }
-        window.showView('view-lobby');
+      // 轉向 view-review 獨立頁面
+      if (window.currentView !== 'view-review') {
+        window.showView('view-review');
       } else {
         this.setupLobbyReviewMode();
       }
 
-      // 滾動到右側錯題本區塊
+      // 渲染右側特工金幣
+      const displayEl = document.getElementById('review-stars-display');
+      if (displayEl) {
+        displayEl.textContent = window.formatCoins(profile.total_stars || 0, true);
+      }
+      document.querySelectorAll('.skip-exam-ticket-count').forEach(el => {
+        el.textContent = Number(profile.skip_exam_tickets || 0).toLocaleString('zh-TW');
+      });
+
+      // 聚焦輸入框
       setTimeout(() => {
-        const workspace = document.getElementById('review-workspace') || document.getElementById('review-empty-state');
-        if (workspace) {
-          workspace.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
         const input = document.getElementById('review-input');
         if (input) input.focus();
       }, 150);

@@ -173,7 +173,7 @@
         resNextBtn.addEventListener('click', async () => {
           let nextMission = this.gameState.currentMission;
           let nextLevel = this.gameState.currentLevel + 1;
-          if (nextLevel > 20) {
+          if (nextLevel > 10) {
             nextLevel = 1;
             nextMission = this.gameState.currentMission + 1;
           }

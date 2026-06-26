@@ -67,6 +67,27 @@
         }
       }
 
+      // 清除 Level 11-20 的舊關卡紀錄
+      let needSave = false;
+      if (profile.level_records) {
+        for (let key in profile.level_records) {
+          // 格式為 mission-[M]-level-[L]
+          const match = key.match(/^mission-\d+-level-(\d+)$/);
+          if (match) {
+            const levelVal = parseInt(match[1]);
+            if (levelVal > 10) {
+              delete profile.level_records[key];
+              needSave = true;
+            }
+          }
+        }
+      }
+
+      if (needSave) {
+        this.recalculateTotalStars(profile);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+      }
+
       // 每日清零獎金邏輯
       const todayStr = new Date().toLocaleDateString('sv');
       if (profile.last_active_date !== todayStr) {

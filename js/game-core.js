@@ -96,12 +96,21 @@ window.CFG = window.MATH_SPRINT_CONFIG;
         this.renderLobby();
         this.initScanner();
 
-        window.addEventListener('mathSprintProfileUpdated', () => {
+        window.addEventListener('mathSprintProfileUpdated', (e) => {
+          const profile = e.detail || window.MathSprintStorage.getProfile();
           this.renderHome();
           this.renderLobby();
           if (window.GameStore && typeof window.GameStore.renderStore === 'function') {
             window.GameStore.renderStore();
           }
+          // 同步更新錯題消除頁面的右側金幣與考卷數量
+          const displayEl = document.getElementById('review-stars-display');
+          if (displayEl) {
+            displayEl.textContent = window.formatCoins(profile.total_stars || 0, true);
+          }
+          document.querySelectorAll('.skip-exam-ticket-count').forEach(el => {
+            el.textContent = Number(profile.skip_exam_tickets || 0).toLocaleString('zh-TW');
+          });
         });
 
         window.addEventListener('mathSprintBonusStarAwarded', (e) => {

@@ -91,9 +91,16 @@
       this.gameState.targetSpeed = initLimit;
       this.gameState.correctRateTarget = 0.60;
       
-      this.gameState.isStageTimer = (missionNum <= 10);
+      // 若為第一關 (Level 1) 則不倒數 (設為9999，即自由計時)
+      if (levelNum === 1) {
+        this.gameState.initLimitTime = 9999;
+        this.gameState.limitTime = 9999;
+        this.gameState.targetSpeed = 9999;
+      }
+      
+      this.gameState.isStageTimer = (missionNum <= 10 && levelNum > 1);
       if (this.gameState.isStageTimer) {
-        const stageTotalTime = initLimit * this.gameState.totalQuestions;
+        const stageTotalTime = this.gameState.initLimitTime * this.gameState.totalQuestions;
         this.gameState.stageTimeTotal = stageTotalTime;
         this.gameState.stageTimeRemaining = stageTotalTime;
       }
@@ -107,7 +114,7 @@
 
       // Sync HUD
       document.getElementById('game-shields').textContent = profile.shields_count;
-      document.getElementById('game-level-title').textContent = `M${missionNum} ${String(levelNum).padStart(2, '0')}/20`;
+      document.getElementById('game-level-title').textContent = `M${missionNum} ${String(levelNum).padStart(2, '0')}/10`;
 
       document.getElementById('error-feedback').classList.add('hidden');
       document.getElementById('shield-alert').classList.add('hidden');
