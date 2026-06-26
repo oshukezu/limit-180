@@ -251,16 +251,16 @@
   }
 
 
-  async function clearAllMessages() {
+  async function clearClassMessages(gradeClass) {
     const db = getSupabaseClient();
-    if (!db) return false;
+    const cName = String(gradeClass || '').trim().toUpperCase();
+    if (!db || !cName) return false;
     try {
-      // 由於無 auth 依賴，直接依據大於 0 的 ID 條件清空所有資料
-      const { error } = await db.from('messages').delete().neq('id', 0);
+      const { error } = await db.from('messages').delete().eq('grade_class', cName);
       if (error) throw error;
       return true;
     } catch (err) {
-      console.error("[Supabase] 清除聊天記錄失敗:", err);
+      console.error("[Supabase] 清除班級聊天記錄失敗:", err);
       return false;
     }
   }
@@ -270,6 +270,6 @@
     saveRecord, getLeaderboard, saveGlobalProfile, applyCoinTransaction, getGlobalProfile,
     purchaseSkipExamTicket, consumeSkipExamTicket, updatePurchasedMissions, getLatestCoinLedger,
     listGlobalProfiles, listSensitiveWords, addSensitiveWord, deleteSensitiveWord, checkSensitiveWords,
-    clearAllMessages
+    clearClassMessages
   };
 })();

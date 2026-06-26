@@ -280,15 +280,22 @@
     },
 
     async clearChatHistory() {
-      const confirmFirst = confirm("🚨 警告！您即將刪除雲端資料庫 messages 表格內的所有聊天歷史記錄！\n\n此操作為永久性刪除且無法撤銷，確定要清除嗎？");
+      const classSelect = document.getElementById('admin-class-select');
+      const className = classSelect?.value;
+      if (!className) {
+        alert("⚠️ 請先在上方下拉選單選擇要清除的「班級」！");
+        return;
+      }
+
+      const confirmFirst = confirm(`🚨 警告！您即將永久刪除雲端資料表 messages 中【 ${className} 班 】的所有聊天留言記錄！\n\n此操作為永久性刪除且無法撤銷，確定要清除嗎？`);
       if (!confirmFirst) return;
-      const confirmSecond = confirm("⚠️ 請再次確認：是否確定清空留言板的所有聊天記錄？");
+      const confirmSecond = confirm(`⚠️ 請再次確認：是否確定清空【 ${className} 班 】的聊天室？`);
       if (!confirmSecond) return;
 
       try {
-        const success = await window.MathSprintSupabaseService.clearAllMessages();
+        const success = await window.MathSprintSupabaseService.clearClassMessages(className);
         if (success) {
-          alert("✓ 所有聊天記錄已成功清除！");
+          alert(`✓ 【 ${className} 班 】的聊天記錄已成功清除！`);
         } else {
           alert("❌ 清除失敗，可能是因為雲端 RLS 安全政策不允許 DELETE，或者連線中斷。");
         }

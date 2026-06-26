@@ -73,11 +73,16 @@
 
       <!-- 資料維護 -->
       <div class="hud-panel p-5 bg-slate-900/80 border border-slate-800 flex flex-col gap-3 font-pixel">
-        <h4 class="text-xs text-pink-500 glow-pink">班級錯題一鍵維護 RE-CALIBRATE</h4>
-        <p class="text-[9px] text-slate-500 font-tech">為當前班級內所有學生的一鍵清除所有的錯題記錄，釋放記憶體。</p>
-        <button id="admin-batch-reset-btn" class="cyber-btn cyber-btn-pink w-full py-2.5 text-xs text-pink-500 rounded mt-2">
-          ⚡ 清空全班錯題本
-        </button>
+        <h4 class="text-xs text-pink-500 glow-pink">班級數據維護 RE-CALIBRATE</h4>
+        <p class="text-[9px] text-slate-500 font-tech">針對當前選擇的班級，一鍵清除錯題或清理留言板記錄。</p>
+        <div class="flex flex-col gap-2 mt-2">
+          <button id="admin-batch-reset-btn" class="cyber-btn cyber-btn-pink w-full py-2 text-xs text-pink-500 rounded">
+            ⚡ 清空當前班級錯題本
+          </button>
+          <button id="admin-clear-chat-btn" class="cyber-btn cyber-btn-pink w-full py-2 text-xs text-red-500 font-bold rounded">
+            🧹 清空當前班級聊天記錄
+          </button>
+        </div>
       </div>
     </div>
 
@@ -177,19 +182,10 @@
         </button>
       </div>
 
-      <div class="overflow-x-auto max-h-48 overflow-y-auto border-b border-slate-800/40 pb-4">
+      <div class="overflow-x-auto max-h-48 overflow-y-auto">
         <div id="admin-sensitive-list" class="flex flex-wrap gap-2 py-2">
           <div class="text-[10px] text-slate-500">載入中...</div>
         </div>
-      </div>
-
-      <!-- 聊天歷史清理功能 -->
-      <div class="flex flex-col gap-2 pt-2">
-        <h4 class="text-xs text-orange-400">聊天記錄清理 CLEAR CHAT HISTORY</h4>
-        <p class="text-[9px] text-slate-500 font-tech">一鍵清空 Supabase 雲端資料庫 `messages` 表格中的所有班級留言記錄。</p>
-        <button id="admin-clear-chat-btn" class="cyber-btn cyber-btn-pink py-2 text-xs text-red-500 rounded font-bold w-fit px-4 mt-1">
-          🧹 一鍵清空所有聊天記錄
-        </button>
       </div>
     </div>
   </div>
